@@ -27,7 +27,7 @@ var Account = require('./models/account')
  ***********************************************************/
 
 var routes = require('./routes/index')
-// var users = require('./routes/users')
+var users = require('./routes/users')
 
 /************************************************************
  * App Config
@@ -37,6 +37,9 @@ var app = express()
 
 app.locals.title = 'Hancon.com'
 app.locals.email = 'ron@rongallant.com'
+
+// Allow read access to static files in node_modules.
+app.use("/node_modules", express.static('node_modules'))
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -49,37 +52,37 @@ app.use(bodyParser.json()) // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({extended:true})) // to support URL-encoded bodies
 app.use(cookieParser('keyboard cat'))
 
-// Allow read access to static files in node_modules.
-app.use("/node_modules", express.static('node_modules'))
+app.use('/', routes)
+app.use('/users', users)
 
 // Session
-  // var sessionStore = new session.MemoryStore;
-  // app.use(session({
-  //     cookie: { secure: false, maxAge: 1800000 }, // Timeout set to 30 minutes
-  //     store: sessionStore,
-  //     saveUninitialized: true,
-  //     resave: true,
-  //     secret: 'This is a crazy secret, Shjahsk'
-  // }))
+  var sessionStore = new session.MemoryStore;
+  app.use(session({
+      cookie: { secure: false, maxAge: 1800000 }, // Timeout set to 30 minutes
+      store: sessionStore,
+      saveUninitialized: true,
+      resave: true,
+      secret: 'This is a crazy secret, Shjahsk'
+  }))
 
 // Flash Messaging - Returns messages to users.
-// app.use(flash());
-// app.use(function(req, res, next){
-//     res.locals.info = req.flash('info')
-//     res.locals.success = req.flash('success')
-//     res.locals.error = req.flash('error')
-//     next()
-// })
+app.use(flash());
+app.use(function(req, res, next){
+    res.locals.info = req.flash('info')
+    res.locals.success = req.flash('success')
+    res.locals.error = req.flash('error')
+    next()
+})
 
 // Sass
-// app.use(sassMiddleware({
-//     src: path.join(__dirname, 'sass'),
-//     dest: path.join(__dirname, 'public/stylesheets'),
-//     outputStyle: 'compressed',
-//     prefix:  '/stylesheets',
-//     debug: true,
-//     force: true
-// }));
+app.use(sassMiddleware({
+    src: path.join(__dirname, 'sass'),
+    dest: path.join(__dirname, 'public/stylesheets'),
+    outputStyle: 'compressed',
+    prefix:  '/stylesheets',
+    debug: true,
+    force: true
+}));
 
 /************************************************************
  * Database
