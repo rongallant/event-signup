@@ -1,0 +1,35 @@
+extends ../layout
+
+append stylesheets
+  style.
+    .login-card {
+      margin: 0 auto;
+    }
+
+append appContent
+
+  .login-card.mdl-card.mdl-shadow--2dp
+    .mdl-card__title
+      h2.mdl-card__title-text Hangcon Signup
+
+    .mdl-card__supporting-text
+      small Please log in to create an account
+      form
+        .mdl-textfield.mdl-js-textfield
+          input#username.mdl-textfield__input(type='text')
+          label.mdl-textfield__label(for='username') Username...
+
+        .mdl-textfield.mdl-js-textfield
+          input#password.mdl-textfield__input(type='password')
+          label.mdl-textfield__label(for='password') Password...
+
+    .mdl-card__actions.mdl-card--border
+
+      button.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+          | Sign Up
+      button(class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent")
+          | Login
+
+    .mdl-card__menu
+      button.mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+        i.material-icons share

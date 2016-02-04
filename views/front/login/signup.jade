@@ -1,0 +1,28 @@
+extends ../layout
+
+append content
+
+    h1 Hangcon Signup
+    h2 Please create an account
+
+    form
+
+        input(name="username")
+        label Username
+
+        input(name="givenName")
+        label First Name
+
+
+        input(name="familyName")
+        label Last Name
+
+
+        input(name="email", class="")
+        label Email
+
+        input(name="password", type="password", class="")
+        label Password
+
+        a(href"#", class="") Cancel
+        a(href"#", class="") Create Account
