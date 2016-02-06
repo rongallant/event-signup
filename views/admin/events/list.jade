@@ -1,0 +1,52 @@
+extend ../layout
+
+include ../layout/mixinCard
+
+append javascripts
+    script.
+        var button = document.querySelector('#row1Link');
+        var dialog = document.querySelector('dialog#editForm');
+        button.addEventListener('click', function() {
+            dialog.showModal();
+            /* Or dialog.show(); to show the dialog without a backdrop. */
+        });
+
+block appContent
+
+    +card(12)
+        .mdl-card__title
+            h5.mdl-card__title-text Add Event
+        include edit
+
+
+
+    +cardNoPad(12)
+        .mdl-card__title
+            h5.mdl-card__title-text Events
+
+        // Right aligned menu below button
+        button#table-menu.mdl-button.mdl-js-button.mdl-button--icon.mdl-card__menu
+          i.material-icons more_vert
+        ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect(for='table-menu')
+          li.mdl-menu__item Some Action
+          li.mdl-menu__item Another Action
+          li.mdl-menu__item(disabled='') Disabled Action
+          li.mdl-menu__item Yet Another Action
+
+        table(class="mdl-data-table mdl-data-table--responsive")
+            thead
+                tr
+                    th.mdl-data-table__cell--non-numeric Name
+                    th.mdl-data-table__cell--non-numeric Contact
+                    th Date/Time
+            tbody
+                tr
+                    td.mdl-data-table__cell--non-numeric(data-label="Name")
+                     a#row1Link(href='#') Leather Working
+                    td.mdl-data-table__cell--non-numeric(data-label="Contact") Olddog
+                        include edit
+                    td(data-label="Date/Time") Saturday, 11:00am - 2:00pm
+
+
+        .mdl-card__actions.mdl-card--border
+            a(href="#", class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect") link

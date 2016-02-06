@@ -1,9 +1,9 @@
 var express = require('express')
 var router = express.Router()
 
-/* GET home page. */
+// Domain Root
 router.get('/', function(req, res, next) {
-    res.render('front/login/login', { title: 'Express' })
+    res.redirect('/admin')
 })
 
 module.exports = router

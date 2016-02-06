@@ -1,0 +1,45 @@
+.mdl-data-table.mdl-data-table--responsive {
+    // table-layout:fixed;
+    width: 100%;
+    tr {
+        width: 100%;
+    }
+    td {
+        // display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    @media screen and (max-width: 760px)
+    {
+        border: 0;
+        margin: 0 auto;
+        width: 98%;
+
+         thead {
+            display: none;
+        }
+         tr {
+            border-bottom: 2px solid #ddd;
+            display: block;
+            height: auto;
+            margin-bottom: 10px;
+        }
+         td {
+            border-bottom: 1px dotted #ccc;
+            display: block;
+            font-size: 13px;
+            text-align: right;
+        }
+         td:last-child {
+            border-bottom: 0;
+        }
+         td:before {
+            content: attr(data-label);
+            float: left;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+    }
+}

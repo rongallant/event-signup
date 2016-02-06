@@ -1,0 +1,24 @@
+form(action='#')
+    .mdl-textfield.mdl-js-textfield
+        input.mdl-textfield__input(type="text", name="name", id="name",  pattern="[A-Z,a-z, ]*")
+        label.mdl-textfield__label(for="name") Event Name
+        span.mdl-textfield__error Letters and spaces only
+
+    .mdl-textfield.mdl-js-textfield
+        textarea.mdl-textfield__input(type="text", rows="3", id="description",  pattern="[A-Z,a-z, ]*")
+        label.mdl-textfield__label(for="description") Description
+        span.mdl-textfield__error Letters and spaces only
+
+
+    .mdl-textfield Select Schedule
+    .mdl-textfield Select Contact
+    .mdl-textfield Select/Add Location
+
+    .mdl-textfield.mdl-js-textfield
+        input.mdl-textfield__input(type="text", name="", id="",  pattern="[A-Z,a-z, ]*")
+        label.mdl-textfield__label(for="")
+        span.mdl-textfield__error Letters and spaces only
+
+    .mdl-dialog__actions
+        button.mdl-button.close(type='button') Disagree
+        button(class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent") Save

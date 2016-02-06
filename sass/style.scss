@@ -1,3 +1,23 @@
 @charset "UTF-8";
 
-@import "node_modules/material-design-lite/src/material-design-lite"
+@import "node_modules/material-design-lite/src/material-design-lite";
+// @import "responsive_table";
+@import "dashboard";
+
+.full-width {
+    width: 100%;
+}
+.mdl-data-table--responsive {
+    // display: block;
+    overflow-x: auto;
+    width: 100%;
+
+    tr {
+        width: 100%;
+    }
+}
+
+.mdl-data-table--selectable td:first-of-type,
+.mdl-data-table--selectable th:first-of-type {
+    width: 67px;
+}

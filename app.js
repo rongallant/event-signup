@@ -26,8 +26,10 @@ var Account = require('./models/account')
  * Routes
  ***********************************************************/
 
-var routes = require('./routes/index')
-var users = require('./routes/users')
+var index = require('./routes/index')
+var admin = require('./routes/admin')
+var events = require('./routes/admin/events')
+var login = require('./routes/login')
 
 /************************************************************
  * App Config
@@ -38,22 +40,15 @@ var app = express()
 app.locals.title = 'Hancon.com'
 app.locals.email = 'ron@rongallant.com'
 
-// Allow read access to static files in node_modules.
-app.use("/node_modules", express.static('node_modules'))
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
 app.set('view options', { layout: false })
-// app.use(favicon(__dirname + '/public/favicon.ico'))
 app.use(logger('dev'))
 
 app.use(bodyParser.json()) // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({extended:true})) // to support URL-encoded bodies
 app.use(cookieParser('keyboard cat'))
-
-app.use('/', routes)
-app.use('/users', users)
 
 // Session
   var sessionStore = new session.MemoryStore;
@@ -78,11 +73,23 @@ app.use(function(req, res, next){
 app.use(sassMiddleware({
     src: path.join(__dirname, 'sass'),
     dest: path.join(__dirname, 'public/stylesheets'),
-    outputStyle: 'compressed',
-    prefix:  '/stylesheets',
+    prefix: '/stylesheets',
+    outputStyle: 'expanded',
     debug: true,
     force: true
 }));
+
+/************************************************************
+ * Paths
+ ***********************************************************/
+
+// app.use(favicon(path.join(__dirname, 'public/favicon.ico')))
+app.use(express.static(path.join(__dirname, 'public')))
+app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')))
+
+app.use('/', index)
+app.use('/admin', admin)
+app.use('/admin/events', events)
 
 /************************************************************
  * Database
@@ -91,6 +98,13 @@ app.use(sassMiddleware({
 // MongooseJS / MongoDB
 mongoose.connect('mongodb://localhost/passport_local_mongoose_express4')
 mongoose.set('debug', true)
+
+/************************************************************
+ * Security
+ ***********************************************************/
+
+// app.use(passport.initialize())
+// app.use(passport.session())
 
 /************************************************************
  * Error Handling
