@@ -2,51 +2,35 @@ extend ../layout
 
 include ../layout/mixinCard
 
-append javascripts
-    script.
-        var button = document.querySelector('#row1Link');
-        var dialog = document.querySelector('dialog#editForm');
-        button.addEventListener('click', function() {
-            dialog.showModal();
-            /* Or dialog.show(); to show the dialog without a backdrop. */
-        });
-
 block appContent
 
-    +card(12)
-        .mdl-card__title
-            h5.mdl-card__title-text Add Event
-        include edit
+    h3 Events
 
+    .ui.segment: table.ui.very.basic.single.line.selectable.table
+        thead
+            tr
+                th Name
+                th Contact
+                th.right.aligned Date/Time
 
+        tbody
+            if data
+                each row in data
+                    tr
+                        td(data-label="Name")
+                            a#row1Link(href='./' + row.id)= row.name
+                        td(data-label="Contact") Olddog
+                        td.right.aligned(data-label="Date/Time") Saturday, 11:00am - 2:00pm
 
-    +cardNoPad(12)
-        .mdl-card__title
-            h5.mdl-card__title-text Events
+        tfoot.full-width
+            tr
+                th(colspan='3')
+                    .ui.right.floated.small.primary.labeled.icon.button
+                        i.user.icon
+                        |  Add User
+                    .ui.small.button
+                        | Approve
+                    .ui.small.disabled.button
+                        | Approve All
 
-        // Right aligned menu below button
-        button#table-menu.mdl-button.mdl-js-button.mdl-button--icon.mdl-card__menu
-          i.material-icons more_vert
-        ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect(for='table-menu')
-          li.mdl-menu__item Some Action
-          li.mdl-menu__item Another Action
-          li.mdl-menu__item(disabled='') Disabled Action
-          li.mdl-menu__item Yet Another Action
-
-        table(class="mdl-data-table mdl-data-table--responsive")
-            thead
-                tr
-                    th.mdl-data-table__cell--non-numeric Name
-                    th.mdl-data-table__cell--non-numeric Contact
-                    th Date/Time
-            tbody
-                tr
-                    td.mdl-data-table__cell--non-numeric(data-label="Name")
-                     a#row1Link(href='#') Leather Working
-                    td.mdl-data-table__cell--non-numeric(data-label="Contact") Olddog
-                        include edit
-                    td(data-label="Date/Time") Saturday, 11:00am - 2:00pm
-
-
-        .mdl-card__actions.mdl-card--border
-            a(href="#", class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect") link
+    .ui.hidden.divider

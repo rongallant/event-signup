@@ -1,18 +1,19 @@
+ <pre>
+  _    _                 _
+ | |  | |               (_)
+ | |__| | __ _ _ __ ___  _  ___ ___  _ __    ___ ___  _ __ ___
+ |  __  |/ _` | '_ ` _ \| |/ __/ _ \| '_ \  / __/ _ \| '_ ` _ \
+ | |  | | (_| | | | | | | | (_| (_) | | | || (_| (_) | | | | | |
+ |_|  |_|\__,_|_| |_| |_|_|\___\___/|_| |_(_)___\___/|_| |_| |_|
 
-     ,-----.,--.                  ,--. ,---.   ,--.,------.  ,------.
-    '  .--./|  | ,---. ,--.,--. ,-|  || o   \  |  ||  .-.  \ |  .---'
-    |  |    |  || .-. ||  ||  |' .-. |`..'  |  |  ||  |  \  :|  `--, 
-    '  '--'\|  |' '-' ''  ''  '\ `-' | .'  /   |  ||  '--'  /|  `---.
-     `-----'`--' `---'  `----'  `---'  `--'    `--'`-------' `------'
-    ----------------------------------------------------------------- 
+</pre>
 
 
-Hi there! Welcome to Cloud9 IDE!
 
-To get you started, create some files, play with the terminal,
-or visit http://docs.c9.io for our documentation.
-If you want, you can also go watch some training videos at
-http://www.youtube.com/user/c9ide.
+need to create symbolic links to config files in semantic-ui-less.
 
-Happy coding!
-The Cloud9 IDE team
+<pre><code>
+cd ~/node_modules/semantic-ui-less/
+ln -s ../../less/stylesheets/theme.config theme.config
+ln -s ../../less/stylesheets/site site
+</code></pre>
