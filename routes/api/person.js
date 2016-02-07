@@ -18,17 +18,25 @@ router.get('/', function(req, res, next) {
 
 /* POST New item created. */
 router.post('/', function(req, res, next) {
+
+  console.table(req.body)
+
   var data = new Person({
     nickName: req.body.nickName,
     lastName: req.body.lastName,
     firstName: req.body.firstName,
-    _address: req.body.address,
+    email: req.body.email,
     phone: req.body.phone,
     isChild: req.body.isChild,
     childAge: req.body.childAge,
     gearList: req.body.gearList,
+    _address: req.body.address,
     _emergencyContact: req.body.emergencyContact
   })
+
+  console.log(data.validateSync())
+
+
   data.save(function(err) {
       if (err) {
         res.status(500).json({ error: err })

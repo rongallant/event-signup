@@ -1,15 +1,31 @@
 extend ../layout
 
+include ../../mixins/formFields
+
 append javascripts
+    script(src="/javascripts/jquery-maxlength.js")
     script.
         $(function(){
+            $("input[data-maxsize], textarea[data-maxsize]").maxLengthCounter()
+
             $('.ui.checkbox').checkbox()
             $('#editPerson')
                 .form({
                     fields: {
-                    nickName: 'empty',
-                    firstName: 'empty',
-                    lastName: 'empty'
+                    nickName: {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
+                    firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
+                    lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'},{type:'doesntContain[a-zA-Z]'}]},
+                    email: {rules:[{type:'empty'}, {type:'maxLength[254]'},{type:'email'}]},
+                    childAge: {rules:[{type:'integer[0..17]',prompt:'Child must be under 18'},{type:'maxLength[2]'}]},
+                    phone: {
+                        identifier: 'phone',
+                        rules: [{
+                            type: 'regExp[/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\.\/0-9]*$/g]',
+                            prompt: 'Please enter a valid phone number'
+                        },{
+                            type:'minLength[10]'
+                        }]
+                    }
                 },
                 inline : true
             })
@@ -20,33 +36,6 @@ append javascripts
                 })
             })
         })
-
-mixin textField(field, label, value)
-    .field
-        label(for=field)= label
-        input(type="text", name=field, id=field,  pattern="[A-Z,a-z, ]*", value=value)
-
-mixin textareaField(field, label, value)
-    .field
-        label(for=field)= label
-        textarea(name=field, id=field,  pattern="[A-Z,a-z, ]*")
-            = value
-
-mixin phoneField(field, label, value)
-    .field
-        label(for=field)= label
-        input(type="text", name=field, id=field, value=value)
-
-mixin numberField(field, label, value)
-    .field
-        label(for=field)= label
-        input(type="number", name=field, id=field, value=value)
-
-mixin checkField(field, label, isChecked)
-    .field
-        .ui.checkbox
-            input(type="checkbox", name=field, id=field, checked=isChecked)
-            label(for=field)= label
 
 append appContent
     - var method
@@ -60,16 +49,25 @@ append appContent
             input(type="hidden", name="_method", value=formMethod)
 
         +textField('nickName', 'Nickname', data.nickName)
+
         .two.fields
             +textField('lastName', 'Last Name', data.lastName)
             +textField('firstName', 'First Name', data.firstName)
-        +phoneField('phone', 'Phone', data.phone)
-        +checkField('isChild', "Is a child", data.isChild)
-        +numberField('childAge', 'Childs Age', data.childAge)
-        +textareaField('gearList', 'Hammock Setup', data.gearList)
 
-        // _address: { type: Schema.Types.ObjectId, ref: 'Address'  },
-        // _emergencyContact: { type: Schema.Types.ObjectId, ref: 'Person'  }
+        .two.fields
+            +emailField('email', 'Email', data.email)
+            +phoneField('phone', 'Phone', data.phone)
+
+        .ui.segment
+            .inline.equal.width.fields
+                +toggleField('isChild', "Is a child", data.isChild)
+                +field('childAge', 'Childs Age', data.childAge)
+                    input(type="number", name="childAge", id="childAge", max="17", maxlength="2" value=data.childAge)
+
+        +field('gearList', 'Hammock Setup', data.gearList)
+            textarea(name='gearList', id='gearList', placeholder='Limit is 2000 characters.', data-maxsize="2000", data-output="gearListCount", wrap="virtual")
+                = data.gearList
+            .label ( #[i#gearListCount] / 2000)
 
         .ui.submit.button Submit
         .ui.reset.button Reset

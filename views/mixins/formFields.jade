@@ -1,0 +1,44 @@
+
+mixin textField(field, label, value)
+    .field
+        label(for=field)= label
+        input(type="text", name=field, id=field,  pattern="[A-Z,a-z, ]*", value=value)
+
+mixin emailField(field, label, value)
+    .field
+        label(for=field)= label
+        input(type="email", name=field, id=field, value=value)
+
+mixin phoneField(field, label, value)
+    .field
+        label(for=field)= label
+        input(type="tel", name=field, id=field, value=value)
+
+mixin numberField(field, label, value)
+    .field
+        label(for=field)= label
+        input(type="number", name=field, id=field, value=value)
+
+mixin toggleField(field, label, isChecked)
+    .field
+        .ui.toggle.checkbox
+            input(type="checkbox", name=field, id=field, checked=isChecked)
+            label(for=field)= label
+
+mixin checkField(field, label, isChecked)
+    .field
+        .ui.checkbox
+            input(type="checkbox", name=field, id=field, checked=isChecked)
+            label(for=field)= label
+
+mixin textareaField(field, label, value)
+    .field
+        label(for=field)= label
+        textarea(name=field, id=field,  pattern="[A-Z,a-z, ]*")= value
+
+mixin field(field, label, value)
+    .field
+        label(for=field)= label
+        if block
+            block
+
