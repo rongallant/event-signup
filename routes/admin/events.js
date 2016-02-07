@@ -1,15 +1,13 @@
 var express = require('express')
-var mongoose = require('mongoose')
-var Event = require("../../models/event")
 var request = require('request');
-
 var router = express.Router()
+
+var Event = require("../../models/event")
 
 var VIEW_FOLDER = "admin/events"
 var URL_BASE = "/admin/events"
 var entryName = "Event"
 var entriesName = "Events"
-
 
 /************************************************************
  * PAGES
@@ -18,6 +16,15 @@ var entriesName = "Events"
 function localUrl(req) {
     return req.protocol + '://' + req.get('host')
 }
+
+router.use(function(req, res, next) {
+    res.locals.list = URL_BASE
+    res.locals.edit = URL_BASE + '/edit/'
+    res.locals.create = URL_BASE + '/create'
+    res.locals.url = req.originalUrl
+    // console.log(req)
+    next()
+})
 
 // LIST
 router.get('/', function(req, res, next){
@@ -31,17 +38,29 @@ router.get('/', function(req, res, next){
     })
 })
 
-// FORM
-router.get('/:id', function(req, res, next) {
-    if (req.flash('code')  == 200) {
-        req.flash('success', 'Update successfull!')
-        res.redirect(URL_BASE + '/' + req.params.id);
+router.get('/success/:code', function(req, res, next) {
+    if (req.params.code == 'deleted') {
+        req.flash('success', 'Deleted successfully!')
+        res.redirect(URL_BASE + '/')
     }
     next()
 })
 
-router.get('/:id', function(req, res) {
-    request(localUrl(req) + '/api/event/' + req.params.id , function (err, body){
+router.get('/success/:code/:id', function(req, res, next) {
+    if (req.params.code == 'updated') {
+        req.flash('success', 'Updated successfully!')
+        res.redirect(URL_BASE + '/edit/' + req.params.id)
+    }
+    if (req.params.code == 'created') {
+        req.flash('success', 'Created successfully!')
+        res.redirect(URL_BASE + '/edit/' + req.params.id)
+    }
+    next()
+})
+
+// FORM
+router.get('/edit/:id', function(req, res) {
+    request(localUrl(req) + '/api/event/' + req.params.id, function (err, body){
         if (err) console.log(err.message)
         res.render(VIEW_FOLDER + '/edit', {
             title: "Editing " + entryName,
@@ -53,15 +72,20 @@ router.get('/:id', function(req, res) {
     })
 })
 
+router.get('/create', function(req, res) {
+    console.log('Create Event')
+    res.render(VIEW_FOLDER + '/edit', {
+        title: 'Create New ' + entryName,
+        user: req.user,
+        data: new Event(),
+        formMethod: 'post',
+        formAction: '/api/event/'
+    })
+})
+
 /************************************************************
  * PARTS
  ************************************************************/
-
-router.get('/emailrow/:index', function(req, res) {
-    res.render(VIEW_FOLDER +'/includes/email-row', {
-        index:req.params.index
-    })
-})
 
 /************************************************************
  * ACTIONS

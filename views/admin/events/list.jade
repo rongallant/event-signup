@@ -18,19 +18,15 @@ block appContent
                 each row in data
                     tr
                         td(data-label="Name")
-                            a#row1Link(href='./' + row.id)= row.name
+                            a#row1Link(href='/admin/events/edit/' + row.id)= row.name
                         td(data-label="Contact") Olddog
                         td.right.aligned(data-label="Date/Time") Saturday, 11:00am - 2:00pm
 
         tfoot.full-width
             tr
                 th(colspan='3')
-                    .ui.right.floated.small.primary.labeled.icon.button
+                    a(href=create).ui.right.floated.small.primary.labeled.icon.button
                         i.user.icon
-                        |  Add User
-                    .ui.small.button
-                        | Approve
-                    .ui.small.disabled.button
-                        | Approve All
+                        |  Add Event
 
     .ui.hidden.divider

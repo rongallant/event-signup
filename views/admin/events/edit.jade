@@ -2,18 +2,30 @@ extend ../layout
 
 append javascripts
     script.
-        $('#editEvent')
-            .form({
-                fields: {
-                name: 'empty',
-                description: 'empty',
-            }
+        $(function(){
+            $('#editEvent')
+                .form({
+                    fields: {
+                    name: 'empty',
+                    description: 'empty',
+                }
+            })
+            $('.ui.delete.button').click(function(){
+                deleteEntry('#{data.id}')
+                $.ajax({
+                url: '/api/event/#{data.id}',
+                type: 'DELETE',
+                success: function(result) {
+                    window.location.replace('/admin/events/')
+                }
+            })
+            })
         })
 
 append appContent
 
     form#editEvent.ui.form(method=formMethod action=formAction)
-        input(type="hidden", name="_method", value="put")
+        input(type="hidden", name="_method", value="PUT")
 
         .field
             label(for="name") Event Name
@@ -31,3 +43,4 @@ append appContent
         .ui.submit.button Submit
         .ui.reset.button Reset
         .ui.clear.button Clear
+        .ui.delete.button Delete

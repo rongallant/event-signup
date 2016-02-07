@@ -1,12 +1,12 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema
-
+//, required: true, index: { unique: true }
 var PersonSchema = new Schema({
-    nickName: { type: String, required: true, index: { unique: true } },
+    nickName: { type: String },
     lastName: { type: String },
     firstName: { type: String },
     _address: { type: Schema.Types.ObjectId, ref: 'Address'  },
-    phone: { type: Number },
+    phone: { type: String },
     isChild: { type: Boolean },
     childAge: { type: Number },
     gearList: { type: String },

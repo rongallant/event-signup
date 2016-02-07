@@ -1,0 +1,79 @@
+extend ../layout
+
+append javascripts
+    script.
+        $(function(){
+            $('.ui.checkbox').checkbox()
+            $('#editPerson')
+                .form({
+                    fields: {
+                    nickName: 'empty',
+                    firstName: 'empty',
+                    lastName: 'empty'
+                },
+                inline : true
+            })
+            $('.ui.delete.button').click(function(){
+                $.ajax({
+                    url: '/api/person/#{data.id}',
+                    type: 'DELETE'
+                })
+            })
+        })
+
+mixin textField(field, label, value)
+    .field
+        label(for=field)= label
+        input(type="text", name=field, id=field,  pattern="[A-Z,a-z, ]*", value=value)
+
+mixin textareaField(field, label, value)
+    .field
+        label(for=field)= label
+        textarea(name=field, id=field,  pattern="[A-Z,a-z, ]*")
+            = value
+
+mixin phoneField(field, label, value)
+    .field
+        label(for=field)= label
+        input(type="text", name=field, id=field, value=value)
+
+mixin numberField(field, label, value)
+    .field
+        label(for=field)= label
+        input(type="number", name=field, id=field, value=value)
+
+mixin checkField(field, label, isChecked)
+    .field
+        .ui.checkbox
+            input(type="checkbox", name=field, id=field, checked=isChecked)
+            label(for=field)= label
+
+append appContent
+    - var method
+    if (formMethod != 'post' && formMethod != 'get')
+        - method = 'post'
+    else
+        - method = formMethod
+    form#editPerson.ui.form(method=method, action=formAction, name="form")
+
+        - if (formMethod != 'post' && formMethod != 'get')
+            input(type="hidden", name="_method", value=formMethod)
+
+        +textField('nickName', 'Nickname', data.nickName)
+        .two.fields
+            +textField('lastName', 'Last Name', data.lastName)
+            +textField('firstName', 'First Name', data.firstName)
+        +phoneField('phone', 'Phone', data.phone)
+        +checkField('isChild', "Is a child", data.isChild)
+        +numberField('childAge', 'Childs Age', data.childAge)
+        +textareaField('gearList', 'Hammock Setup', data.gearList)
+
+        // _address: { type: Schema.Types.ObjectId, ref: 'Address'  },
+        // _emergencyContact: { type: Schema.Types.ObjectId, ref: 'Person'  }
+
+        .ui.submit.button Submit
+        .ui.reset.button Reset
+        .ui.clear.button Clear
+        .ui.delete.button Delete
+
+        .ui.error.message

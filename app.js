@@ -17,7 +17,6 @@ var express = require('express'),
   lessMiddleware = require('less-middleware'),
   methodOverride = require('method-override')
 
-
 /************************************************************
  * Models
  ***********************************************************/
@@ -29,15 +28,17 @@ var Account = require('./models/account')
  ***********************************************************/
 
 var index = require('./routes/index')
+var login = require('./routes/login')
 var admin = require('./routes/admin')
 var events = require('./routes/admin/events')
-var login = require('./routes/login')
+var persons = require('./routes/admin/persons')
 
 /************************************************************
  * Rest API
  ***********************************************************/
 
 var apiEvent = require('./routes/api/event')
+var apiPerson = require('./routes/api/person')
 
 /************************************************************
  * App Config
@@ -45,7 +46,7 @@ var apiEvent = require('./routes/api/event')
 
 var app = express()
 
-app.locals.title = 'Hancon.com'
+app.locals.title = 'Hangcon.com'
 app.locals.email = 'ron@rongallant.com'
 
 // view engine setup
@@ -106,16 +107,18 @@ app.use(lessMiddleware(
 
 // app.use(favicon(path.join(__dirname, 'public/favicon.ico')))
 app.use(express.static(path.join(__dirname, 'public')))
-app.use('themes', express.static(path.join(__dirname, 'node_modules', 'semantic-ui-less', 'themes')))
-
-app.use('/javascripts', express.static(path.join(__dirname, 'node_modules', 'jquery/dist')))
-app.use('/javascripts', express.static(path.join(__dirname, 'semantic/dist')))
-// app.use('/stylesheets', express.static(path.join(__dirname, 'semantic/dist')))
+app.use('/themes', express.static(path.join(__dirname, 'node_modules', 'semantic-ui-less', 'themes')))
+app.use('/javascripts', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
+app.use('/javascripts', express.static(path.join(__dirname, 'semantic', 'dist')))
 
 app.use('/', index)
 app.use('/admin', admin)
+
 app.use('/admin/events', events)
 app.use('/api/event', apiEvent)
+
+app.use('/admin/persons', persons)
+app.use('/api/person', apiPerson)
 
 /************************************************************
  * Database
