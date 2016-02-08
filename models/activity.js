@@ -10,6 +10,7 @@ var ActivitySchema = new Schema({
     description: { type: String }
 }, {
     strict: true,
+    timestamps: true,
     toObject: {
         virtuals: true
     },

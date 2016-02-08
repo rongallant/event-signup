@@ -4,13 +4,13 @@ var express = require('express'),
     path = require("path"),
     url = require("url")
 
-var Person = require('../../models/person')
+var Address = require('../../models/address')
 
-var API_URI = "/api/person/",
-    VIEW_FOLDER = "admin/persons",
-    URL_BASE = "/admin/persons",
-    entryName = "Person",
-    entriesName = "Persons"
+var API_URI = "/api/address/",
+    VIEW_FOLDER = "admin/addresses",
+    URL_BASE = "/admin/addresses",
+    entryName = "Address",
+    entriesName = "Addresses"
 
 /************************************************************
  * PAGES
@@ -64,7 +64,7 @@ router.get('/create', function(req, res) {
     res.render(path.join(VIEW_FOLDER + '/edit'), {
         title: 'Create New ' + entryName,
         user: req.user,
-        data: new Person(),
+        data: new Address(),
         formMethod: 'post',
         formAction: API_URI
     })
@@ -72,20 +72,15 @@ router.get('/create', function(req, res) {
 
 // Edit
 router.get('/edit/:id', function(req, res) {
-    request(localUrl(req) + API_URI + '/' + req.params.id, function (err, data){
+    request(localUrl(req) + API_URI + req.params.id, function (err, data){
         if (err) console.log(err.message)
-        try {
-            res.render(VIEW_FOLDER + '/edit', {
-                title: "Editing " + entryName,
-                user: req.user,
-                data: JSON.parse(data.body),
-                formMethod: 'put',
-                formAction: API_URI + data.body.id
-            })
-        } catch (err) {
-            console.error('ERROR: ' + err.stack);
-            res.status(500).json({ error: err })
-        }
+        res.render(VIEW_FOLDER + '/edit', {
+            title: "Editing " + entryName,
+            user: req.user,
+            data: JSON.parse(data.body),
+            formMethod: 'PUT',
+            formAction: API_URI + JSON.parse(data.body).id
+        })
     })
 })
 

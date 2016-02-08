@@ -13,6 +13,7 @@ var ReservationSchema = new Schema({
     _pet: { type: Schema.Types.ObjectId, ref: 'Pet' }
 }, {
     strict: true,
+    timestamps: true,
     toObject: {
         virtuals: true
     },

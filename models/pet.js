@@ -8,6 +8,7 @@ var PetSchema = new Schema({
     animal: { type: String, default: 'Dog' }
 }, {
     strict: true,
+    timestamps: true,
     toObject: {
         virtuals: true
     },

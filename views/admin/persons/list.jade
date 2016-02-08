@@ -10,21 +10,43 @@ block appContent
         table.ui.very.basic.single.line.selectable.table
             thead
                 tr
+                    th Nickname
                     th Name
-                    th Child
+                    th
+                    th.center.aligned Child
 
             tbody
-                if data.length
+                if !data.length
+                        tr: td(colspan='4') No Results
+                else
                     each row in data
                         tr
+                            td(data-label="Nickname")
+                                a#row1Link(href=edit + row.id)
+                                    = row.nickName
+
                             td(data-label="Name")
-                                a#row1Link(href='./edit/' + row.id) #{row.firstName} #{row.lastName}
-                            td(data-label="Child")
-                                = isChild
+                                = row.fullName
+
+                            td.right.aligned(data-label="")
+                                if row.email
+                                    a(href='mailto:' + row.email, title=row.email)
+                                        i.large.mail.square.icon
+                                if row.phone
+                                    a(href='tel:' + row.phone, title=row.phone)
+                                        i.large.phone.square.icon
+
+                            td.center.aligned(data-label="Child")
+                                if (row.isChild == true)
+                                    i.large.checkmark.box.icon
+                                else
+                                    i.large.square.outline.icon
 
             tfoot.full-width
                 tr
-                    th(colspan='2')
-                        a(href=create).ui.right.floated.small.primary.labeled.icon.button
-                            i.user.icon
-                            | Add Person
+                    th(colspan='4')
+                        .ui.right.floated.icon.button
+                            a(href=create)
+                                i.plus.icon
+                                | Create
+

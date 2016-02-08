@@ -1,29 +1,76 @@
-var express = require('express')
-var router = express.Router()
+var express = require('express'),
+  router = express.Router(),
+  mongoose = require('mongoose')
 
-/* GET Returns all address. */
-router.get('/address', function(req, res, next) {
-  res.send('address')
+var Address = require("../../models/address")
+
+var URL_BASE = "/admin/addresses"
+
+/* GET Returns all item. */
+router.get('/', function(req, res, next) {
+  Address.find(function(err, data) {
+    if (err) {
+      res.status(404).json({ error: err.message })
+    } else {
+      res.json(data)
+    }
+  })
 })
 
-/* POST New address created. */
-router.post('/address', function(req, res, next) {
-  res.send('address')
+/* POST New item created. */
+router.post('/', function(req, res, next) {
+  var data = new Address({
+    _mainPerson: mongoose.Types.ObjectId(req.body._mainPersion),
+    address1: req.body.address1,
+    address2: req.body.address2,
+    city: req.body.city,
+    state: req.body.state,
+    country: req.body.country,
+    postalCode: req.body.postalCode,
+    location: req.body.location
+  })
+  data.save(function(err) {
+      if (err) {
+        res.status(500).json({ error: err })
+      } else {
+        res.redirect(URL_BASE + '/success/created/' + data._id)
+      }
+  })
 })
 
-/* GET Returns single address. */
-router.get('/address:id', function(req, res, next) {
-  res.send('address:id')
+/* GET Returns single item. */
+router.get('/:id', function(req, res, next) {
+  Address.findById(req.params.id)
+    .populate('_mainPerson') // only return the Persons name
+    .exec(function(err, data) {
+      if (err) {
+        res.status(404).json({ error: err.message })
+      } else {
+        res.json(data)
+      }
+  })
 })
 
-/* PUT Updates and address. */
-router.put('/address:id', function(req, res, next) {
-  res.send('address:id')
+/* PUT Updates an item. */
+router.put('/:id', function(req, res, next) {
+  Address.findById(req.params.id).update({$set:req.body}, function (err, data) {
+      if (err) {
+        res.status(500).json({ error: err.message })
+      } else {
+        res.redirect(URL_BASE + '/success/updated/' + req.params.id)
+      }
+    })
 })
 
-/* DELETE Deletes an address. */
-router.delete('/address:id', function(req, res, next) {
-  res.send('address:id')
+/* DELETE Deletes an item. */
+router.delete('/:id', function(req, res, next) {
+  Address.findOneAndRemove(req.params.id, function (err) {
+      if (err) {
+        res.status(500).json({ error: err.message })
+      } else {
+        res.redirect(URL_BASE + '/success/deleted')
+      }
+  })
 })
 
 module.exports = router

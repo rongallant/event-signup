@@ -11,6 +11,7 @@ var EventSchema = new Schema({
     _address: { type: Schema.Types.ObjectId, ref: 'Address' }
 }, {
     strict: true,
+    timestamps: true,
     toObject: {
         virtuals: true
     },

@@ -9,7 +9,7 @@ var URL_BASE = "/admin/persons"
 router.get('/', function(req, res, next) {
   Person.find(function(err, data) {
     if (err) {
-      res.status(404).json({ error: err.message })
+      res.status(404).json({ error: err })
     } else {
       res.json(data)
     }
@@ -18,9 +18,6 @@ router.get('/', function(req, res, next) {
 
 /* POST New item created. */
 router.post('/', function(req, res, next) {
-
-  console.table(req.body)
-
   var data = new Person({
     nickName: req.body.nickName,
     lastName: req.body.lastName,
@@ -33,9 +30,6 @@ router.post('/', function(req, res, next) {
     _address: req.body.address,
     _emergencyContact: req.body.emergencyContact
   })
-
-  console.log(data.validateSync())
-
 
   data.save(function(err) {
       if (err) {
@@ -61,7 +55,7 @@ router.get('/:id', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   Person.findById(req.params.id).update({$set:req.body}, function (err, data) {
       if (err) {
-        res.status(500).json({ error: err.message })
+        res.status(500).json({ error: err })
       } else {
         res.redirect(URL_BASE + '/success/updated/' + req.params.id)
       }
@@ -72,10 +66,21 @@ router.put('/:id', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
   Person.findOneAndRemove(req.params.id, function (err) {
       if (err) {
-        res.status(500).json({ error: err.message })
+        res.status(500).json({ error: err })
       } else {
         res.redirect(URL_BASE + '/success/deleted')
       }
+  })
+})
+
+/* SEARCH Returns all item. */
+router.get('/search/:q', function(req, res, next) {
+  Person.textSearch(req.params.q, function(err, results) {
+        if (err) {
+          res.status(500).json({ error: err })
+        } else {
+          res.json(results);
+        }
   })
 })
 

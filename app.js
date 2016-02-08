@@ -15,7 +15,9 @@ var express = require('express'),
   flash = require('connect-flash'),
   consoletable = require('console.table'),
   lessMiddleware = require('less-middleware'),
-  methodOverride = require('method-override')
+  methodOverride = require('method-override'),
+  mongoosefulltext = require('mongoose-text-search'),
+  marked = require('marked')
 
 /************************************************************
  * Models
@@ -27,18 +29,20 @@ var Account = require('./models/account')
  * Routes
  ***********************************************************/
 
-var index = require('./routes/index')
-var login = require('./routes/login')
-var admin = require('./routes/admin')
-var events = require('./routes/admin/events')
-var persons = require('./routes/admin/persons')
+var index = require('./routes/index'),
+  login = require('./routes/login'),
+  admin = require('./routes/admin'),
+  events = require('./routes/admin/events'),
+  persons = require('./routes/admin/persons'),
+  addresses = require('./routes/admin/addresses')
 
 /************************************************************
  * Rest API
  ***********************************************************/
 
-var apiEvent = require('./routes/api/event')
-var apiPerson = require('./routes/api/person')
+var apiEvent = require('./routes/api/event'),
+  apiPerson = require('./routes/api/person'),
+  apiAddress = require('./routes/api/address')
 
 /************************************************************
  * App Config
@@ -119,6 +123,9 @@ app.use('/api/event', apiEvent)
 
 app.use('/admin/persons', persons)
 app.use('/api/person', apiPerson)
+
+app.use('/admin/addresses', addresses)
+app.use('/api/address', apiAddress)
 
 /************************************************************
  * Database

@@ -1,0 +1,52 @@
+extend ../layout
+
+include ../layout/mixinCard
+
+block appContent
+
+    h3 Address
+
+    .ui.segment
+        table.ui.very.basic.single.line.selectable.table
+            thead
+                tr
+                    th Name
+                    th Address
+                    th Country
+                    th State
+                    th Map
+
+            tbody
+                if !data.length
+                    tr: td(colspan='5') No Results
+                else
+                    each row in data
+                        tr
+                            td(data-label="Name")
+                                a#row1Link(href=edit + row.id)
+                                    if row.person
+                                        = row.person.fullName
+                                    else
+                                        | Select
+
+                            td(data-label="Address")
+                                    = row.address1
+
+                            td(data-label="Country")
+                                    = row.country
+
+                            td(data-label="State")
+                                    = row.state
+
+                            td.center.aligned(data-label="Map")
+                                if (row.coordinates == true)
+                                    a(href='mailto:' + row.email, title=row.email)
+                                        i.large.marker.square.icon
+
+            tfoot.full-width
+                tr
+                    th(colspan='5')
+                        .ui.right.floated.icon.button
+                            a(href=create)
+                                i.plus.icon
+                                | Create

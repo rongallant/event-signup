@@ -13,6 +13,7 @@ var MealSchema = new Schema({
     effort: Number // Scale of 1-5
 }, {
     strict: true,
+    timestamps: true,
     toObject: {
         virtuals: true
     },

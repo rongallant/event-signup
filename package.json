@@ -20,18 +20,16 @@
     "kerberos": "0.0.18",
     "less-middleware": "^2.0.1",
     "map-stream": "0.0.6",
+    "marked": "^0.3.5",
     "method-override": "^2.3.5",
     "mongoose": "^4.3.5",
+    "mongoose-text-search": "0.0.2",
     "morgan": "~1.6.1",
-    "passport": "^0.3.2",
-    "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^4.0.0",
     "request": "^2.69.0",
     "require-dot-file": "^0.4.0",
     "run-sequence": "^1.1.5",
     "semantic-ui": "^2.1.8",
     "semantic-ui-less": "^2.1.8",
     "serve-favicon": "~2.3.0"
-
   }
 }

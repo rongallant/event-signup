@@ -20,6 +20,7 @@ var GuestSchema = new Schema({
 
 }, {
     strict: true,
+    timestamps: true,
     toObject: {
         virtuals: true
     },
