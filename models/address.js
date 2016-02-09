@@ -23,12 +23,16 @@ var AddressSchema = new Schema({
 
 // Formated Address
 AddressSchema.virtual('fullAddress').get(function () {
-    return (this.address1.length > 0 ? this.address1 + '\n' : '') +
-    (this.address2.length > 0 ? this.address2 + '\n' : '') +
-    (this.city.length > 0 ? this.city + ', ' : '') +
-    (this.state.length > 0 ? this.state + '  ' : '') +
-    (this.postalCode.length > 0 ? this.postalCode + '\n' : '') +
-    (this.country.length > 0 ? this.country : '')
+    try {
+        return (this.address1.length > 0 ? this.address1 + '\n' : '') +
+            (this.address2.length > 0 ? this.address2 + '\n' : '') +
+            (this.city.length > 0 ? this.city + ', ' : '') +
+            (this.state.length > 0 ? this.state + '  ' : '') +
+            (this.postalCode.length > 0 ? this.postalCode + '\n' : '') +
+            (this.country.length > 0 ? this.country : '')
+    } catch(err) {
+        return ''
+    }
 })
 
 module.exports = mongoose.model('Address', AddressSchema)

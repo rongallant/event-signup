@@ -15,9 +15,7 @@ var express = require('express'),
   flash = require('connect-flash'),
   consoletable = require('console.table'),
   lessMiddleware = require('less-middleware'),
-  methodOverride = require('method-override'),
-  mongoosefulltext = require('mongoose-text-search'),
-  marked = require('marked')
+  methodOverride = require('method-override')
 
 /************************************************************
  * Models

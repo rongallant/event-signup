@@ -80,6 +80,17 @@ function partVal(val) {
     return (val === 'undefined') ? '' : val
 }
 
+// Check var exists
+function u(variabl) {
+    if (typeof variabl === "undefined") {
+        return ''
+    } else if (variabl.length == 0) {
+        return ''
+    } else {
+        return variabl
+    }
+}
+
 var localPersonSearch = {
     apiSettings: {
         url: '/api/person/search/{query}',
@@ -88,13 +99,15 @@ var localPersonSearch = {
             var response = {
                 results: []
             }
-            $.each(qResponse.results, function(index, value) {
+            $.each(qResponse, function(index, value) {
                 var maxResults = 8
                 if (index >= maxResults) return false
-                var v = value['obj']
+                var v = value
+                var desc = ''
+                desc = ( u(v.nickName) ? v.nickName + '<br>' : '') + ( u(v.email) ? v.email : '')
                 response.results.push({
                     title: v.fullName,
-                    description: v.nickName + '<br>' + v.email,
+                    description: desc,
                     id: v.id
                 })
             })

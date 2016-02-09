@@ -1,6 +1,5 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    textSearch = require('mongoose-text-search')
+    Schema = mongoose.Schema
 
 var PersonSchema = new Schema({
     nickName: {
@@ -45,18 +44,7 @@ var PersonSchema = new Schema({
 
 })
 
-// give our schema text search capabilities
-PersonSchema.plugin(textSearch);
-
-// add a text index to the tags array
-PersonSchema.index({
-    nickName: 'text',
-    lastName: 'text',
-    firstName: 'text',
-    email: 'text',
-    phone: 'text'
-
-});
+PersonSchema.index({nickName: 1, field2: 1, lastName: 1, firstName: 1, email: 1}, {unique: true});
 
 // Virtual Attibute 'fullName'
 PersonSchema.virtual('fullName').get(function () {

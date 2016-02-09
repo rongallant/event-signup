@@ -20,7 +20,6 @@
     "kerberos": "0.0.18",
     "less-middleware": "^2.0.1",
     "map-stream": "0.0.6",
-    "marked": "^0.3.5",
     "method-override": "^2.3.5",
     "mongoose": "^4.3.5",
     "mongoose-text-search": "0.0.2",

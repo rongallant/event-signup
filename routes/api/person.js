@@ -75,7 +75,14 @@ router.delete('/:id', function(req, res, next) {
 
 /* SEARCH Returns all item. */
 router.get('/search/:q', function(req, res, next) {
-  Person.textSearch(req.params.q, function(err, results) {
+  var regex = new RegExp(req.params.q, 'i');
+  Person.find()
+    .or({firstName: regex})
+    .or({lastName: regex})
+    .or({nickName: regex})
+    .or({email: regex})
+    .or({fullName: regex})
+    .exec(function(err, results) {
         if (err) {
           res.status(500).json({ error: err })
         } else {
