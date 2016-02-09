@@ -79,8 +79,8 @@ router.get('/edit/:id', function(req, res) {
                 title: "Editing " + entryName,
                 user: req.user,
                 data: JSON.parse(data.body),
-                formMethod: 'put',
-                formAction: API_URI + data.body.id
+                formMethod: 'PUT',
+                formAction: path.join(API_URI , req.params.id)
             })
         } catch (err) {
             console.error('ERROR: ' + err.stack);

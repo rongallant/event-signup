@@ -19,8 +19,14 @@ append javascripts
             })
             $('.ui.delete.button').click(function(){
                 $.ajax({
-                    url: '/api/person/#{data.id}',
-                    type: 'DELETE'
+                    url: '/api/address/#{data._id}',
+                    type: 'DELETE',
+                    error: function(request, status, error) {
+                        console.error(error)
+                    },
+                    success: function(request, status) {
+                        console.log(request)
+                    }
                 })
             })
             $('#personSearch').search(localPersonSearch)

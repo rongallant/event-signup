@@ -30,7 +30,7 @@ router.get('/success/:code', function(req, res, next) {
         req.flash('success', 'Deleted successfully!')
     }
     res.redirect(URL_BASE + '/')
-    next()
+    // next()
 })
 
 router.get('/success/:code/:id', function(req, res, next) {
@@ -79,7 +79,7 @@ router.get('/edit/:id', function(req, res) {
             user: req.user,
             data: JSON.parse(data.body),
             formMethod: 'PUT',
-            formAction: API_URI + JSON.parse(data.body).id
+            formAction: path.join(API_URI , req.params.id)
         })
     })
 })

@@ -3,10 +3,10 @@ extend ../layout
 include ../../mixins/formFields
 
 append javascripts
-    script(src="/javascripts/jquery-maxlength.js")
+    script(src='/javascripts/jquery-maxlength.js')
     script.
         $(function(){
-            $("input[data-maxsize], textarea[data-maxsize]").maxLengthCounter()
+            $('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
 
             $('.ui.checkbox').checkbox()
             $('#editPerson')
@@ -16,7 +16,14 @@ append javascripts
                     firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
                     lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'},{type:'doesntContain[a-zA-Z]'}]},
                     email: {rules:[{type:'empty'}, {type:'maxLength[254]'},{type:'email'}]},
-                    childAge: {rules:[{type:'integer[0..17]',prompt:'Child must be under 18'},{type:'maxLength[2]'}]},
+                    childAge: {
+                        optional: true,
+                        rules:[{
+                            type: 'integer[0..17]',
+                            prompt: 'Child must be under 18'
+                        }, {
+                            type: 'maxLength[2]'
+                        }]},
                     phone: {
                         identifier: 'phone',
                         rules: [{
@@ -35,6 +42,18 @@ append javascripts
                     type: 'DELETE'
                 })
             })
+
+            var childAge = $("#childAge")
+            var hasAge = childAge.val().length;
+            childAge.prop('disabled', !hasAge)
+            $("#isChild").change(function(){
+                if ($(this).prop('checked')){
+                childAge.prop('disabled', false)
+                } else {
+                childAge.val('')
+                childAge.prop('disabled', true)
+                }
+            })
         })
 
 append appContent
@@ -43,29 +62,31 @@ append appContent
         - method = 'post'
     else
         - method = formMethod
-    form#editPerson.ui.form(method=method, action=formAction, name="form")
+    form#editPerson.ui.form(method=method, action=formAction, name='form')
 
         - if (formMethod != 'post' && formMethod != 'get')
-            input(type="hidden", name="_method", value=formMethod)
+            input(type='hidden', name='_method', value=formMethod)
 
         +textField('nickName', 'Nickname', data.nickName)
 
         .two.fields
-            +textField('lastName', 'Last Name', data.lastName)
             +textField('firstName', 'First Name', data.firstName)
+            +textField('lastName', 'Last Name', data.lastName)
 
         .two.fields
             +emailField('email', 'Email', data.email)
             +phoneField('phone', 'Phone', data.phone)
 
-        .ui.segment
-            .inline.equal.width.fields
-                +toggleField('isChild', "Is a child", data.isChild)
-                +field('childAge', 'Childs Age', data.childAge)
-                    input(type="number", name="childAge", id="childAge", max="17", maxlength="2" value=data.childAge)
+        .field
+            label(for='isChild') Is Child
+            .ui.left.labeled.input
+                .ui.label
+                    .ui.fitted.checkbox
+                        input(type='checkbox', name='isChild', id='isChild', checked=data.isChild)
+                input(type='number', name='childAge', id='childAge', max='17', maxlength='2', placeholder='Childs age...', value=data.childAge)
 
         +field('gearList', 'Hammock Setup', data.gearList)
-            textarea(name='gearList', id='gearList', placeholder='Limit is 2000 characters.', data-maxsize="2000", data-output="gearListCount", wrap="virtual")
+            textarea(name='gearList', id='gearList', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='gearListCount', wrap='virtual')
                 = data.gearList
             .label ( #[i#gearListCount] / 2000)
 
