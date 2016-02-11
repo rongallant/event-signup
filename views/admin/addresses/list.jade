@@ -19,7 +19,7 @@ block appContent
                 if !data.length
                     tr: td.center.aligned(colspan='5')
                         .ui.basic.icon.button
-                            a(href=create)
+                            a(href=createAction)
                                 i.plus.icon
                                 | Add First Address
 
@@ -27,7 +27,7 @@ block appContent
                     each row in data
                         tr
                             td(data-label="Name")
-                                a#row1Link(href=edit + row.id)
+                                a#row1Link(href=editAction + row.id)
                                     = row._contact ? row._contact.fullName : 'No Name'
 
                             td(data-label="Address")

@@ -17,7 +17,7 @@ block appContent
                 if !data.length
                     tr: td.center.aligned(colspan='5')
                         .ui.basic.icon.button
-                            a(href=create)
+                            a(href=createAction)
                                 i.plus.icon
                                 | Add First Event
 
@@ -25,7 +25,7 @@ block appContent
                     each row in data
                         tr
                             td(data-label="Name")
-                                a#row1Link(href='/admin/events/edit/' + row.id)= row.name
+                                a#row1Link(href=editAction + row.id)= row.name
                             td(data-label="Contact") Olddog
                             td.right.aligned(data-label="Date/Time") Saturday, 11:00am - 2:00pm
 

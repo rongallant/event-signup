@@ -1,38 +1,32 @@
 var express = require('express'),
     request = require('request'),
-    dateformat = require('dateformat'),
     path = require("path"),
-    url = require("url")
+    dateformat = require('dateformat')
 
 var router = express.Router(),
-    ScheduleDate = require("../../models/scheduleDates")
+    ScheduleDate = require("../../models/scheduleDate"),
+    appSettings = require('../utils/appSettings')
 
-var API_URI = "/api/scheduleDates/",
-    VIEW_FOLDER = "admin/scheduleDates",
-    URL_BASE = "/admin/scheduleDates",
-    entryName = "Schedule Date",
-    entriesName = "Schedule Dates"
+var appDesc = []
+    appDesc['folder'] = '/scheduleDates',
+    appDesc['singularName'] = "Schedule Date",
+    appDesc['pluralName'] = "Schedule Dates"
+
+router.use(function(req, res, next) {
+    appSettings.appPaths(req, res, appDesc['folder'])
+    next()
+})
 
 /************************************************************
  * PAGES
  ************************************************************/
 
-router.use(function(req, res, next) {
-    res.locals.apiAction = API_URI
-    res.locals.listAction = URL_BASE
-    res.locals.editAction = path.join(URL_BASE, 'edit/')
-    res.locals.createAction = path.join(URL_BASE, 'create')
-    res.locals.deleteAction = path.join(URL_BASE, 'delete')
-    res.locals.url = req.originalUrl
-    next()
-})
-
 // LIST
 router.get('/', function(req, res, next){
-    request(API_URI, function (err, data) {
-        if (err) console.log(err.message)
-        res.render(VIEW_FOLDER +'/list', {
-            title: entriesName,
+    request(res.locals.apiAction, function (err, data) {
+        if (err) { return next(err) }
+        res.render(res.locals.listView, {
+            title: appDesc['pluralName'],
             user: req.user,
             data: JSON.parse(data.body)
         })
@@ -42,7 +36,7 @@ router.get('/', function(req, res, next){
 router.get('/success/:code', function(req, res, next) {
     if (req.params.code == 'deleted') {
         req.flash('success', 'Deleted successfully!')
-        res.redirect(URL_BASE)
+        res.redirect(res.locals.listAction)
     }
 })
 
@@ -52,41 +46,40 @@ router.get('/success/:code/:id', function(req, res, next) {
     } else if (req.params.code == 'created') {
         req.flash('success', 'Created successfully!')
     }
-    res.redirect(path.join(URL_BASE, 'edit', req.params.id))
+    res.redirect(path.join(res.locals.editAction, req.params.id))
 })
 
-// FORM
-router.get('/edit/:id', function(req, res) {
-    request(path.join(API_URI + req.params.id), function (err, data){
-        if (err) console.log(err.message)
-        res.render(path.join(VIEW_FOLDER, 'edit'), {
-            title: "Editing " + entryName,
+// EDIT
+router.get('/edit/:id', function(req, res, next) {
+    request(res.locals.apiAction, function (err, data){
+        if (err) { return next(err) }
+        res.render(res.locals.editView, {
+            title: "Editing " + appDesc['singularName'],
             user: req.user,
             dateFormat: dateformat,
             data: JSON.parse(data.body),
             formMode: 'edit',
             formMethod: 'post',
-            formAction: API_URI
+            formAction: res.locals.apiAction
         })
     })
 })
 
+// CREATE
 router.get('/create', function(req, res) {
-    res.render(path.join(VIEW_FOLDER, 'edit'), {
-        title: 'Create New ' + entryName,
+    res.render(res.locals.editView, {
+        title: 'Create New ' + appDesc['singularName'],
         user: req.user,
         data: new ScheduleDate(),
         dateFormat: dateformat,
         formMode: 'create',
         formMethod: 'post',
-        formAction: API_URI
+        formAction: res.locals.apiAction
     })
 })
 
 /************************************************************
  * ACTIONS
  ************************************************************/
-
-// use event API
 
 module.exports = router

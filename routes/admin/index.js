@@ -11,7 +11,9 @@ var entriesName = "Configurations"
 
 
 router.get('/', function(req, res, next) {
-    res.render(VIEW_FOLDER + '/portal', { title: 'Admin Portal' })
+    res.render(VIEW_FOLDER + '/portal', {
+        title: 'Admin Portal'
+    })
 })
 
 module.exports = router

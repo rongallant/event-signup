@@ -1,97 +1,79 @@
 var express = require('express'),
     request = require('request'),
-    path = require("path"),
-    url = require("url")
+    path = require("path")
 
 var router = express.Router(),
-    Address = require('../../models/address')
+    Address = require('../../models/address'),
+    appSettings = require('../utils/appSettings')
 
-var API_URI = "/api/address/",
-    VIEW_FOLDER = "admin/addresses",
-    URL_BASE = "/admin/addresses",
-    entryName = "Address",
-    entriesName = "Addresses"
+var appDesc = []
+    appDesc['folder'] = '/addresses',
+    appDesc['singularName'] = "Address",
+    appDesc['pluralName'] = "Addresses"
+
+router.use(function(req, res, next) {
+    appSettings.appPaths(req, res, appDesc['folder'])
+    next()
+})
 
 /************************************************************
  * PAGES
  ************************************************************/
 
-function localUrl(req) {
-    return req.protocol + '://' + req.get('host')
-}
-
-router.use(function(req, res, next) {
-    res.locals.listAction = URL_BASE
-    res.locals.editAction = path.join(URL_BASE, 'edit/')
-    res.locals.createAction = path.join(URL_BASE, 'create')
-    res.locals.deleteAction = path.join(URL_BASE, 'delete')
-    res.locals.url = req.originalUrl
-    next()
-})
-
-router.get('/success/:code', function(req, res, next) {
-    if (req.params.code == 'deleted') {
-        req.flash('success', 'Deleted successfully!')
-    }
-    res.redirect(URL_BASE + '/')
-    // next()
-})
-
-router.get('/success/:code/:id', function(req, res, next) {
-    if (req.params.code == 'updated') {
-        req.flash('success', 'Updated successfully!')
-        res.redirect(URL_BASE + '/edit/' + req.params.id)
-    } else
-    if (req.params.code == 'created') {
-        req.flash('success', 'Created successfully!')
-        res.redirect(URL_BASE + '/edit/' + req.params.id)
-    } else {
-        res.redirect(URL_BASE + '/')
-    }
-    next()
-})
-
 // LIST
 router.get('/', function(req, res, next){
-    request(localUrl(req) + API_URI, function (err, data) {
-        if (err) console.log(err.message)
-        res.render(VIEW_FOLDER +'/list', {
-            title: entriesName,
+    request(res.locals.apiAction, function (err, data) {
+        if (err) { return next(err) }
+        res.render(res.locals.listView, {
+            title: appDesc['pluralName'],
             user: req.user,
             data: JSON.parse(data.body)
         })
     })
 })
 
+router.get('/success/:code', function(req, res, next) {
+    if (req.params.code == 'deleted') {
+        req.flash('success', 'Deleted successfully!')
+    }
+    res.redirect(res.locals.listAction)
+})
+
+router.get('/success/:code/:id', function(req, res, next) {
+    if (req.params.code == 'updated') {
+        req.flash('success', 'Updated successfully!')
+    } else
+    if (req.params.code == 'created') {
+        req.flash('success', 'Created successfully!')
+    }
+    res.redirect(path.join(res.locals.editAction, req.params.id))
+})
+
 // Create
 router.get('/create', function(req, res) {
-    res.render(path.join(VIEW_FOLDER + '/edit'), {
-        title: 'Create New ' + entryName,
+    res.render(res.locals.editView, {
+        title: 'Create New ' + appDesc['singularName'],
         user: req.user,
         data: new Address(),
         formMode: 'create',
         formMethod: 'post',
-        formAction: API_URI
+        formAction: res.locals.apiAction
     })
 })
 
 // Edit
-router.get('/edit/:id', function(req, res) {
-    request(localUrl(req) + API_URI + req.params.id, function (err, data){
-        if (err) console.log(err.message)
-        res.render(VIEW_FOLDER + '/edit', {
-            title: "Editing " + entryName,
+router.get('/edit/:id', function(req, res, next) {
+    request(res.locals.apiAction + req.params.id, function (err, data){
+        if (err) { return next(err) }
+        res.render(res.locals.editView, {
+            title: "Editing " + appDesc['singularName'],
             user: req.user,
             data: JSON.parse(data.body),
             formMode: 'edit',
             formMethod: 'PUT',
-            formAction: path.join(API_URI , req.params.id)
+            formAction: res.locals.apiAction + req.params.id
         })
     })
 })
-
-function localUrl(req) {
-    return req.protocol + '://' + req.get('host')
-}
 
 module.exports = router

@@ -7,7 +7,6 @@ var URL_BASE = "/admin/events"
 
 /* GET Returns all item. */
 router.get('/', function(req, res, next) {
-  console.log(req.query)
   Event.find(function(err, data) {
     if (!err) {
       res.json(data)
@@ -50,10 +49,6 @@ router.put('/:id', function(req, res, next) {
       if (err) {
         res.status(500).json({ error: err.message })
       } else {
-        console.table(data)
-        console.table(req.body)
-        console.table(req.params)
-
         res.redirect(URL_BASE + '/success/updated/' + req.params.id)
       }
     })

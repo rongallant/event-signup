@@ -1,34 +1,73 @@
 extend ../layout
 
+append javascripts
+    script.
+        $(function(){
+            $('form.batch').delegate('tr', 'click', function(event) {
+                var $this = $(this)
+                var $box = $this.find('input.batch')
+                if ($box.is(':checked')) {
+                    $box.removeAttr('checked')
+                    $this.removeClass('active')
+                } else {
+                    $box.attr('checked', 'checked')
+                    $this.addClass('active')
+                }
+            }).delegate('input, a', 'click', function(event) {
+                event.stopPropagation()
+                var $el = $(this)
+                if ($el.is('input.batch')) {
+                    if ($el.is(':checked')) {
+                        $el.closest('tr').addClass('active')
+                    } else {
+                        $el.closest('tr').removeClass('active')
+                    }
+                }
+            }).delegate('input.batch-all', 'click', function(event){
+                if ($(this).is(':checked')) {
+                    $('form.batch input.batch').attr('checked','checked').closest('tr').addClass('active')
+                } else {
+                    $('form.batch input.batch').removeAttr('checked').closest('tr').removeClass('active')
+                }
+            })
+        })
 block appContent
 
     .ui.raised.segment
 
         h1 Schedule Dates
 
-        table.ui.small.padded.very.basic.selectable.table
+        form.batch: table.ui.small.padded.very.basic.selectable.table
             thead
                 tr
-                    th.one.wide.center.aligned: input(type="checkbox")
+                    th.one.wide.center.aligned
+                        .ui.fitted.checkbox
+                            input.batch-all(type="checkbox")
+                            label
                     th.four.wide Schedule Day
                     th.three.wide Start Time
                     th.three.wide End Time
                     th Address
+
             tbody
                 if !data.length
                     tr: td.center.aligned(colspan='5')
                         .ui.basic.icon.button
-                            a(href=create)
+                            a(href=createAction)
                                 i.plus.icon
                                 | Add First Schedule Date
 
                 else
                     each row in data
                         tr
-                            td.center.aligned: input(type="checkbox", value=row.id)
+                            td.center.aligned
+                                .ui.fitted.checkbox
+                                    input.batch(type="checkbox", value=row.id)
+                                    label
 
                             td(data-label="Schedule Day")
-                                a(href=urlEdit + row.id)= row.scheduleDay
+                                a(href=editAction + row.id)
+                                    = row.scheduleDay?row.scheduleDay:'UNDEFINED'
 
                             td(data-label="Start Time")
                                 = row.startTime

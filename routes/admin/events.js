@@ -1,39 +1,31 @@
 var express = require('express'),
     request = require('request'),
-    path = require("path"),
-    url = require("url")
+    path = require("path")
 
 var router = express.Router(),
-    Event = require("../../models/event")
+    Event = require("../../models/event"),
+    appSettings = require('../utils/appSettings')
 
-var VIEW_FOLDER = "admin/events",
-    URL_BASE = "/admin/events",
-    entryName = "Event",
-    entriesName = "Events"
+var appDesc = []
+    appDesc['folder'] = '/events',
+    appDesc['singularName'] = "Event",
+    appDesc['pluralName'] = "Events"
+
+router.use(function(req, res, next) {
+    appSettings.appPaths(req, res, appDesc['folder'])
+    next()
+})
 
 /************************************************************
  * PAGES
  ************************************************************/
 
-function localUrl(req) {
-    return req.protocol + '://' + req.get('host')
-}
-
-router.use(function(req, res, next) {
-    res.locals.listAction = URL_BASE
-    res.locals.editAction = path.join(URL_BASE, 'edit/')
-    res.locals.createAction = path.join(URL_BASE, 'create')
-    res.locals.deleteAction = path.join(URL_BASE, 'delete')
-    res.locals.url = req.originalUrl
-    next()
-})
-
 // LIST
 router.get('/', function(req, res, next){
-    request(localUrl(req) + '/api/event', function (err, data) {
-        if (err) console.log(err.message)
-        res.render(VIEW_FOLDER +'/list', {
-            title: entriesName,
+    request(res.locals.apiAction, function (err, data) {
+        if (err) { return next(err) }
+        res.render(res.locals.listView, {
+            title: appDesc['pluralName'],
             user: req.user,
             data: JSON.parse(data.body)
         })
@@ -43,58 +35,45 @@ router.get('/', function(req, res, next){
 router.get('/success/:code', function(req, res, next) {
     if (req.params.code == 'deleted') {
         req.flash('success', 'Deleted successfully!')
-        res.redirect(URL_BASE + '/')
+        res.redirect(res.locals.listAction)
     }
-    next()
 })
 
 router.get('/success/:code/:id', function(req, res, next) {
     if (req.params.code == 'updated') {
         req.flash('success', 'Updated successfully!')
-        res.redirect(URL_BASE + '/edit/' + req.params.id)
+        res.redirect(path.join(res.locals.editAction, req.params.id))
     }
     if (req.params.code == 'created') {
         req.flash('success', 'Created successfully!')
-        res.redirect(URL_BASE + '/edit/' + req.params.id)
+        res.redirect(path.join(res.locals.editAction, req.params.id))
     }
-    next()
 })
 
 // FORM
-router.get('/edit/:id', function(req, res) {
-    request(localUrl(req) + '/api/event/' + req.params.id, function (err, body){
-        if (err) console.log(err.message)
-        res.render(VIEW_FOLDER + '/edit', {
-            title: "Editing " + entryName,
+router.get('/edit/:id', function(req, res, next) {
+    request(res.locals.apiAction + req.params.id, function (err, body){
+        if (err) { return next(err) }
+        res.render(path.join(res.locals.editView), {
+            title: "Editing " + appDesc['singularName'],
             user: req.user,
             data: JSON.parse(body.body),
             formMode: 'edit',
             formMethod: 'post',
-            formAction: '/api/event/' + JSON.parse(body.body).id
+            formAction: res.locals.apiAction + req.params.id
         })
     })
 })
 
 router.get('/create', function(req, res) {
-    console.log('Create Event')
-    res.render(VIEW_FOLDER + '/edit', {
-        title: 'Create New ' + entryName,
+    res.render(res.locals.editView, {
+        title: 'Create New ' + appDesc['singularName'],
         user: req.user,
         data: new Event(),
         formMode: 'create',
         formMethod: 'post',
-        formAction: '/api/event/'
+        formAction: res.locals.apiAction
     })
 })
-
-/************************************************************
- * PARTS
- ************************************************************/
-
-/************************************************************
- * ACTIONS
- ************************************************************/
-
-// use event API
 
 module.exports = router

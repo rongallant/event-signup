@@ -43,7 +43,7 @@ var index = require('./routes/index'),
 var apiEvent = require('./routes/api/event'),
   apiPerson = require('./routes/api/person'),
   apiAddress = require('./routes/api/address'),
-  apiScheduleDates = require('./routes/api/scheduleDates')
+  apiScheduleDates = require('./routes/api/scheduleDate')
 
 /************************************************************
  * App Config
@@ -124,13 +124,13 @@ app.use('/', index)
 app.use('/admin', admin)
 
 app.use('/admin/events', events)
-app.use('/api/event', apiEvent)
+app.use('/api/events', apiEvent)
 
 app.use('/admin/persons', persons)
-app.use('/api/person', apiPerson)
+app.use('/api/persons', apiPerson)
 
 app.use('/admin/addresses', addresses)
-app.use('/api/address', apiAddress)
+app.use('/api/addresses', apiAddress)
 
 app.use('/admin/scheduleDates', scheduleDates)
 app.use('/api/scheduleDates', apiScheduleDates)
@@ -189,7 +189,6 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
 
 function errorHandler(err, req, res, next) {
   if (res.headersSent) {
