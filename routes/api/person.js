@@ -6,13 +6,13 @@ var mongoose = require('mongoose'),
 
 var URL_BASE = "/admin/persons"
 
-/* GET Returns all item. */
+/* LIST Returns all item. */
 router.get('/', function(req, res, next) {
     Person.find()
         .populate('_address', '_emergencyContact')
         .exec(function(err, data) {
             if (err) {
-                res.status(404).json({ error: err })
+                return next(err)
             } else {
                 res.json(data)
             }
@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
     )
 })
 
-/* POST New item created. */
+/* CREATE New item created. */
 router.post('/', function(req, res, next) {
     var data = new Person({
         nickName: req.body.nickName,
@@ -36,31 +36,35 @@ router.post('/', function(req, res, next) {
     })
     data.save(function(err) {
         if (err) {
-            res.status(500).json({ error: err })
+            return next(err)
         } else {
+            // res.status(200).json({ success: 'Success' })
             res.redirect(URL_BASE + '/success/created/' + data._id)
         }
     })
 })
 
-/* GET Returns single item. */
+/* EDIT Returns single item. */
 router.get('/:id', function(req, res, next) {
-    Person.findById()
-        .populate('_address', '_emergencyContact')
-        .exec(req.params.id, function(err, data) {
+    Person.findById(req.params.id)
+        .populate('_address')
+        .populate('_emergencyContact')
+        .exec(function(err, data) {
         if (err) {
-            res.status(404).json({ error: err })
+            return next(err)
         } else {
+            console.log(data)
             res.json(data)
         }
     })
 })
 
-/* PUT Updates an item. */
+/* UPDATE Updates an item. */
 router.put('/:id', function(req, res, next) {
-    Person.findById(req.params.id).update({$set:req.body}, function (err, data) {
+    Person.findById(req.params.id)
+        .update({$set:req.body}, function (err, data) {
             if (err) {
-            res.status(404).json({ error: err })
+                return next(err)
             } else {
                 res.redirect(URL_BASE + '/success/updated/' + req.params.id)
             }
@@ -71,13 +75,13 @@ router.put('/:id', function(req, res, next) {
 /* DELETE Deletes an item. */
 router.delete('/:id', function(req, res, next) {
     Person.findOneAndRemove(req.params.id, function (err) {
-            if (err) {
-                res.status(500).json({ error: err })
-            } else {
-                res.redirect(URL_BASE + '/success/deleted')
-            }
+        if (err) {
+            return next(err)
+        } else {
+            res.status(200).json({ success: 'Deleted' })
+            // res.redirect(URL_BASE + '/success/deleted')
         }
-    )
+    })
 })
 
 /* SEARCH Returns all item. */
@@ -92,7 +96,7 @@ router.get('/search/:q', function(req, res, next) {
         .populate('_address', '_emergencyContact')
         .exec(function(err, results) {
             if (err) {
-                res.status(500).json({ error: err })
+                return next(err)
             } else {
                 res.json(results);
             }

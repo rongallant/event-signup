@@ -104,7 +104,7 @@ append appContent
                             input(type='checkbox', name='isChild', id='isChild', checked=data.isChild)
                     input(type='number', name='childAge', id='childAge', max='17', maxlength='2', placeholder='Childs age...', value=data.childAge)
 
-            .field.required
+            .field
                 label(for='emergencyContact') Emergency Contact
                 +personSelector('emergencyContact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
 

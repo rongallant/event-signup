@@ -45,7 +45,7 @@ router.get('/success/:code/:id', function(req, res, next) {
     } else if (req.params.code == 'created') {
         req.flash('success', 'Created successfully!')
     }
-    res.redirect(path.join(res.locals.editAction, req.params.id))
+    res.redirect(res.locals.editAction + req.params.id)
 })
 
 // Create
@@ -62,7 +62,7 @@ router.get('/create', function(req, res) {
 
 // Edit
 router.get('/edit/:id', function(req, res, next) {
-    request(res.locals.apiAction + req.params.id), function (err, data){
+    request(res.locals.apiAction + req.params.id, function (err, data){
         if (err) { return next(err) }
         res.render(res.locals.editView, {
             title: "Editing " + appDesc['singularName'],
@@ -72,7 +72,7 @@ router.get('/edit/:id', function(req, res, next) {
             formMethod: 'PUT',
             formAction: res.locals.apiAction + req.params.id
         })
-    }
+    })
 })
 
 module.exports = router
