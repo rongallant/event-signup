@@ -1,10 +1,12 @@
 extend ../layout
 
 include ../../mixins/formFields
+include ../../mixins/addressSelector
 include ../../mixins/personSelector
 
 append javascripts
     +searchApiJavascript
+    +addressSelectorInit
     +personSelectorInit
     script(src='/javascripts/jquery-maxlength.js')
     script.
@@ -88,6 +90,10 @@ append appContent
             .two.fields
                 +emailField('email', 'Email', data.email)
                 +phoneField('phone', 'Phone', data.phone)
+
+            .field
+                label(for='_address') Address
+                +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
 
             +field('gearList', 'Hammock Setup', data.gearList)
                 textarea(name='gearList', id='gearList', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='gearListCount', wrap='virtual')

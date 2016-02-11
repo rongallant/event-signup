@@ -15,6 +15,6 @@ mixin personSelectorInit
 mixin personSelector(fieldId, fieldDisplayValue, fieldValue)
     .ui.search.personSelector
         .ui.icon.input
-            input#mainPersonId(type='hidden', name=fieldId, value=fieldValue)
+            input(type='hidden', name=fieldId, value=fieldValue)
             input.prompt(type='text', id=fieldId, autocomplete='off', placeholder='Search for person...', value=fieldDisplayValue)
             i.search.icon

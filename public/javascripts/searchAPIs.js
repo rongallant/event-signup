@@ -115,8 +115,7 @@ var localPersonSearch = {
         }
     },
     onSelect: function(result, response) {
-            console.table(result)
-        $('#mainPersonId').val(result.id)
+        $(this).closest('.personSelector').find('input[type=hidden]').val(result.id)
     },
     minCharacters: 3,
     debug: debugMode,
@@ -147,7 +146,7 @@ var localAddressSearch = {
         }
     },
     onSelect: function(result, response) {
-        $(this).closest('.field').find('input[name=dateField]').val(result.id)
+        $(this).closest('.addressSelector').find('input[type=hidden]').val(result.id)
     },
     minCharacters: 3,
     debug: debugMode,

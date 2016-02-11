@@ -15,6 +15,6 @@ mixin addressSelectorInit
 mixin addressSelector(fieldId, fieldDisplayValue, fieldValue)
     .ui.search.addressSelector
         .ui.icon.input
-            input(type="hidden", name='_address', value=fieldValue)
+            input(type="hidden", name=fieldId, value=fieldValue)
             input.prompt(type="text", id=fieldId, autocomplete="false", placeholder="Search for address...", value=fieldDisplayValue)
             i.search.icon
