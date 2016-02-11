@@ -61,6 +61,7 @@ router.get('/:id', function(req, res, next) {
 
 /* UPDATE Updates an item. */
 router.put('/:id', function(req, res, next) {
+    console.table(req.body)
     Person.findById(req.params.id)
         .update({$set:req.body}, function (err, data) {
             if (err) {

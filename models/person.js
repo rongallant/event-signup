@@ -2,6 +2,8 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema
 
 var PersonSchema = new Schema({
+    _address: { type: Schema.Types.ObjectId, ref: 'Address'  },
+    _emergencyContact: { type: Schema.Types.ObjectId, ref: 'Person'  },
     nickName: {
         type: String,
         maxlength: 70,
@@ -28,8 +30,6 @@ var PersonSchema = new Schema({
     isChild: { type: Boolean },
     childAge: { type: Number, min: 0, max: 17 },
     gearList: { type: String, maxlength: 2000 },
-    _address: { type: Schema.Types.ObjectId, ref: 'Address'  },
-    _emergencyContact: { type: Schema.Types.ObjectId, ref: 'Person'  },
     cr_id: {},
     lu_id: {}
 }, {

@@ -105,8 +105,8 @@ append appContent
                     input(type='number', name='childAge', id='childAge', max='17', maxlength='2', placeholder='Childs age...', value=data.childAge)
 
             .field
-                label(for='emergencyContact') Emergency Contact
-                +personSelector('emergencyContact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+                label(for='_emergencyContact') Emergency Contact
+                +personSelector('_emergencyContact', data._emergencyContact?data._emergencyContact.fullName:'', data._emergencyContact?data._emergencyContact.id:'')
 
             .ui.hidden.divider
 

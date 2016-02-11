@@ -1,4 +1,4 @@
-var debugMode = false
+var debugMode = true
 
 var googleAddressSearch = {
     apiSettings: {
@@ -90,8 +90,9 @@ function u(variabl) {
 
 var localPersonSearch = {
     apiSettings: {
-        url: '/api/person/search/{query}',
+        url: '/api/persons/search/{query}',
         onResponse: function(qResponse) {
+            console.table(qResponse)
             if (!qResponse) return
             var response = {
                 results: []
@@ -102,16 +103,19 @@ var localPersonSearch = {
                 var v = value
                 var desc = ''
                 desc = ( u(v.nickName) ? v.nickName + '<br>' : '') + ( u(v.email) ? v.email : '')
+                console.table(v)
                 response.results.push({
                     title: v.fullName,
                     description: desc,
                     id: v.id
                 })
             })
+            console.table(response)
             return response;
         }
     },
     onSelect: function(result, response) {
+            console.table(result)
         $('#mainPersonId').val(result.id)
     },
     minCharacters: 3,
@@ -121,7 +125,7 @@ var localPersonSearch = {
 
 var localAddressSearch = {
     apiSettings: {
-        url: '/api/address/search/{query}',
+        url: '/api/addresses/search/{query}',
         onResponse: function(qResponse) {
             if (!qResponse) return
             var response = {
