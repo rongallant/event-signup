@@ -1,13 +1,12 @@
 extend ../layout
 
-include ../layout/mixinCard
-
 block appContent
 
-    h3 Person
+    .ui.raised.segment
 
-    .ui.segment
-        table.ui.very.basic.single.line.selectable.table
+        h1 People
+
+        table.ui.small.padded.very.basic.selectable.table
             thead
                 tr
                     th Nickname
@@ -17,7 +16,12 @@ block appContent
 
             tbody
                 if !data.length
-                        tr: td(colspan='4') No Results
+                    tr: td.center.aligned(colspan='5')
+                        .ui.basic.icon.button
+                            a(href=create)
+                                i.plus.icon
+                                | Add First Person
+
                 else
                     each row in data
                         tr
@@ -38,15 +42,12 @@ block appContent
 
                             td.center.aligned(data-label="Child")
                                 if (row.isChild == true)
-                                    i.large.checkmark.box.icon
-                                else
-                                    i.large.square.outline.icon
+                                    i.large.child.box.icon(title="Child")
 
-            tfoot.full-width
-                tr
-                    th(colspan='4')
-                        .ui.right.floated.icon.button
-                            a(href=create)
-                                i.plus.icon
-                                | Create
-
+        if data.length
+            .ui.hidden.divider
+            .ui.row
+                .ui.icon.button
+                    a(href=createAction)
+                        i.plus.icon
+                        | Add Person

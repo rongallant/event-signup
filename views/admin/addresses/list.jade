@@ -1,48 +1,53 @@
 extend ../layout
 
-include ../layout/mixinCard
-
 block appContent
 
-    h3 Address
+    .ui.raised.segment
 
-    table.ui.fixed.very.basic.single.line.selectable.table
-        thead
-            tr
-                th Name
-                th Address
-                th Country
-                th State
-                th Map
+        h1 Address
 
-        tbody
-            if !data.length
-                tr: td(colspan='5') No Results
-            else
-                each row in data
-                    tr
-                        td(data-label="Name")
-                            a#row1Link(href=edit + row.id)
-                                = row._mainPerson ? row._mainPerson.fullName : 'No Name'
+        table.ui.small.padded.very.basic.selectable.table
+            thead
+                tr
+                    th Name
+                    th Address
+                    th Country
+                    th State
+                    th Map
 
-                        td(data-label="Address")
-                                = row.address1
+            tbody
+                if !data.length
+                    tr: td.center.aligned(colspan='5')
+                        .ui.basic.icon.button
+                            a(href=create)
+                                i.plus.icon
+                                | Add First Address
 
-                        td(data-label="Country")
-                                = row.country
+                else
+                    each row in data
+                        tr
+                            td(data-label="Name")
+                                a#row1Link(href=edit + row.id)
+                                    = row._contact ? row._contact.fullName : 'No Name'
 
-                        td(data-label="State")
-                                = row.state
+                            td(data-label="Address")
+                                    = row.address1
 
-                        td.center.aligned(data-label="Map")
-                            if row.location
-                                a(href='https://www.google.com/maps/place/' + row.location)
-                                    i.large.red.marker.square.icon
+                            td(data-label="Country")
+                                    = row.country
 
-        tfoot.full-width
-            tr
-                th(colspan='5')
-                    .ui.right.floated.icon.button
-                        a(href=create)
-                            i.plus.icon
-                            | Create
+                            td(data-label="State")
+                                    = row.state
+
+                            td.center.aligned(data-label="Map")
+                                if row.location
+                                    a(href='https://www.google.com/maps/place/' + row.location)
+                                        i.large.red.marker.square.icon
+
+        if data.length
+            .ui.hidden.divider
+            .ui.row
+                .ui.icon.button
+                    a(href=createAction)
+                        i.plus.icon
+                        | Add Address

@@ -1,0 +1,19 @@
+// Include in javascripts area
+// append javascripts
+//     +searchApiJavascript
+//     +addressSearchInit
+
+mixin searchApiJavascript
+    script(src="/javascripts/searchAPIs.js")
+
+mixin addressSearchInit
+    script.
+        $(function(){
+            $('.addressSeasrch').search(googleAddressSearchAndPopulate)
+        })
+
+mixin addressSearch(fieldId)
+    .ui.search.addressSeasrch
+        .ui.icon.input
+            input.prompt(type="text", id=fieldId, name=fieldId, autocomplete="false", placeholder="Search for address...")
+            i.marker.icon

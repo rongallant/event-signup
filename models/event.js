@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 var EventSchema = new Schema({
     name: String,
     description: String,
-    schedule: [{
+    schedules: [{
         type: Schema.Types.ObjectId, ref: 'ScheduleDate'
     }],
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },

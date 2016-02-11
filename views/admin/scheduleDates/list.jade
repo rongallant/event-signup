@@ -1,0 +1,48 @@
+extend ../layout
+
+block appContent
+
+    .ui.raised.segment
+
+        h1 Schedule Dates
+
+        table.ui.small.padded.very.basic.selectable.table
+            thead
+                tr
+                    th.one.wide.center.aligned: input(type="checkbox")
+                    th.four.wide Schedule Day
+                    th.three.wide Start Time
+                    th.three.wide End Time
+                    th Address
+            tbody
+                if !data.length
+                    tr: td.center.aligned(colspan='5')
+                        .ui.basic.icon.button
+                            a(href=create)
+                                i.plus.icon
+                                | Add First Schedule Date
+
+                else
+                    each row in data
+                        tr
+                            td.center.aligned: input(type="checkbox", value=row.id)
+
+                            td(data-label="Schedule Day")
+                                a(href=urlEdit + row.id)= row.scheduleDay
+
+                            td(data-label="Start Time")
+                                = row.startTime
+
+                            td(data-label="End Time")
+                                = row.endTime
+
+                            td(data-label="Address")
+                                = row._address ? row._address.simpleAddress : ''
+
+        if data.length
+            .ui.hidden.divider
+            .ui.row
+                .ui.icon.button
+                    a(href=createAction)
+                        i.plus.icon
+                        | Add Schedule Date

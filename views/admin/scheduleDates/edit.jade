@@ -1,0 +1,127 @@
+extend ../layout
+
+include ../../mixins/formFields
+include ../../mixins/addressSelector
+
+append stylesheets
+    link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.css")
+
+append javascripts
+    +searchApiJavascript
+    +addressSelectorInit
+    script(src="/javascripts/moment.js")
+    script(src="/javascripts/daterangepicker.min.js")
+    script(src="/jquery_timepicker/jquery.timepicker.min.js")
+    script.
+        $(function(){
+            $('#editEvent')
+                .form({
+                    fields: {
+                        dateField: 'empty',
+                        startTime: 'empty',
+                        endTime: 'empty',
+                        location: 'empty'
+                    }
+                }
+            )
+            $('.ui.delete.button').click(function(){
+                deleteEntry('#{data.id}')
+                    $.ajax({
+                    url: '#{api}#{data.id}',
+                    type: 'DELETE',
+                    success: function(result) {
+                        window.location.replace('#{api}')
+                    }
+                })
+            })
+            $('#dateField').daterangepicker(
+              {
+                format: 'MM/DD/YYYY',
+                startDate: new Date(),
+                singleDatePicker: true,
+                timePicker: false
+              }
+            )
+
+            var timePickerDefaults = {
+                forceRoundTime: false,
+                minTime: '5:00am',
+                maxTime: '12:00am',
+                useSelect: true,
+                className: 'dropdown'
+
+            }
+            var endTime = $('#endTime')
+            endTime.timepicker(timePickerDefaults)
+            $('#startTime').timepicker(
+                timePickerDefaults, {
+                setTime: '#{data.startTime}'
+                }
+            )
+                .on('changeTime', function(settings) {
+                    console.log(settings)
+                    endTime.timepicker(timePickerDefaults, {
+                        minTime: target('ui-timepicker-value')
+                    })
+                }
+            )
+            endTime.timepicker(timePickerDefaults)
+            $('select.dropdown').dropdown()
+        })
+
+append appContent
+
+    - var method
+    if (formMethod != 'post' && formMethod != 'get')
+        - method = 'post'
+    else
+        - method = formMethod
+
+    .ui.raised.segment
+
+        h1 Schedule Date
+
+        form#editEvent.ui.form(method=formMethod action=formAction)
+
+            div(style='display: none;')
+                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+
+            - if (formMethod != 'post' && formMethod != 'get')
+                input(type='hidden', name='_method', value=formMethod)
+
+            .three.fields
+
+                .field.required
+                    label(for="dateField") Date (day)
+                    .ui.left.icon.input
+                        input(type="text", name="scheduleDay", id="dateField", value=data.scheduleDay)
+                        i.calendar.icon
+
+                .field.required
+                    label(for="startTime") Start Time
+                    input(type="text", name="startTime", id="startTime", value=data.startTime)
+
+                .field.required
+                    label(for="endTime") End Time
+                    input(type="text", name="endTime", id="endTime", value=data.endTime)
+
+            .field.required
+                label(for="location") Location
+                +addressSelector("location", data._address, data.id)
+
+            .ui.hidden.divider
+
+            .ui.row
+                .ui.primary.submit.button
+                    case formMode
+                        when 'edit': | Update
+                        default: | Save
+
+                a.ui.button(href=list)
+                    | Cancel
+
+                if formMode == 'edit'
+                    .ui.delete.icon.button.right.floated(title='Delete')
+                        i.trash.outline.icon
+
+                .ui.error.message

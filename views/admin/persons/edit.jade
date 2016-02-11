@@ -1,8 +1,11 @@
 extend ../layout
 
 include ../../mixins/formFields
+include ../../mixins/personSelector
 
 append javascripts
+    +searchApiJavascript
+    +personSelectorInit
     script(src='/javascripts/jquery-maxlength.js')
     script.
         $(function(){
@@ -34,7 +37,7 @@ append javascripts
                         }]
                     }
                 },
-                inline : true
+                inline: false
             })
             $('.ui.delete.button').click(function(){
                 $.ajax({
@@ -57,42 +60,67 @@ append javascripts
         })
 
 append appContent
+
     - var method
     if (formMethod != 'post' && formMethod != 'get')
         - method = 'post'
     else
         - method = formMethod
-    form#editPerson.ui.form(method=method, action=formAction, name='form')
 
-        - if (formMethod != 'post' && formMethod != 'get')
-            input(type='hidden', name='_method', value=formMethod)
+    .ui.raised.segment
 
-        +textField('nickName', 'Nickname', data.nickName)
+        h1 Person
 
-        .two.fields
-            +textField('firstName', 'First Name', data.firstName)
-            +textField('lastName', 'Last Name', data.lastName)
+        form#editPerson.ui.form(method=method, action=formAction, name='form')
 
-        .two.fields
-            +emailField('email', 'Email', data.email)
-            +phoneField('phone', 'Phone', data.phone)
+            div(style='display: none;')
+                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
-        .field
-            label(for='isChild') Is Child
-            .ui.left.labeled.input
-                .ui.label
-                    .ui.fitted.checkbox
-                        input(type='checkbox', name='isChild', id='isChild', checked=data.isChild)
-                input(type='number', name='childAge', id='childAge', max='17', maxlength='2', placeholder='Childs age...', value=data.childAge)
+            - if (formMethod != 'post' && formMethod != 'get')
+                input(type='hidden', name='_method', value=formMethod)
 
-        +field('gearList', 'Hammock Setup', data.gearList)
-            textarea(name='gearList', id='gearList', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='gearListCount', wrap='virtual')
-                = data.gearList
-            .label ( #[i#gearListCount] / 2000)
+            +textField('nickName', 'Nickname', data.nickName)
 
-        .ui.submit.button Submit
-        .ui.reset.button Reset
-        .ui.clear.button Clear
-        .ui.delete.button Delete
+            .two.fields
+                +textField('firstName', 'First Name', data.firstName)
+                +textField('lastName', 'Last Name', data.lastName)
 
-        .ui.error.message
+            .two.fields
+                +emailField('email', 'Email', data.email)
+                +phoneField('phone', 'Phone', data.phone)
+
+            +field('gearList', 'Hammock Setup', data.gearList)
+                textarea(name='gearList', id='gearList', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='gearListCount', wrap='virtual')
+                    = data.gearList
+                .label ( #[i#gearListCount] / 2000)
+
+            .ui.divider
+
+            .field
+                label(for='isChild') Is Child
+                .ui.left.labeled.input
+                    .ui.label
+                        .ui.fitted.checkbox
+                            input(type='checkbox', name='isChild', id='isChild', checked=data.isChild)
+                    input(type='number', name='childAge', id='childAge', max='17', maxlength='2', placeholder='Childs age...', value=data.childAge)
+
+            .field.required
+                label(for='emergencyContact') Emergency Contact
+                +personSelector('emergencyContact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+
+            .ui.hidden.divider
+
+            .ui.row
+                .ui.primary.submit.button
+                    case formMode
+                        when 'edit': | Update
+                        default: | Save
+
+                a.ui.button(href=list)
+                    | Cancel
+
+                if formMode == 'edit'
+                    .ui.delete.icon.button.right.floated(title='Delete')
+                        i.trash.outline.icon
+
+                .ui.error.message

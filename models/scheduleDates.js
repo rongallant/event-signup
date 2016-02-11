@@ -2,10 +2,10 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema
 
 var ScheduleDateSchema = new Schema({
-   date: Date,
-   startTime: String,
-   endTime: String,
-    _address: { type: Schema.Types.ObjectId, ref: 'Address' }
+    _address: { type: Schema.Types.ObjectId, ref: 'Address' },
+   scheduleDay: { type: String },
+   startTime: { type: String },
+   endTime: { type: String }
 }, {
     strict: true,
     timestamps: true,

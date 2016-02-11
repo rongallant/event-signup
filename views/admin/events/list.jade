@@ -1,32 +1,38 @@
 extend ../layout
 
-include ../layout/mixinCard
-
 block appContent
 
-    h3 Events
+    .ui.raised.segment
 
-    .ui.segment: table.ui.very.basic.single.line.selectable.table
-        thead
-            tr
-                th Name
-                th Contact
-                th.right.aligned Date/Time
+        h1 Events
 
-        tbody
-            if data
-                each row in data
-                    tr
-                        td(data-label="Name")
-                            a#row1Link(href='/admin/events/edit/' + row.id)= row.name
-                        td(data-label="Contact") Olddog
-                        td.right.aligned(data-label="Date/Time") Saturday, 11:00am - 2:00pm
+        table.ui.small.padded.very.basic.selectable.table
+            thead
+                tr
+                    th Name
+                    th Contact
+                    th.right.aligned Date/Time
 
-        tfoot.full-width
-            tr
-                th(colspan='3')
-                    a(href=create).ui.right.floated.small.primary.labeled.icon.button
-                        i.user.icon
-                        |  Add Event
+            tbody
+                if !data.length
+                    tr: td.center.aligned(colspan='5')
+                        .ui.basic.icon.button
+                            a(href=create)
+                                i.plus.icon
+                                | Add First Event
 
-    .ui.hidden.divider
+                else
+                    each row in data
+                        tr
+                            td(data-label="Name")
+                                a#row1Link(href='/admin/events/edit/' + row.id)= row.name
+                            td(data-label="Contact") Olddog
+                            td.right.aligned(data-label="Date/Time") Saturday, 11:00am - 2:00pm
+
+        if data.length
+            .ui.hidden.divider
+            .ui.row
+                .ui.icon.button
+                    a(href=createAction)
+                        i.plus.icon
+                        | Add Event

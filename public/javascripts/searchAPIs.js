@@ -27,21 +27,13 @@ var googleAddressSearchAndPopulate = {
     debug: debugMode,
     verbose: debugMode,
     onResults : function(response) {
-        console.log(response)
         return response
     },
     onSelect: function(result, response) {
         var address = []
         var components = result.address_components
         for (var x in components) {
-            // convert to object
             switch(components[x]['types'][0]) {
-                case 'street_number':
-                   address += partVal(components[x]['short_name'])
-                    break
-                case 'route':
-                   address += ' ' + partVal(components[x]['short_name'])
-                    break
                 case 'locality':
                     $('#city').val(components[x]['short_name'])
                     break
@@ -54,15 +46,20 @@ var googleAddressSearchAndPopulate = {
                 case 'country':
                     $('#country').val(components[x]['long_name'])
                     break
+                case 'street_number':
+                   address += partVal(components[x]['short_name'])
+                    break
+                case 'route':
+                   address += ' ' + partVal(components[x]['short_name'])
+                    break
             }
-            $('#address1').val(address)
             $('#address2').val('')
+            $('#address1').val(address)
         }
-
         var location = result.geometry.location.lat + ', ' + result.geometry.location.lng
         $('#location').val(location)
-
         updateMap(result.formatted_address)
+        return false
     }
 }
 
@@ -116,6 +113,37 @@ var localPersonSearch = {
     },
     onSelect: function(result, response) {
         $('#mainPersonId').val(result.id)
+    },
+    minCharacters: 3,
+    debug: debugMode,
+    verbose: debugMode
+}
+
+var localAddressSearch = {
+    apiSettings: {
+        url: '/api/address/search/{query}',
+        onResponse: function(qResponse) {
+            if (!qResponse) return
+            var response = {
+                results: []
+            }
+            $.each(qResponse, function(index, value) {
+                var maxResults = 8
+                if (index >= maxResults) return false
+                var v = value
+                var title = ((v.name) ? v.name : v.shortAddress)
+                var desc = ((v.fullAddress) ? v.fullAddress : '')
+                response.results.push({
+                    title: title,
+                    description: desc,
+                    id: v.id
+                })
+            })
+            return response;
+        }
+    },
+    onSelect: function(result, response) {
+        $(this).closest('.field').find('input[name=dateField]').val(result.id)
     },
     minCharacters: 3,
     debug: debugMode,

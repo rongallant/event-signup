@@ -1,92 +1,131 @@
+include ../../mixins/formFields
+include ../../mixins/personSelector
+
 extend ../layout
 
-include ../../mixins/formFields
-
 append javascripts
-    script(src="/javascripts/jquery-maxlength.js")
-    script(src="/javascripts/searchAPIs.js")
+    script(src='/javascripts/jquery-maxlength.js')
+    +searchApiJavascript
+    +personSelectorInit
     script.
         $(function(){
-            $("input[data-maxsize], textarea[data-maxsize]").maxLengthCounter()
-            $('.ui.checkbox').checkbox()
-            $('select.dropdown').dropdown()
-            $('#editPerson')
-                .form({
-                    fields: {
-                    mainPerson: {}
+            var $form =  $('form[name=mainForm]');
+            $form.form({
+                fields: {
+                    name: 'empty',
+                    address1: 'empty',
+                    city: 'empty',
+                    state: 'empty',
+                    country: 'empty'
                 },
-                inline : true
+                inline : false
             })
-            $('.ui.delete.button').click(function(){
-                $.ajax({
-                    url: '/api/address/#{data._id}',
-                    type: 'DELETE',
-                    error: function(request, status, error) {
-                        console.error(error)
-                    },
-                    success: function(request, status) {
-                        console.log(request)
-                    }
-                })
+            $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
+            $form.find('.ui.checkbox').checkbox()
+            $form.find('select.dropdown').dropdown()
+            $form.find('.ui.delete.button').click(function(){
+                $form
+                    .prop('action', '#{deleteAction}')
+                    .prop('method', 'POST')
+                    .find('input[name=_method]')
+                    .prop('method', 'DELETE')
             })
-            $('#personSearch').search(localPersonSearch)
-            $('#addressSearch').search(googleAddressSearchAndPopulate)
-            if (('#{data.id}').length > 0)
+            $form.find('#personSearch').search(localPersonSearch)
+            $form.find('#addressSearch').search(googleAddressSearchAndPopulate)
+            if (('#{data.id}').length > 0) {
                 updateMap('#{encodeURIComponent(data.fullAddress)}')
+            }
         })
 
 append appContent
 
-    .ui.segment
+    - var method
+    if (formMethod != 'post' && formMethod != 'get')
+        - method = 'post'
+    else
+        - method = formMethod
 
-        .ui.right.rail
-            .ui.segment
-                #gMap.ui.embed
-                .ui.hidden.divider
-                .nicePre= data.fullAddress
+    .ui.right.rail
+        .ui.segment
+            #gMap.ui.embed
+            .ui.hidden.divider
+            .nicePre= data.fullAddress
 
-        - var method
-        if (formMethod != 'post' && formMethod != 'get')
-            - method = 'post'
-        else
-            - method = formMethod
+    .ui.raised.segment
 
-        form#editPerson.ui.form(method=method, action=formAction, name="form",  autocomplete="false")
+        h1 Address
 
-            - if (formMethod != 'post' && formMethod != 'get')
-                input(type="hidden", name="_method", value=formMethod)
+        form.ui.form(name='mainForm', method=method, action=formAction)
+
+            div(style='display: none;')
+                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+
+            input(type='hidden', name='_method', value=formMethod)
+
+            input.prompt(type='hidden', id='location', name='location')
+
+            .field.required
+                label(for='name') Address Name
+                input(type='text', name='name', id=name, value=data.name)
 
             .field
-                label(for='mainPerson') Person
-                #personSearch.ui.search
-                    .ui.icon.input
-                        input#mainPersonId(name="_mainPerson", type='hidden', value=data._mainPerson?data._mainPerson.id:'')
-                        input.prompt(type="text", id="mainPerson", autocomplete="false", placeholder="Search for person...", value=data._mainPerson?data._mainPerson.fullName:'')
-                        i.person.icon
+                label(for='description') Address Description
+                textarea(name='description', id='description',  rows='2')=data.description
 
-            .field
-                label(for='findAddress') Find Address
-                #addressSearch.ui.search
-                    .ui.icon.input
-                        input.prompt(type="text", id="findAddress", name="findAddress", autocomplete="false", placeholder="Search for address...")
-                        i.marker.icon
+            .field.required
+                label(for='mainPerson') Main Contact
+                +personSelector('mainPerson', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+
+                // #personSearch.ui.search
+                //     .ui.icon.input
+                //         input#mainPersonId(type='hidden', name='_contact', value=data._contact?data._contact.id:'')
+                //         input.prompt(type='text', id='mainPerson', autocomplete='off', placeholder='Search for person...', value=data._contact?data._contact.fullName:'', required)
+                //         i.person.icon
 
             .two.fields
-                +textField('address1', 'Address 1', data.address1)
-                +textField('address2', 'Address 2', data.address2)
+
+                .field
+                    label(for='address1') Address 1 (Search)
+                    #addressSearch.ui.search
+                        .ui.icon.input
+                            input.prompt(type='text', id='address1', name='address1', autocomplete='off', value=data.address1, placeholder='Search for address...')
+                            i.marker.icon
+
+                .field
+                    label(for='address2') Address 2
+                    input(type='text', name='address2', id='address2', value=data.address2)
 
             .three.fields
-                +textField('city', 'City', data.city)
-                +textField('state', 'State', data.state)
-                +textField('postalCode', 'Zip Code', data.postalCode)
 
-            +textField('country', 'Country', data.country)
+                .field.required
+                    label(for='city') City
+                    input(type='text', name='city', id='city', value=data.city, required)
 
-            input.prompt(type="hidden", id="location", name="location")
+                .field.required
+                    label(for='state') State
+                    input(type='text', name='state', id='state', value=data.state, required)
 
-            .ui.submit.button Submit
-            .ui.reset.button Reset
-            .ui.clear.button Clear
-            .ui.delete.button Delete
+                .field.required
+                    label(for='postalCode') Zip Code
+                    input(type='text', name='postalCode', id='postalCode', value=data.postalCode, required)
 
-            .ui.error.message
+            .field.required
+                label(for='country') Country
+                input(type='text', name='country', id='country', value=data.country, required)
+
+            .ui.hidden.divider
+
+            .ui.row
+                .ui.primary.submit.button
+                    case formMode
+                        when 'edit': | Update
+                        default: | Save
+
+                a.ui.button(href=list)
+                    | Cancel
+
+                if formMode == 'edit'
+                    .ui.delete.icon.button.right.floated(title='Delete')
+                        i.trash.outline.icon
+
+                .ui.error.message

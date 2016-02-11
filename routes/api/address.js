@@ -9,7 +9,7 @@ var URL_BASE = "/admin/addresses"
 /* GET Returns all item. */
 router.get('/', function(req, res, next) {
   Address.find()
-    .populate('_mainPerson')
+    .populate('_contact')
     .exec(function(err, data) {
       if (err) {
         res.status(500).json({ error: err.message })
@@ -22,7 +22,9 @@ router.get('/', function(req, res, next) {
 /* POST New item created. */
 router.post('/', function(req, res, next) {
   var data = new Address({
-    _mainPerson: mongoose.Types.ObjectId(req.body._mainPerson),
+    _contact: mongoose.Types.ObjectId(req.body._contact),
+    name: req.body.name,
+    description: req.body.description,
     address1: req.body.address1,
     address2: req.body.address2,
     city: req.body.city,
@@ -43,7 +45,7 @@ router.post('/', function(req, res, next) {
 /* GET Returns single item. */
 router.get('/:id', function(req, res, next) {
   Address.findById(req.params.id)
-    .populate('_mainPerson')
+    .populate('_contact')
     .exec(function(err, data) {
       if (err) {
         res.status(404).json({ error: err.message })
@@ -73,6 +75,27 @@ router.delete('/:id', function(req, res, next) {
         res.status(200)
         // res.redirect(URL_BASE + '/success/deleted')
       }
+  })
+})
+
+/* SEARCH Returns all item. */
+router.get('/search/:q', function(req, res, next) {
+  var regex = new RegExp(req.params.q, 'i');
+  Address.find()
+    .or({name: regex})
+    .or({description: regex})
+    .or({address2: regex})
+    .or({postalCode: regex})
+    .or({city: regex})
+    .or({state: regex})
+    .or({country: regex})
+    .populate('_contact')
+    .exec(function(err, results) {
+        if (err) {
+          res.status(500).json({ error: err })
+        } else {
+          res.json(results);
+        }
   })
 })
 

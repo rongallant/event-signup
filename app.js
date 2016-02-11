@@ -15,7 +15,8 @@ var express = require('express'),
   flash = require('connect-flash'),
   consoletable = require('console.table'),
   lessMiddleware = require('less-middleware'),
-  methodOverride = require('method-override')
+  methodOverride = require('method-override'),
+  dateformat = require('dateformat')
 
 /************************************************************
  * Models
@@ -32,7 +33,8 @@ var index = require('./routes/index'),
   admin = require('./routes/admin'),
   events = require('./routes/admin/events'),
   persons = require('./routes/admin/persons'),
-  addresses = require('./routes/admin/addresses')
+  addresses = require('./routes/admin/addresses'),
+  scheduleDates = require('./routes/admin/scheduleDates')
 
 /************************************************************
  * Rest API
@@ -40,7 +42,8 @@ var index = require('./routes/index'),
 
 var apiEvent = require('./routes/api/event'),
   apiPerson = require('./routes/api/person'),
-  apiAddress = require('./routes/api/address')
+  apiAddress = require('./routes/api/address'),
+  apiScheduleDates = require('./routes/api/scheduleDates')
 
 /************************************************************
  * App Config
@@ -84,12 +87,15 @@ app.all('/express-flash', function( req, res ) {
     res.redirect(301, '/');
 });
 
-// Flash Messaging - Returns messages to users.
 app.use(flash());
 app.use(function(req, res, next){
+
+    // Flash Messaging - Returns messages to users.
     res.locals.info = req.flash('info')
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
+
+    app.locals.moment = require('moment') // Date formatter
     next()
 })
 
@@ -111,6 +117,7 @@ app.use(lessMiddleware(
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/themes', express.static(path.join(__dirname, 'node_modules', 'semantic-ui-less', 'themes')))
 app.use('/javascripts', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
+app.use('/javascripts', express.static(path.join(__dirname, 'node_modules', 'semantic-ui-daterangepicker')))
 app.use('/javascripts', express.static(path.join(__dirname, 'semantic', 'dist')))
 
 app.use('/', index)
@@ -124,6 +131,9 @@ app.use('/api/person', apiPerson)
 
 app.use('/admin/addresses', addresses)
 app.use('/api/address', apiAddress)
+
+app.use('/admin/scheduleDates', scheduleDates)
+app.use('/api/scheduleDates', apiScheduleDates)
 
 /************************************************************
  * Database
