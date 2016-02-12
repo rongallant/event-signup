@@ -2,11 +2,21 @@ extend ../layout
 
 include ../../mixins/addressSelector
 include ../../mixins/personSelector
+include ../../mixins/scheduleDatesSelector
+include ../scheduleDates/parts/form
+
+append stylesheets
+    link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.css")
 
 append javascripts
-    +searchApiJavascript
-    +addressSelectorInit
+
+    script(src="/javascripts/moment.js")
+    script(src="/javascripts/daterangepicker.min.js")
+    script(src="/jquery_timepicker/jquery.timepicker.min.js")
+    script(src="/javascripts/scheduleDayForm.js")
+    script(src="/javascripts/searchAPIs.js")
     +personSelectorInit
+    +scheduleDatesSelectorInit
     script.
         $(function(){
             $('#editEvent')
@@ -29,6 +39,12 @@ append javascripts
                     }
                 })
             })
+            $('#addSchedules').click(function(){
+                $('#schedulesForm')
+                    .modal('show')
+            })
+            $('.addressSelector').search(localAddressSearch)
+            scheduleEventFormScripts('#{data.id}', '#{data.id}')
         })
 
 append appContent
@@ -48,7 +64,7 @@ append appContent
             div(style='display: none;')
                 input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
-            - if (formMethod != 'post' && formMethod != 'get')
+            if (formMethod != 'post' && formMethod != 'get')
                 input(type='hidden', name='_method', value=formMethod)
 
             .field.required
@@ -65,7 +81,11 @@ append appContent
 
             .field.required
                 label(for="schedules") Schedules
-                input(type="text", name="schedules", id="schedules", value=schedules?data.schedules:'')
+                #schedules.ui.segments
+                    .ui.segment
+                        a.ui.basic.button#addSchedules(href='#')
+                            i.icon.plus
+                            | Schedules
 
             .field.required
                 label(for="location") Location
@@ -87,3 +107,22 @@ append appContent
                         i.trash.outline.icon
 
                 .ui.error.message
+
+
+
+append footer
+    //- Modal
+    #schedulesForm.ui.modal
+        .header Schedule Date
+        .content
+            +scheduleDayForm('Schedule Date', user, dateFormat, data, 'edit', 'post', apiAction)
+        .actions
+            .ui.cancel.button
+                | Cancel
+            if formMode == 'edit'
+                .ui.delete.icon.button.right.floated(title='Delete')
+                    i.trash.outline.icon
+            .ui.primary.submit.button
+                case formMode
+                    when 'edit': | Update
+                    default: | Save

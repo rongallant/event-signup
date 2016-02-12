@@ -67,12 +67,33 @@ router.put('/:id', function(req, res, next) {
 /* DELETE Deletes an item. */
 router.delete('/:id', function(req, res, next) {
     ScheduleDate.findOneAndRemove(req.params.id, function (err) {
-            if (err) {
-                res.status(500).json({ error: err })
-            } else {
-                res.status(200)
-            }
+        if (err) {
+            res.status(500).json({ error: err })
+        } else {
+            res.status(200)
+        }
     })
 })
 
+/* SEARCH Returns all item. */
+router.get('/search/:q', function(req, res, next) {
+  var regex = new RegExp(req.params.q, 'i');
+  ScheduleDate.find()
+    .or({scheduleDay: regex})
+    .or({startTime: regex})
+    .or({endTime: regex})
+    // .or({_address:{$elemMatch:{address1: regex}}})
+    // .or({_address:{$elemMatch:{city: regex}}})
+    // .or({_address:{$elemMatch:{state: regex}}})
+    // .or({_address:{$elemMatch:{country: regex}}})
+    // .or({_address:{$elemMatch:{postalCode: regex}}})
+    // .populate('_contact')
+    .exec(function(err, results) {
+        if (err) {
+          res.status(500).json({ error: err })
+        } else {
+          res.json(results);
+        }
+  })
+})
 module.exports = router

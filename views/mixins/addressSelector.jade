@@ -3,14 +3,10 @@
 //     +searchApiJavascript
 //     +addressSelectorInit
 
-mixin searchApiJavascript
-    script(src="/javascripts/searchAPIs.js")
-
-mixin addressSelectorInit
-    script.
-        $(function(){
-            $('.addressSelector').search(localAddressSearch)
-        })
+// mixin addressSelectorInit
+//     $(function(){
+//         $('.addressSelector').search(localAddressSearch)
+//     })
 
 mixin addressSelector(fieldId, fieldDisplayValue, fieldValue)
     .ui.search.addressSelector

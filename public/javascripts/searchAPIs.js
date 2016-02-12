@@ -63,8 +63,7 @@ var googleAddressSearchAndPopulate = {
     }
 }
 
-function updateMap(query)
-{
+function updateMap(query) {
     if (query) {
         var gMap = 'https://www.google.com/maps/embed/v1/place?key=AIzaSyCszYBdD5JzHMDPJcdcCR0R7HWTcykLPpE&q=' + query
         $('#gMap').attr('data-url', gMap).embed().closest('rail').removeClass('hidden')

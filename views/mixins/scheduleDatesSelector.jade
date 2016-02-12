@@ -1,0 +1,32 @@
+// Include in javascripts area
+// append javascripts
+//     +searchApiJavascript
+//     +personSelectorInit
+
+mixin scheduleDatesSelectorInit
+    script.
+        $(function(){
+            $('.dropdown[multiple]').dropdown({
+                apiSettings: {
+                    url: '/api/scheduleDates/search/{query}',
+                    onResponse: function(response) {
+                        console.table(response)
+                        return response
+                    }
+                },
+                fields: {
+                    // remoteValues: true,
+                    values: '', // grouping for all dropdown values
+                    name: 'scheduleDay', // displayed dropdown text
+                    value: 'id' // actual dropdown value
+                },
+                maxSelections: 4,
+                sortSelect: true,
+                debug: true,
+                verbose: true
+            })
+        })
+
+mixin scheduleDatesSelector(fieldId, options, fieldDisplayValue, fieldValue)
+    select.scheduleDatesSelector.ui.search.dropdown(name=fieldId, id=fieldId, multiple="")
+

@@ -26,11 +26,13 @@ html
             link(rel='shortcut icon', href='images/favicon.png')
 
         block stylesheets
-            link(rel='stylesheet', href='/stylesheets/style.css')
+
+        link(rel='stylesheet', href='/stylesheets/style.css')
 
     body
+        block header
         block content
-
+        block footer
         block javascripts
             script(src="/javascripts/jquery.min.js")
             script(src="/javascripts/semantic.min.js")
