@@ -1,40 +1,23 @@
-// +searchApiJavascript
-// +addressSelectorInit
-// script(src="/javascripts/moment.js")
-// script(src="/javascripts/daterangepicker.min.js")
-// script(src="/jquery_timepicker/jquery.timepicker.min.js")
-// script(src="/javascripts/scheduleDayForm.js")
-// script.
-//     $(function(){
-//         scheduleEventFormScripts('#{data.id}', '#{data.id}')
-//     })
+mixin scheduleDayDateTime(data)
 
-mixin scheduleDayForm(title, user, dateFormat, data, formMode, formMethod, formAction)
-
-    form#editEvent.ui.form(method=formMethod action=formAction)
-
-        div(style='display: none;')
-            input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
-
-        - if (formMethod != 'post' && formMethod != 'get')
-            input(type='hidden', name='_method', value=formMethod)
-
-        .three.fields
-
-            .field.required
-                label(for="dateField") Date (day)
-                .ui.left.icon.input
-                    input(type="text", name="scheduleDay", id="dateField", value=data.scheduleDay)
-                    i.calendar.icon
-
-            .field.required
-                label(for="startTime") Start Time
-                input(type="text", name="startTime", id="startTime", value=data.startTime)
-
-            .field.required
-                label(for="endTime") End Time
-                input(type="text", name="endTime", id="endTime", value=data.endTime)
+    .three.fields
 
         .field.required
-            label(for="location") Location
-            +addressSelector("location", data._address, data.id)
+            label(for="dateField") Date (day)
+            .ui.left.icon.input
+                input(type="text", name="scheduleDay", id="dateField", value=data.scheduleDay)
+                i.calendar.icon
+
+        .field.required
+            label(for="startTime") Start Time
+            input(type="text", name="startTime", id="startTime", value=data.startTime)
+
+        .field.required
+            label(for="endTime") End Time
+            input(type="text", name="endTime", id="endTime", value=data.endTime)
+
+mixin locationSelector(data)
+
+    .field.required
+        label(for="location") Location
+        +addressSelector("location", data._address, data.id)

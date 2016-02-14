@@ -2,9 +2,9 @@ extend ../layout
 
 block appContent
 
-    .ui.raised.segment
+    h1 People
 
-        h1 People
+    .ui.raised.segment
 
         table.ui.small.padded.very.basic.selectable.table
             thead
@@ -44,10 +44,10 @@ block appContent
                                 if (row.isChild == true)
                                     i.large.child.box.icon(title="Child")
 
-        if data.length
-            .ui.hidden.divider
-            .ui.row
-                .ui.icon.button
-                    a(href=createAction)
-                        i.plus.icon
-                        | Add Person
+    if data.length
+
+        .ui.row
+            .ui.icon.button.right.floated
+                a(href=createAction)
+                    i.plus.icon
+                    | Add Person

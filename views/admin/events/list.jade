@@ -2,9 +2,9 @@ extend ../layout
 
 block appContent
 
-    .ui.raised.segment
+    h1 Events
 
-        h1 Events
+    .ui.raised.segment
 
         table.ui.small.padded.very.basic.selectable.table
             thead
@@ -29,10 +29,10 @@ block appContent
                             td(data-label="Contact") Olddog
                             td.right.aligned(data-label="Date/Time") Saturday, 11:00am - 2:00pm
 
-        if data.length
-            .ui.hidden.divider
-            .ui.row
-                .ui.icon.button
-                    a(href=createAction)
-                        i.plus.icon
-                        | Add Event
+    if data.length
+
+        .ui.row
+            .ui.icon.button.right.floated
+                a(href=createAction)
+                    i.plus.icon
+                    | Add Event

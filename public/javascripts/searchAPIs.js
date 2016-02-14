@@ -91,7 +91,6 @@ var localPersonSearch = {
     apiSettings: {
         url: '/api/persons/search/{query}',
         onResponse: function(qResponse) {
-            console.table(qResponse)
             if (!qResponse) return
             var response = {
                 results: []
@@ -102,14 +101,12 @@ var localPersonSearch = {
                 var v = value
                 var desc = ''
                 desc = ( u(v.nickName) ? v.nickName + '<br>' : '') + ( u(v.email) ? v.email : '')
-                console.table(v)
                 response.results.push({
                     title: v.fullName,
                     description: desc,
                     id: v.id
                 })
             })
-            console.table(response)
             return response;
         }
     },

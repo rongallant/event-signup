@@ -7,12 +7,14 @@ var router = express.Router(),
     appSettings = require('../utils/appSettings')
 
 var appDesc = []
-    appDesc['folder'] = '/addresses',
-    appDesc['singularName'] = "Address",
-    appDesc['pluralName'] = "Addresses"
+appDesc['apiSingle'] = '/address'
+appDesc['apiCollection'] = '/addresses'
+appDesc['folder'] = '/addresses'
+appDesc['singularName'] = "Address"
+appDesc['pluralName'] = "Addresses"
 
 router.use(function(req, res, next) {
-    appSettings.appPaths(req, res, appDesc['folder'])
+    appSettings.appPaths(req, res, appDesc)
     next()
 })
 
@@ -22,7 +24,7 @@ router.use(function(req, res, next) {
 
 // LIST
 router.get('/', function(req, res, next){
-    request(res.locals.apiAction, function (err, data) {
+    request(res.locals.apiCollection, function (err, data) {
         if (err) { return next(err) }
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
@@ -57,13 +59,13 @@ router.get('/create', function(req, res) {
         data: new Address(),
         formMode: 'create',
         formMethod: 'post',
-        formAction: res.locals.apiAction
+        formAction: res.locals.apiItem
     })
 })
 
 // Edit
 router.get('/edit/:id', function(req, res, next) {
-    request(res.locals.apiAction + req.params.id, function (err, data){
+    request(res.locals.apiItem + req.params.id, function (err, data){
         if (err) { return next(err) }
         res.render(res.locals.editView, {
             title: "Editing " + appDesc['singularName'],
@@ -71,7 +73,7 @@ router.get('/edit/:id', function(req, res, next) {
             data: JSON.parse(data.body),
             formMode: 'edit',
             formMethod: 'PUT',
-            formAction: res.locals.apiAction + req.params.id
+            formAction: res.locals.apiItem + req.params.id
         })
     })
 })

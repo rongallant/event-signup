@@ -1,3 +1,14 @@
 /*******************************
     User Variable Overrides
 *******************************/
+$alert('Bam')
+$.fn.form.settings = {
+    templates: {
+        // template that produces label
+        prompt: function(errors) {
+            return $('<div/>')
+                .addClass('ui basic red prompt label')
+                .html(errors[0]);
+        }
+    }
+}

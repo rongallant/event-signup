@@ -6,4 +6,10 @@ router.get('/', function(req, res, next) {
     res.redirect('/admin')
 })
 
+router.get('/message/:type/:message', function(req, res, next) {
+    req.flash(req.params.type, req.params.message)
+    res.status(200)
+    res.end()
+})
+
 module.exports = router

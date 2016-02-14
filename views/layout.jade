@@ -27,7 +27,8 @@ html
 
         block stylesheets
 
-        link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel='stylesheet', href='/semantic/dist/semantic.min.css')
+        // link(rel='stylesheet', href='/stylesheets/style.css')
 
     body
         block header
@@ -35,4 +36,14 @@ html
         block footer
         block javascripts
             script(src="/javascripts/jquery.min.js")
-            script(src="/javascripts/semantic.min.js")
+            script(src="/semantic/dist/semantic.min.js")
+            script(src="/noty/js/noty/packaged/jquery.noty.packaged.min.js")
+            script(src="/javascripts/javascripts.js")
+
+            //- Message Handling
+            if error && error.length > 0
+                script $(function(){toaster('error', '#{error}')})
+            if success && success.length > 0
+                script $(function(){toaster('success', '#{success}')})
+            if info && info.length > 0
+                script  $(function(){toaster('info', '#{info}')})

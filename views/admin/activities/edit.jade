@@ -1,0 +1,114 @@
+include ../../mixins/formFields
+include ../../mixins/personSelector
+
+extend ../layout
+
+append stylesheets
+    link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.css")
+
+append javascripts
+    script(src="/jquery_timepicker/jquery.timepicker.min.js")
+    script(src="/javascripts/moment.js")
+    script(src='/javascripts/jquery-maxlength.js')
+    script(src="/javascripts/searchAPIs.js")
+    +personSelectorInit
+    script.
+        $(function(){
+            var $form =  $('form[name=mainForm]');
+            $form.form({
+                fields: {
+                    name: 'empty',
+                    address1: 'empty',
+                    city: 'empty',
+                    state: 'empty',
+                    country: 'empty'
+                },
+                inline : false,
+                onSuccess: function(event, fields){
+                    $.ajax({
+                        type: '#{formMethod}',
+                        data: fields,
+                        url: '#{apiCollection}',
+                        dataType: 'JSON'
+                    }).done(function(response) {
+                        console.log(response)
+
+                        // $.get( "/message/success/" + )
+                        location.replace('#{editAction}' + response.data.id)
+                    })
+                    return false
+                }
+            })
+            $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
+
+            var timePickerDefaults = {
+                forceRoundTime: false,
+                minTime: '5:00am',
+                maxTime: '12:00am',
+                useSelect: true,
+                className: 'dropdown'
+
+            }
+            var endTime =  $form.find('#endTime')
+            endTime.timepicker(timePickerDefaults)
+             $form.find('#startTime').timepicker(
+                timePickerDefaults, {
+                setTime: '#{data.startTime}'
+                })
+                .on('changeTime', function(settings) {
+                    endTime.timepicker(timePickerDefaults, {
+                        minTime: target('ui-timepicker-value')
+                    })
+                }
+            )
+            endTime.timepicker(timePickerDefaults)
+
+            $form.find('.ui.checkbox').checkbox()
+            $form.find('select.dropdown').dropdown()
+            $form.find('.ui.delete.button').click(function(){
+                $form
+                    .prop('action', '#{deleteAction}')
+                    .prop('method', 'POST')
+                    .find('input[name=_method]')
+                    .prop('method', 'DELETE')
+            })
+
+
+            $form.find('#personSearch').search(localPersonSearch)
+
+        })
+
+append appContent
+
+    h1 Activity
+
+    form.ui.form(name='mainForm')
+
+        div(style='display: none;')
+            input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+
+        .ui.raised.segment
+
+            include parts/formFields
+
+        .ui.raised.segment
+
+            .field.required
+                label(for='mainPerson') Main Contact
+                +personSelector('mainPerson', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+
+        .ui.row
+
+            if formMode == 'edit'
+                .ui.delete.icon.button.left.floated(title='Delete')
+                    i.trash.outline.icon
+
+            .ui.primary.submit.button.right.floated
+                case formMode
+                    when 'edit': | Update
+                    default: | Save
+
+            a.ui.button.right.floated(href=list)
+                | Cancel
+
+            .ui.error.message

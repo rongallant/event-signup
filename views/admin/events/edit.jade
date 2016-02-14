@@ -9,7 +9,6 @@ append stylesheets
     link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.css")
 
 append javascripts
-
     script(src="/javascripts/moment.js")
     script(src="/javascripts/daterangepicker.min.js")
     script(src="/jquery_timepicker/jquery.timepicker.min.js")
@@ -19,14 +18,15 @@ append javascripts
     +scheduleDatesSelectorInit
     script.
         $(function(){
-            $('#editEvent')
-                .form({
-                    fields: {
-                    name: 'empty',
-                    description: 'empty',
-                    mainPerson: 'empty',
-                    schedules: 'empty',
-                    location: 'empty'
+            $('form#editEvent').form({
+                inline: true,
+                debug: true,
+                fields: {
+                    eventName : ['empty'],
+                    description: ['empty'],
+                    mainPerson: ['empty'],
+                    schedules: ['empty'],
+                    location: ['empty']
                 }
             })
             $('.ui.delete.button').click(function(){
@@ -55,74 +55,100 @@ append appContent
     else
         - method = formMethod
 
-    .ui.raised.segment
+    h1 Event
 
-        h1 Event
+    form#editEvent.ui.form(method=formMethod action=formAction)
 
-        form#editEvent.ui.form(method=formMethod action=formAction)
+        div(style='display: none;')
+            input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
-            div(style='display: none;')
-                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+        .ui.raised.segment
 
             if (formMethod != 'post' && formMethod != 'get')
                 input(type='hidden', name='_method', value=formMethod)
 
             .field.required
-                label(for="name") Event Name
-                input(type="text", name="name", id="name", value=data.name)
+                label(for="eventName") Event Name
+                input(type="text", name="name", id="eventName", value=data.name)
 
             .field.required
                 label(for="description") Description
                 textarea(type="text", name="description", id="description", rows="4")= data.description
 
-            .field.required
-                label(for='mainPerson') Main Contact
-                +personSelector('mainPerson', data._mainPerson?data._mainPerson.id:'', data._mainPerson?data._mainPerson.fullName:'')
-
-            .field.required
-                label(for="schedules") Schedules
-                #schedules.ui.segments
-                    .ui.segment
-                        a.ui.basic.button#addSchedules(href='#')
-                            i.icon.plus
-                            | Schedules
+        .ui.raised.segment
 
             .field.required
                 label(for="location") Location
                 +addressSelector("location", data._address, data.id)
 
-            .ui.hidden.divider
+        .ui.raised.segment
+
+            .field.required
+                label(for='mainPerson') Main Contact
+                +personSelector('mainPerson', data._mainPerson?data._mainPerson.id:'', data._mainPerson?data._mainPerson.fullName:'')
+
+        .ui.raised.segment
 
             .ui.row
-                .ui.primary.submit.button
-                    case formMode
-                        when 'edit': | Update
-                        default: | Save
+                a#addSchedules.ui.right.floated.button(href='#')
+                    i.icon.plus
+                    | Add Schedule Day
 
-                a.ui.button(href=list)
-                    | Cancel
+                .field.required
+                    label.ui.right.floated(for="schedules") Schedule Days
 
-                if formMode == 'edit'
-                    .ui.delete.icon.button.right.floated(title='Delete')
-                        i.trash.outline.icon
+            #schedules.ui.relaxed.divided.list
+                .item
+                    i.large.clock.middle.aligned.icon
+                    .content
+                        a.header Jan 12th
+                        .description 11:00am - 12:00am
+                .item
+                    i.large.clock.middle.aligned.icon
+                    .content
+                        a.header Jan 12th
+                        .description 11:00am - 12:00am
+                .item
+                    i.large.clock.middle.aligned.icon
+                    .content
+                        a.header Jan 12th
+                        .description 11:00am - 12:00am
 
-                .ui.error.message
+        .ui.row
+            .ui.primary.submit.button.right.floated
+                case formMode
+                    when 'edit': | Update
+                    default: | Save
 
+            a.ui.button.right.floated(href=list)
+                | Cancel
 
+            if formMode == 'edit'
+                .ui.delete.icon.button(title='Delete')
+                    i.trash.outline.icon
+
+            .ui.error.message
 
 append footer
     //- Modal
     #schedulesForm.ui.modal
         .header Schedule Date
         .content
-            +scheduleDayForm('Schedule Date', user, dateFormat, data, 'edit', 'post', apiAction)
+
+            form#editEvent.ui.form(method=formMethod action=formAction)
+
+                div(style='display: none;')
+                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+
+                - if (formMethod != 'post' && formMethod != 'get')
+                    input(type='hidden', name='_method', value=formMethod)
+
+                +scheduleDayDateTime(data)
+
+                +locationSelector(data)
+
         .actions
             .ui.cancel.button
                 | Cancel
-            if formMode == 'edit'
-                .ui.delete.icon.button.right.floated(title='Delete')
-                    i.trash.outline.icon
             .ui.primary.submit.button
-                case formMode
-                    when 'edit': | Update
-                    default: | Save
+                | Save

@@ -21,7 +21,6 @@ append javascripts
             $('.addressSelector').search(localAddressSearch)
         })
 
-
 append appContent
 
     - var method
@@ -30,23 +29,33 @@ append appContent
     else
         - method = formMethod
 
-    .ui.raised.segment
+    h1 Schedule Date
 
-        h1 Schedule Date
+    form#editEvent.ui.form(method=formMethod action=formAction)
 
-        +scheduleDayForm(title, user, dateFormat, data, formMode, formMethod, formAction)
+        div(style='display: none;')
+            input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
-        .ui.hidden.divider
+        - if (formMethod != 'post' && formMethod != 'get')
+            input(type='hidden', name='_method', value=formMethod)
 
-        .ui.row
-            .ui.primary.submit.button
-                case formMode
-                    when 'edit': | Update
-                    default: | Save
+        .ui.raised.segment
 
-            a.ui.button(href=list)
-                | Cancel
+            +scheduleDayDateTime(data)
 
-            if formMode == 'edit'
-                .ui.delete.icon.button.right.floated(title='Delete')
-                    i.trash.outline.icon
+        .ui.raised.segment
+
+            +locationSelector(data)
+
+    .ui.row
+        .ui.primary.submit.button.right.floated
+            case formMode
+                when 'edit': | Update
+                default: | Save
+
+        a.ui.button.right.floated(href=list)
+            | Cancel
+
+        if formMode == 'edit'
+            .ui.delete.icon.button.left.floated(title='Delete')
+                i.trash.outline.icon

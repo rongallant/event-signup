@@ -1,3 +1,27 @@
 /*******************************
          Site Overrides
 *******************************/
+
+/*--------------------
+   Validation Prompt
+---------------------*/
+
+.ui.form .field .prompt.label {
+  white-space: normal;
+  background: white !important;
+  border: 0 !important;
+  color: black !important;
+}
+.ui.form .inline.fields .field .prompt,
+.ui.form .inline.field .prompt {
+  vertical-align: top;
+  margin: 0;
+}
+.ui.form .inline.fields .field .prompt:before,
+.ui.form .inline.field .prompt:before {
+  border-width: 0;
+  bottom: auto;
+  right: auto;
+  top: 50%;
+  left: 0em;
+}

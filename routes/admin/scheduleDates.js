@@ -8,12 +8,13 @@ var router = express.Router(),
     appSettings = require('../utils/appSettings')
 
 var appDesc = []
-    appDesc['folder'] = '/scheduleDates',
-    appDesc['singularName'] = "Schedule Date",
-    appDesc['pluralName'] = "Schedule Dates"
-
+appDesc['apiSingle'] = '/scheduleDate'
+appDesc['apiCollection'] = '/scheduleDates'
+appDesc['folder'] = '/scheduleDates'
+appDesc['singularName'] = "Schedule Date"
+appDesc['pluralName'] = "Schedule Dates"
 router.use(function(req, res, next) {
-    appSettings.appPaths(req, res, appDesc['folder'])
+    appSettings.appPaths(req, res, appDesc)
     next()
 })
 
@@ -23,7 +24,7 @@ router.use(function(req, res, next) {
 
 // LIST
 router.get('/', function(req, res, next){
-    request(res.locals.apiAction, function (err, data) {
+    request(res.locals.apiCollection, function (err, data) {
         if (err) { return next(err) }
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
@@ -51,7 +52,7 @@ router.get('/success/:code/:id', function(req, res, next) {
 
 // EDIT
 router.get('/edit/:id', function(req, res, next) {
-    request(res.locals.apiAction, function (err, data){
+    request(res.locals.apiItem, function (err, data){
         if (err) { return next(err) }
         res.render(res.locals.editView, {
             title: "Editing " + appDesc['singularName'],
@@ -60,7 +61,7 @@ router.get('/edit/:id', function(req, res, next) {
             data: JSON.parse(data.body),
             formMode: 'edit',
             formMethod: 'post',
-            formAction: res.locals.apiAction
+            formAction: res.locals.apiItem
         })
     })
 })
@@ -74,7 +75,7 @@ router.get('/create', function(req, res) {
         dateFormat: dateformat,
         formMode: 'create',
         formMethod: 'post',
-        formAction: res.locals.apiAction
+        formAction: res.locals.apiItem
     })
 })
 

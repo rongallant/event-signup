@@ -1,0 +1,30 @@
+//- Pagination mixin
+//- ----------------
+//- start=# to start pagination at
+//- numPages=# links to serve up
+//- base=base url before num
+//-
+//- Example:
+//- pagination(3,5,4,'/fda/')
+//- Yields: | « | 3 | 4 | 5 | 6 | 7 | » |
+//- « = /fda/2, 3 = /fda/3, 4 = #, .. 7 = /fda/7, » = /fda/8
+mixin pagination(start, numPages, curr, base)
+    - start    = start    || 1
+    - numPages = numPages || 10
+    - curr     = curr     || 1
+    - base     = base     || '#'
+        .ui.right.floated.pagination.menu
+            - if(curr==1)
+                a.icon.item(href='#')
+                    i.left.chevron.icon
+            - else
+                a.icon.item.disabled(href='#') Prev
+
+            - for(var i=start;i<start+numPages;i++) {
+                - if(i==curr)
+                    a.item.active(href='#{base}#{i}') #{i}
+                - else
+                    a.item(href='#{base}#{i}') #{i}
+            - }
+            a.icon.item(href='#')
+                i.right.chevron.icon

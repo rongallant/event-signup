@@ -1,13 +1,13 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate')
 
 var ActivitySchema = new Schema({
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
-    location: { type: String },
+    name: { type: String },
+    description: { type: String },
     startTime: String,
-    endTime: String,
-    title: { type: String },
-    description: { type: String }
+    endTime: String
 }, {
     strict: true,
     timestamps: true,
@@ -18,5 +18,8 @@ var ActivitySchema = new Schema({
         virtuals: true
     }
 })
+
+
+ActivitySchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Activity', ActivitySchema)

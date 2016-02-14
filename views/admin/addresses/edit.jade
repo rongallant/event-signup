@@ -4,8 +4,8 @@ include ../../mixins/personSelector
 extend ../layout
 
 append javascripts
+    script(src="/javascripts/searchAPIs.js")
     script(src='/javascripts/jquery-maxlength.js')
-    +searchApiJavascript
     +personSelectorInit
     script.
         $(function(){
@@ -51,11 +51,11 @@ append appContent
             .ui.hidden.divider
             .nicePre= data.fullAddress
 
-    .ui.raised.segment
+    h1 Address
 
-        h1 Address
+    form.ui.form(name='mainForm', method=method, action=formAction)
 
-        form.ui.form(name='mainForm', method=method, action=formAction)
+        .ui.raised.segment
 
             div(style='display: none;')
                 input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
@@ -81,6 +81,8 @@ append appContent
                 //         input#mainPersonId(type='hidden', name='_contact', value=data._contact?data._contact.id:'')
                 //         input.prompt(type='text', id='mainPerson', autocomplete='off', placeholder='Search for person...', value=data._contact?data._contact.fullName:'', required)
                 //         i.person.icon
+
+        .ui.raised.segment
 
             .two.fields
 
@@ -113,19 +115,18 @@ append appContent
                 label(for='country') Country
                 input(type='text', name='country', id='country', value=data.country, required)
 
-            .ui.hidden.divider
+        .ui.row
 
-            .ui.row
-                .ui.primary.submit.button
-                    case formMode
-                        when 'edit': | Update
-                        default: | Save
+            if formMode == 'edit'
+                .ui.delete.icon.button.left.floated(title='Delete')
+                    i.trash.outline.icon
 
-                a.ui.button(href=list)
-                    | Cancel
+            .ui.primary.submit.button.right.floated
+                case formMode
+                    when 'edit': | Update
+                    default: | Save
 
-                if formMode == 'edit'
-                    .ui.delete.icon.button.right.floated(title='Delete')
-                        i.trash.outline.icon
+            a.ui.button.right.floated(href=list)
+                | Cancel
 
-                .ui.error.message
+            .ui.error.message

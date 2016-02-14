@@ -1,0 +1,18 @@
+
+.field.required
+    label(for='name') Activity
+    input(type='text', name='name', id=name, value=data.name)
+
+.field.required
+    label(for='description') Description
+    textarea(name='description', id='description',  rows='2')=data.description
+
+.two.fields
+
+    .field.required
+        label(for="startTime") Start Time
+        input(type="text", name="startTime", id="startTime", value=data.startTime)
+
+    .field.required
+        label(for="endTime") End Time
+        input(type="text", name="endTime", id="endTime", value=data.endTime)

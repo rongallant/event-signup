@@ -33,9 +33,9 @@ append javascripts
         })
 block appContent
 
-    .ui.raised.segment
+    h1 Schedule Dates
 
-        h1 Schedule Dates
+    .ui.raised.segment
 
         form.batch: table.ui.small.padded.very.basic.selectable.table
             thead
@@ -78,10 +78,10 @@ block appContent
                             td(data-label="Address")
                                 = row._address ? row._address.simpleAddress : ''
 
-        if data.length
-            .ui.hidden.divider
-            .ui.row
-                .ui.icon.button
-                    a(href=createAction)
-                        i.plus.icon
-                        | Add Schedule Date
+    if data.length
+
+        .ui.row
+            .ui.icon.button.right.floated
+                a(href=createAction)
+                    i.plus.icon
+                    | Add Schedule Date

@@ -5,10 +5,10 @@ include ../../mixins/addressSelector
 include ../../mixins/personSelector
 
 append javascripts
-    +searchApiJavascript
-    +addressSelectorInit
-    +personSelectorInit
+    script(src="/javascripts/searchAPIs.js")
     script(src='/javascripts/jquery-maxlength.js')
+    // +addressSelectorInit
+    +personSelectorInit
     script.
         $(function(){
             $('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
@@ -69,11 +69,11 @@ append appContent
     else
         - method = formMethod
 
-    .ui.raised.segment
+    h1 Person
 
-        h1 Person
+    form#editPerson.ui.form(method=method, action=formAction, name='form')
 
-        form#editPerson.ui.form(method=method, action=formAction, name='form')
+        .ui.raised.segment
 
             div(style='display: none;')
                 input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
@@ -92,17 +92,6 @@ append appContent
                 +phoneField('phone', 'Phone', data.phone)
 
             .field
-                label(for='_address') Address
-                +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
-
-            +field('gearList', 'Hammock Setup', data.gearList)
-                textarea(name='gearList', id='gearList', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='gearListCount', wrap='virtual')
-                    = data.gearList
-                .label ( #[i#gearListCount] / 2000)
-
-            .ui.divider
-
-            .field
                 label(for='isChild') Is Child
                 .ui.left.labeled.input
                     .ui.label
@@ -110,23 +99,36 @@ append appContent
                             input(type='checkbox', name='isChild', id='isChild', checked=data.isChild)
                     input(type='number', name='childAge', id='childAge', max='17', maxlength='2', placeholder='Childs age...', value=data.childAge)
 
+        .ui.raised.segment
+
+            .field
+                label(for='_address') Address
+                +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
+
+        .ui.raised.segment
+
             .field
                 label(for='_emergencyContact') Emergency Contact
                 +personSelector('_emergencyContact', data._emergencyContact?data._emergencyContact.fullName:'', data._emergencyContact?data._emergencyContact.id:'')
 
-            .ui.hidden.divider
+        .ui.raised.segment
 
-            .ui.row
-                .ui.primary.submit.button
-                    case formMode
-                        when 'edit': | Update
-                        default: | Save
+            +field('gearList', 'Hammock Setup', data.gearList)
+                textarea(name='gearList', id='gearList', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='gearListCount', wrap='virtual')
+                    = data.gearList
+                .label ( #[i#gearListCount] / 2000)
 
-                a.ui.button(href=list)
-                    | Cancel
+        .ui.row
+            .ui.primary.submit.button.right.floated
+                case formMode
+                    when 'edit': | Update
+                    default: | Save
 
-                if formMode == 'edit'
-                    .ui.delete.icon.button.right.floated(title='Delete')
-                        i.trash.outline.icon
+            a.ui.button.right.floated(href=list)
+                | Cancel
 
-                .ui.error.message
+            if formMode == 'edit'
+                .ui.delete.icon.button.left.floated(title='Delete')
+                    i.trash.outline.icon
+
+            .ui.error.message

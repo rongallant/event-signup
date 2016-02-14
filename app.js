@@ -16,7 +16,8 @@ var express = require('express'),
   consoletable = require('console.table'),
   lessMiddleware = require('less-middleware'),
   methodOverride = require('method-override'),
-  dateformat = require('dateformat')
+  dateformat = require('dateformat'),
+  mongoosePages = require('mongoose-paginate')
 
 /************************************************************
  * Models
@@ -34,16 +35,27 @@ var index = require('./routes/index'),
   events = require('./routes/admin/events'),
   persons = require('./routes/admin/persons'),
   addresses = require('./routes/admin/addresses'),
-  scheduleDates = require('./routes/admin/scheduleDates')
+  scheduleDates = require('./routes/admin/scheduleDates'),
+  activities = require('./routes/admin/activities')
 
 /************************************************************
  * Rest API
  ***********************************************************/
 
 var apiEvent = require('./routes/api/event'),
+  apiEvents = require('./routes/api/event'),
+
   apiPerson = require('./routes/api/person'),
+  apiPersons = require('./routes/api/person'),
+
   apiAddress = require('./routes/api/address'),
-  apiScheduleDates = require('./routes/api/scheduleDate')
+  apiAddresses = require('./routes/api/address'),
+
+  apiScheduleDate = require('./routes/api/scheduleDate'),
+  apiScheduleDates = require('./routes/api/scheduleDate'),
+
+  apiActivity = require('./routes/api/activity'),
+  apiActivities = require('./routes/api/activities')
 
 /************************************************************
  * App Config
@@ -89,12 +101,10 @@ app.all('/express-flash', function( req, res ) {
 
 app.use(flash());
 app.use(function(req, res, next){
-
     // Flash Messaging - Returns messages to users.
     res.locals.info = req.flash('info')
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
-
     app.locals.moment = require('moment') // Date formatter
     next()
 })
@@ -124,16 +134,25 @@ app.use('/', index)
 app.use('/admin', admin)
 
 app.use('/admin/events', events)
-app.use('/api/events', apiEvent)
+app.use('/api/event', apiEvent)
+app.use('/api/events', apiEvents)
 
 app.use('/admin/persons', persons)
-app.use('/api/persons', apiPerson)
+app.use('/api/person', apiPerson)
+app.use('/api/persons', apiPersons)
 
 app.use('/admin/addresses', addresses)
-app.use('/api/addresses', apiAddress)
+app.use('/api/address', apiAddress)
+app.use('/api/addresses', apiAddresses)
 
 app.use('/admin/scheduleDates', scheduleDates)
+app.use('/api/scheduleDate', apiScheduleDate)
 app.use('/api/scheduleDates', apiScheduleDates)
+
+app.use('/admin/activities', activities)
+app.use('/api/activity', apiActivity)
+app.use('/api/activities', apiActivities)
+
 
 /************************************************************
  * Database
