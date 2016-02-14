@@ -25,16 +25,18 @@ append javascripts
                 },
                 inline : false,
                 onSuccess: function(event, fields){
+                    console.log('#{formMethod} to #{apiItem}')
                     $.ajax({
                         type: '#{formMethod}',
                         data: fields,
-                        url: '#{apiCollection}',
+                        url: '#{apiItem}',
                         dataType: 'JSON'
                     }).done(function(response) {
+                    console.log('RESPONSE')
                         console.log(response)
 
-                        // $.get( "/message/success/" + )
-                        location.replace('#{editAction}' + response.data.id)
+                        $.get( "/message/success/" + "Successfully saved")
+                        location.replace('#{editAction}' + response.itemId)
                     })
                     return false
                 }
@@ -84,6 +86,8 @@ append appContent
 
     form.ui.form(name='mainForm')
 
+        input(type="hidden", name="id", value=data.id)
+
         div(style='display: none;')
             input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
@@ -94,8 +98,8 @@ append appContent
         .ui.raised.segment
 
             .field.required
-                label(for='mainPerson') Main Contact
-                +personSelector('mainPerson', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+                label(for='_contact') Main Contact
+                +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
 
         .ui.row
 

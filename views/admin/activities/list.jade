@@ -5,48 +5,49 @@ include ../../mixins/pagination
 block appContent
 
     h1 Activities
+    .ui.raised.segments
+        .ui.segment
 
-    .ui.raised.segment
+            table.ui.small.padded.very.basic.fixed.selectable.table
+                thead
+                    tr
+                        th Name
+                        th Start Time
+                        th End Time
+                        th Contact
 
-        table.ui.small.padded.very.basic.selectable.table
-            thead
-                tr
-                    th Name
-                    th Start Time
-                    th End Time
-                    th Contact
+                tbody
+                    if !data.docs.length
+                        tr: td.center.aligned(colspan='4')
+                            .ui.basic.icon.button
+                                a(href=createAction)
+                                    i.plus.icon
+                                    | Add First Activity
 
-            tbody
-                if !data.docs.length
-                    tr: td.center.aligned(colspan='4')
-                        .ui.basic.icon.button
-                            a(href=createAction)
-                                i.plus.icon
-                                | Add First Activity
+                    else
+                        each row in data.docs
+                            tr
+                                td(data-label="Name")
+                                    a#row1Link(href=editAction + row.id)
+                                        =row.name
 
-                else
-                    each row in data.docs
-                        tr
-                            td(data-label="Name")
-                                a#row1Link(href=editAction + row.id)
-                                    =row.name
+                                td(data-label="Start Time")
+                                    = row.startTime
 
-                            td(data-label="Start Time")
-                                = row.startTime
+                                td(data-label="End Time")
+                                    = row.endTime
 
-                            td(data-label="End Time")
-                                = row.endTime
+                                td(data-label="Contact")
+                                    if row._contact
+                                        a(href="mailto:#{row._contact.email}")
+                                            = row._contact.fullName
 
-                            td(data-label="Contact")
-                                if row._contact
-                                    a(href="mailto:#{row._contact.email}")
-                                        = row._contact.fullName
-
-    .ui.row
-        +pagination(1, data.pages, data.page, '/admin/activities/')
+        .ui.basic.clearing.segment
+            +pagination(1, data.pages, data.page, '/admin/activities/')
 
     if data.docs.length
-        .ui.icon.button.left.floated
-            a(href=createAction)
-                i.plus.icon
-                | Add Activity
+        .row
+            .ui.icon.button.left.floated
+                a(href=createAction)
+                    i.plus.icon
+                    | Add Activity

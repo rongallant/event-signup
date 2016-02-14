@@ -26,6 +26,38 @@ function hasVal(variable){
     return (typeof variable !== 'undefined')
 }
 
+router.get('/edit/:id', function(req, res, next) {
+    request(res.locals.apiItem + req.params.id, function (err, data){
+        if (err) { return next(err) }
+
+        console.log('page data')
+        console.table(JSON.parse(data.body).data)
+
+        res.render(path.join(res.locals.editView), {
+            title: "Editing " + appDesc['singularName'],
+            user: req.user,
+            data: JSON.parse(data.body).data,
+            formMode: 'edit',
+            formMethod: 'PUT',
+            formAction: res.locals.apiItem + req.params.id
+        })
+    })
+})
+
+router.get('/create', function(req, res) {
+    req.session.redirectTo = res.locals.editView
+    console.log('create activity')
+
+    res.render(res.locals.editView, {
+        title: 'Create New ' + appDesc['singularName'],
+        user: req.user,
+        data: appDesc['newObject'],
+        formMode: 'create',
+        formMethod: 'POST',
+        formAction: res.locals.apiItem
+    })
+})
+
 router.get('/:currPage?', function(req, res, next){
     var apiUri = res.locals.apiCollection
     if (hasVal(req.params.currPage))
@@ -41,36 +73,6 @@ router.get('/:currPage?', function(req, res, next){
             title: appDesc['pluralName'],
             user: req.user,
             data: JSON.parse(data.body)
-        })
-    })
-})
-
-router.get('/create', function(req, res) {
-    req.session.redirectTo = res.locals.editView
-    res.render(res.locals.editView, {
-        title: 'Create New ' + appDesc['singularName'],
-        user: req.user,
-        data: appDesc['newObject'],
-        formMode: 'create',
-        formMethod: 'post',
-        formAction: res.locals.apiItem
-    })
-})
-
-router.get('/edit/:id', function(req, res, next) {
-    request(res.locals.apiItem + req.params.id, function (err, data){
-        if (err) { return next(err) }
-
-        console.log('page data')
-        console.table(JSON.parse(data.body).data)
-
-        res.render(path.join(res.locals.editView), {
-            title: "Editing " + appDesc['singularName'],
-            user: req.user,
-            data: JSON.parse(data.body).data,
-            formMode: 'edit',
-            formMethod: 'post',
-            formAction: res.locals.apiItem + req.params.id
         })
     })
 })

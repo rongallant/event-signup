@@ -12,6 +12,7 @@ var URL_BASE = "/admin/activities"
 
 /* POST New item created. */
 router.post('/', function(req, res, next) {
+  console.log('POST')
   var data = new Activity({
     _contact: mongoose.Types.ObjectId(req.body._contact),
     name: req.body.name,
@@ -44,12 +45,16 @@ router.get('/:id', function(req, res, next) {
 })
 
 /* PUT Updates an item. */
-router.put('/:id', function(req, res, next) {
-  Activity.findById(req.params.id).update({$set:req.body}, function (err, data) {
+router.put('/', function(req, res, next) {
+  console.log('PUT')
+
+  console.table(req.body)
+
+  Activity.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
       if (err) {
         res.status(500).json({ error: err.message })
       } else {
-        res.status(201).json({ "status" : "ok", data })
+        res.status(201).json({ "status" : "ok", "itemId": req.body.id })
       }
     })
 })
