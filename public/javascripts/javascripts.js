@@ -14,3 +14,16 @@ function toaster(type, text) {
         timeout: 3000
     })
 }
+
+function ajaxRequest(fieldData, formMethod, apiUri, successMsg, successRelocate) {
+    $.ajax({
+        type: formMethod,
+        data: fieldData,
+        url: apiUri,
+        dataType: 'JSON'
+    }).done(function(response) {
+    console.log('RESPONSE')
+        $.get( "/message/success/" + successMsg)
+        location.replace(successRelocate)
+    })
+}

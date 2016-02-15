@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate')
 
 var GuestSchema = new Schema({
     arrivingDate: Date,
@@ -28,5 +29,7 @@ var GuestSchema = new Schema({
         virtuals: true
     }
 })
+
+GuestSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Guest', GuestSchema)

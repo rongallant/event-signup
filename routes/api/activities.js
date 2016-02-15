@@ -1,13 +1,9 @@
 var express = require('express'),
-  router = express.Router(),
-  mongoose = require('mongoose')
+  router = express.Router()
 
 var Activity = require("../../models/activity")
 
 var URL_BASE = "/admin/activities"
-
-var docsPerPage = 10
-var pageNumber = 1
 
 /************************************************************
  * REST API
@@ -18,8 +14,8 @@ function hasVal(variable){
 }
 
 /* GET Returns all item. */
-router.get('/:currPage', function(req, res, next) {
-    req.params.currPage = (typeof req.params.currPage !== 'undefined') ? req.params.currPage : 0
+router.get('/:currPage?', function(req, res, next) {
+    req.params.currPage = (typeof req.params.currPage !== 'undefined') ? req.params.currPage : 1
     var query = {}
     if (hasVal(req.query.q)) {
         var regex = new RegExp(req.query.q, 'i')
@@ -38,7 +34,7 @@ router.get('/:currPage', function(req, res, next) {
         populate: '_contact',
         lean: false,
         page: req.params.currPage,
-        limit: docsPerPage
+        limit: req.app.locals.resultsPerPage
     }
     Activity.paginate(query, options, function(err, data) {
             if (err) {

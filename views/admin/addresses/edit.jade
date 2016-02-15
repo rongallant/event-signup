@@ -1,11 +1,10 @@
 include ../../mixins/formFields
 include ../../mixins/personSelector
+include ../includes/formActionButtons
 
 extend ../layout
 
 append javascripts
-    script(src="/javascripts/searchAPIs.js")
-    script(src='/javascripts/jquery-maxlength.js')
     +personSelectorInit
     script.
         $(function(){
@@ -76,12 +75,6 @@ append appContent
                 label(for='mainPerson') Main Contact
                 +personSelector('mainPerson', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
 
-                // #personSearch.ui.search
-                //     .ui.icon.input
-                //         input#mainPersonId(type='hidden', name='_contact', value=data._contact?data._contact.id:'')
-                //         input.prompt(type='text', id='mainPerson', autocomplete='off', placeholder='Search for person...', value=data._contact?data._contact.fullName:'', required)
-                //         i.person.icon
-
         .ui.raised.segment
 
             .two.fields
@@ -116,17 +109,8 @@ append appContent
                 input(type='text', name='country', id='country', value=data.country, required)
 
         .ui.row
+            +actionButtons(formMode)
 
-            if formMode == 'edit'
-                .ui.delete.icon.button.left.floated(title='Delete')
-                    i.trash.outline.icon
+        .ui.hidden.clearing.divider
 
-            .ui.primary.submit.button.right.floated
-                case formMode
-                    when 'edit': | Update
-                    default: | Save
-
-            a.ui.button.right.floated(href=list)
-                | Cancel
-
-            .ui.error.message
+        .ui.error.message

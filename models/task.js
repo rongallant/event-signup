@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate')
 
 var TaskSchema = new Schema({
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
@@ -20,5 +21,7 @@ var TaskSchema = new Schema({
         virtuals: true
     }
 })
+
+TaskSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Task', TaskSchema)

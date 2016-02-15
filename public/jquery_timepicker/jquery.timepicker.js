@@ -249,9 +249,9 @@
 					self.data('timepicker-list', false);
 				}
 
-				if (settings.useSelect) {
-					_render(self);
-				}
+				// if (settings.useSelect) {
+				// 	_render(self);
+				// }
 			});
 		},
 

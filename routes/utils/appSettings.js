@@ -22,7 +22,7 @@ module.exports = {
     res.locals.listView = path.join(APP_VIEW_FOLDER, 'list')
     res.locals.editView = path.join(APP_VIEW_FOLDER, 'edit')
 
-    console.info('appPaths')
-    console.table(res.locals)
+    // console.info('appPaths')
+    // console.table(res.locals)
   }
 }

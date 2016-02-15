@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate')
 
 var ReservationSchema = new Schema({
     teamName: String,
@@ -21,5 +22,7 @@ var ReservationSchema = new Schema({
         virtuals: true
     }
 })
+
+ReservationSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Reservation', ReservationSchema)

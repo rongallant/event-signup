@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate')
 
 var EventSchema = new Schema({
     name: String,
@@ -19,5 +20,7 @@ var EventSchema = new Schema({
         virtuals: true
     }
 })
+
+EventSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Event', EventSchema)

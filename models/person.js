@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate')
 
 var PersonSchema = new Schema({
     _address: { type: Schema.Types.ObjectId, ref: 'Address'  },
@@ -43,6 +44,8 @@ var PersonSchema = new Schema({
     }
 
 })
+
+PersonSchema.plugin(mongoosePaginate);
 
 PersonSchema.index({nickName: 1, field2: 1, lastName: 1, firstName: 1, email: 1}, {unique: true});
 

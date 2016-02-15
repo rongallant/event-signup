@@ -1,5 +1,18 @@
 extends ../layout
 
+append stylesheets
+    link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.min.css")
+
+append javascripts
+    // script(src="/jquery_timepicker/jquery.timepicker.min.js")
+    script(src="/jquery_timepicker/jquery.timepicker.js")
+    script(src="/javascripts/moment.min.js")
+    script(src="/javascripts/daterangepicker.min.js")
+    script(src="/datepair/dist/datepair.min.js")
+    script(src="/datepair/dist/jquery.datepair.min.js")
+    script(src='/javascripts/jquery-maxlength.js')
+    script(src="/javascripts/searchAPIs.js")
+
 block content
     .ui.fixed.inverted.menu
         .ui.container

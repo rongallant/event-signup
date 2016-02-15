@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate')
 
 var MealSchema = new Schema({
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
@@ -21,5 +22,7 @@ var MealSchema = new Schema({
         virtuals: true
     }
 })
+
+MealSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Meal', MealSchema)

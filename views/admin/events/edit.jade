@@ -1,26 +1,18 @@
-extend ../layout
-
 include ../../mixins/addressSelector
 include ../../mixins/personSelector
 include ../../mixins/scheduleDatesSelector
 include ../scheduleDates/parts/form
+include ../includes/formActionButtons
 
-append stylesheets
-    link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.css")
+extend ../layout
 
 append javascripts
-    script(src="/javascripts/moment.js")
-    script(src="/javascripts/daterangepicker.min.js")
-    script(src="/jquery_timepicker/jquery.timepicker.min.js")
-    script(src="/javascripts/scheduleDayForm.js")
-    script(src="/javascripts/searchAPIs.js")
     +personSelectorInit
     +scheduleDatesSelectorInit
     script.
         $(function(){
             $('form#editEvent').form({
-                inline: true,
-                debug: true,
+                inline: false,
                 fields: {
                     eventName : ['empty'],
                     description: ['empty'],
@@ -115,19 +107,12 @@ append appContent
                         .description 11:00am - 12:00am
 
         .ui.row
-            .ui.primary.submit.button.right.floated
-                case formMode
-                    when 'edit': | Update
-                    default: | Save
+            +actionButtons(formMode)
 
-            a.ui.button.right.floated(href=list)
-                | Cancel
+        .ui.hidden.clearing.divider
 
-            if formMode == 'edit'
-                .ui.delete.icon.button(title='Delete')
-                    i.trash.outline.icon
+        .ui.error.message
 
-            .ui.error.message
 
 append footer
     //- Modal

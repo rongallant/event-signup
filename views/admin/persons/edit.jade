@@ -1,57 +1,69 @@
-extend ../layout
-
-include ../../mixins/formFields
 include ../../mixins/addressSelector
 include ../../mixins/personSelector
+include ../../mixins/formFields
+include ../includes/formActionButtons
+
+extend ../layout
 
 append javascripts
-    script(src="/javascripts/searchAPIs.js")
-    script(src='/javascripts/jquery-maxlength.js')
-    // +addressSelectorInit
     +personSelectorInit
     script.
         $(function(){
-            $('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
+            // Validation Rules
+            var validationRules = {
+                nickName: {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
+                firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
+                lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'},{type:'doesntContain[a-zA-Z]'}]},
+                email: {rules:[{type:'empty'}, {type:'maxLength[254]'},{type:'email'}]},
+                childAge: {
+                    optional: $('isChild').val(),
+                    rules:[{
+                        type: 'integer[0..17]',
+                        prompt: 'Child must be under 18'
+                    }, {
+                        type: 'maxLength[2]'
+                    }]},
+                phone: {
+                    identifier: 'phone',
+                    rules: [{
+                        type: 'regExp[/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\.\/0-9]*$/g]',
+                        prompt: 'Please enter a valid phone number'
+                    },{
+                        type:'minLength[10]'
+                    }]
+                }
+            }
 
-            $('.ui.checkbox').checkbox()
-            $('#editPerson')
-                .form({
-                    fields: {
-                    nickName: {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
-                    firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
-                    lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'},{type:'doesntContain[a-zA-Z]'}]},
-                    email: {rules:[{type:'empty'}, {type:'maxLength[254]'},{type:'email'}]},
-                    childAge: {
-                        optional: true,
-                        rules:[{
-                            type: 'integer[0..17]',
-                            prompt: 'Child must be under 18'
-                        }, {
-                            type: 'maxLength[2]'
-                        }]},
-                    phone: {
-                        identifier: 'phone',
-                        rules: [{
-                            type: 'regExp[/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\.\/0-9]*$/g]',
-                            prompt: 'Please enter a valid phone number'
-                        },{
-                            type:'minLength[10]'
-                        }]
-                    }
-                },
-                inline: false
-            })
-            $('.ui.delete.button').click(function(){
-                $.ajax({
-                    url: '/api/person/#{data.id}',
-                    type: 'DELETE'
-                })
+            var $form =  $('form[name=mainForm]')
+
+            // Form validation
+            $form.form({
+                fields: validationRules,
+                inline : false,
+                onSuccess: function(event, fields){
+                    $.ajax({
+                        type: '#{formMethod}',
+                        data: fields,
+                        url: '#{apiItem}',
+                        dataType: 'JSON'
+                    }).done(function(response) {
+                        console.log('RESPONSE')
+                        console.table(response)
+                        $.get( "/message/success/" + "Successfully saved")
+                        location.replace('#{editAction}' + response.itemId)
+                    })
+                    return false
+                }
             })
 
-            var childAge = $("#childAge")
+            $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
+            $form.find('.ui.checkbox').checkbox()
+
+            // Is a child fields.
+            var childAge = $form.find("#childAge")
             var hasAge = childAge.val().length;
             childAge.prop('disabled', !hasAge)
-            $("#isChild").change(function(){
+            $form.find("#isChild").change(function(){
                 if ($(this).prop('checked')){
                 childAge.prop('disabled', false)
                 } else {
@@ -59,37 +71,73 @@ append javascripts
                 childAge.prop('disabled', true)
                 }
             })
+
+            // Delete Item modal
+            $('.ui.delete.modal').modal({
+                onApprove: function(){
+                    $.ajax({
+                        type: 'delete',
+                        data:  $form.form('get values'),
+                        url: '#{apiItem}#{data.id}',
+                        dataType: 'JSON',
+                        statusCode: {
+                            204: function() {
+                                $.get('/message/success/Deleted successfully')
+                            },
+                            500: function() {
+                                $.get('/message/error/Error deleting')
+                            }
+                        }
+                    })
+                    .done(function(response) {
+                        $.get( "/message/success/Deleted Successfully")
+                        location.replace('#{listAction}')
+                    })
+                }
+            })
+            // Delete Item Button
+            $form.find('.delete.button').click(function(){
+                $('.ui.delete.modal').modal('show')
+            })
+
         })
 
 append appContent
 
-    - var method
-    if (formMethod != 'post' && formMethod != 'get')
-        - method = 'post'
-    else
-        - method = formMethod
-
     h1 Person
 
-    form#editPerson.ui.form(method=method, action=formAction, name='form')
+    form#editPerson.ui.form(name='mainForm')
+
+        div(style='display: none;')
+            input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+
+        input(type="hidden", name="id", value=data.id)
 
         .ui.raised.segment
 
-            div(style='display: none;')
-                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
-
-            - if (formMethod != 'post' && formMethod != 'get')
-                input(type='hidden', name='_method', value=formMethod)
-
-            +textField('nickName', 'Nickname', data.nickName)
+            .field.required
+                label(for='nickName') Nickname
+                input(type="text", name='nickName', id='nickName', value=data.nickName)
 
             .two.fields
-                +textField('firstName', 'First Name', data.firstName)
-                +textField('lastName', 'Last Name', data.lastName)
+
+                .field.required
+                    label(for='firstName') First Name
+                    input(type="text", name='firstName', id='firstName', value=data.firstName)
+
+                .field.required
+                    label(for='lastName') Last Name
+                    input(type="text", name='lastName', id='lastName', value=data.lastName)
 
             .two.fields
-                +emailField('email', 'Email', data.email)
-                +phoneField('phone', 'Phone', data.phone)
+
+                .field.required
+                    label(for='email') Email
+                    input(type="email", name='email', id='email', value=data.email)
+
+                .field.required
+                    label(for='phone') Phone
+                    input(type="text", name='phone', id='phone', value=data.phone)
 
             .field
                 label(for='isChild') Is Child
@@ -119,16 +167,9 @@ append appContent
                 .label ( #[i#gearListCount] / 2000)
 
         .ui.row
-            .ui.primary.submit.button.right.floated
-                case formMode
-                    when 'edit': | Update
-                    default: | Save
 
-            a.ui.button.right.floated(href=list)
-                | Cancel
+            +actionButtons(formMode)
 
-            if formMode == 'edit'
-                .ui.delete.icon.button.left.floated(title='Delete')
-                    i.trash.outline.icon
+        .ui.hidden.clearing.divider
 
-            .ui.error.message
+        .ui.error.message

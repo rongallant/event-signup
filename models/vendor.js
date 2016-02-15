@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate')
 
 var VendorSchema = new Schema({
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
@@ -15,5 +16,7 @@ var VendorSchema = new Schema({
         virtuals: true
     }
 })
+
+VendorSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Vendor', VendorSchema)

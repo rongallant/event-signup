@@ -1,4 +1,4 @@
-var debugMode = true
+var debugMode = false
 
 var googleAddressSearch = {
     apiSettings: {
@@ -89,13 +89,13 @@ function u(variabl) {
 
 var localPersonSearch = {
     apiSettings: {
-        url: '/api/persons/search/{query}',
+        url: '/api/persons?q={query}',
         onResponse: function(qResponse) {
             if (!qResponse) return
             var response = {
                 results: []
             }
-            $.each(qResponse, function(index, value) {
+            $.each(qResponse.data.docs, function(index, value) {
                 var maxResults = 8
                 if (index >= maxResults) return false
                 var v = value

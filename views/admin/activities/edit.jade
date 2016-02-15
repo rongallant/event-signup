@@ -1,83 +1,105 @@
 include ../../mixins/formFields
 include ../../mixins/personSelector
+include ../includes/formActionButtons
 
 extend ../layout
 
-append stylesheets
-    link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.css")
-
 append javascripts
-    script(src="/jquery_timepicker/jquery.timepicker.min.js")
-    script(src="/javascripts/moment.js")
-    script(src='/javascripts/jquery-maxlength.js')
-    script(src="/javascripts/searchAPIs.js")
-    +personSelectorInit
     script.
         $(function(){
-            var $form =  $('form[name=mainForm]');
+            var validationRules = {
+                name: {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
+                description: {rules:[{type:'empty'}, {type:'maxLength[500]'}]},
+                startTime: {rules:[{type:'empty'}, {type:'maxLength[7]'}]},
+                endTime: {rules:[{type:'empty'}, {type:'maxLength[7]'}]},
+                _contact: {rules:[{type:'empty'}]}
+            }
+
+            var $form =  $('form[name=mainForm]')
+
+            // CREATE / SAVE
             $form.form({
-                fields: {
-                    name: 'empty',
-                    address1: 'empty',
-                    city: 'empty',
-                    state: 'empty',
-                    country: 'empty'
-                },
+                fields: validationRules,
                 inline : false,
                 onSuccess: function(event, fields){
-                    console.log('#{formMethod} to #{apiItem}')
                     $.ajax({
                         type: '#{formMethod}',
                         data: fields,
                         url: '#{apiItem}',
-                        dataType: 'JSON'
-                    }).done(function(response) {
-                    console.log('RESPONSE')
-                        console.log(response)
-
-                        $.get( "/message/success/" + "Successfully saved")
-                        location.replace('#{editAction}' + response.itemId)
+                        dataType: 'JSON',
+                        statusCode: {
+                            201: function() {
+                                console.log('201 Error')
+                                $.get('/message/success/Saved successfully')
+                            },
+                            501: function() {
+                                console.log('501 Error')
+                                $.get('/message/error/Error saving')
+                            }
+                        }
+                    })
+                    .done(function(response) {
+                        location.replace('#{editAction}' + response.data.id)
                     })
                     return false
                 }
             })
+
             $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
 
-            var timePickerDefaults = {
-                forceRoundTime: false,
-                minTime: '5:00am',
-                maxTime: '12:00am',
-                useSelect: true,
-                className: 'dropdown'
-
-            }
-            var endTime =  $form.find('#endTime')
-            endTime.timepicker(timePickerDefaults)
-             $form.find('#startTime').timepicker(
-                timePickerDefaults, {
-                setTime: '#{data.startTime}'
-                })
-                .on('changeTime', function(settings) {
-                    endTime.timepicker(timePickerDefaults, {
-                        minTime: target('ui-timepicker-value')
+            $('.ui.delete.modal').modal({
+                onApprove: function(){
+                    $.ajax({
+                        type: 'delete',
+                        data:  $form.form('get values'),
+                        url: '#{apiItem}#{data.id}',
+                        dataType: 'JSON',
+                        statusCode: {
+                            204: function() {
+                                $.get('/message/success/Deleted successfully')
+                            },
+                            501: function() {
+                                $.get('/message/error/Error deleting')
+                            }
+                        }
+                    })
+                    .done(function(response) {
+                        location.replace('#{listAction}')
                     })
                 }
-            )
-            endTime.timepicker(timePickerDefaults)
-
-            $form.find('.ui.checkbox').checkbox()
-            $form.find('select.dropdown').dropdown()
-            $form.find('.ui.delete.button').click(function(){
-                $form
-                    .prop('action', '#{deleteAction}')
-                    .prop('method', 'POST')
-                    .find('input[name=_method]')
-                    .prop('method', 'DELETE')
             })
-
-
-            $form.find('#personSearch').search(localPersonSearch)
-
+            $form.find('#startTime').timepicker({
+                minTime: '5:00am',
+                maxTime: '12:00am',
+                match: 'text',
+                useSelect: true,
+                noneOption: ' ',
+                className: 'ui selection dropdown'
+            })
+            var endTimeField = $form.find('#endTimeField')
+            endTimeField.find('#endTime').timepicker({
+                minTime: '5:00am',
+                maxTime: '12:00am',
+                match: 'text',
+                useSelect: true,
+                noneOption: ' ',
+                className: 'ui selection dropdown',
+                showDuration: true
+            })
+            $('#startTime').on('changeTime', function() {
+                // Get selected time
+                var out = moment($(this).timepicker('getTime')).add(1, 'h').format('h:mma')
+                // Set hidden field
+                endTimeField.find('#endTime').val(out)
+                endTimeField.find('#endTime').timepicker('setTime', out)
+                endTimeField.find('.ui-timepicker-select').dropdown()
+            })
+            $form.find('.ui.checkbox').checkbox()
+            $form.find('.ui-timepicker-select').dropdown()
+            $form.find('.personSelector').search(localPersonSearch)
+            $form.find('.delete.button').click(function(){
+                $('.ui.delete.modal').modal('show')
+            })
         })
 
 append appContent
@@ -103,16 +125,8 @@ append appContent
 
         .ui.row
 
-            if formMode == 'edit'
-                .ui.delete.icon.button.left.floated(title='Delete')
-                    i.trash.outline.icon
+            +actionButtons(formMode)
 
-            .ui.primary.submit.button.right.floated
-                case formMode
-                    when 'edit': | Update
-                    default: | Save
+        .ui.hidden.clearing.divider
 
-            a.ui.button.right.floated(href=list)
-                | Cancel
-
-            .ui.error.message
+        .ui.error.message

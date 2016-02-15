@@ -46,7 +46,7 @@ var apiEvent = require('./routes/api/event'),
   apiEvents = require('./routes/api/event'),
 
   apiPerson = require('./routes/api/person'),
-  apiPersons = require('./routes/api/person'),
+  apiPersons = require('./routes/api/persons'),
 
   apiAddress = require('./routes/api/address'),
   apiAddresses = require('./routes/api/address'),
@@ -63,8 +63,10 @@ var apiEvent = require('./routes/api/event'),
 
 var app = express()
 
+// Global variables
 app.locals.title = 'Hangcon.com'
 app.locals.email = 'ron@rongallant.com'
+app.locals.resultsPerPage = 10
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -105,7 +107,7 @@ app.use(function(req, res, next){
     res.locals.info = req.flash('info')
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
-    app.locals.moment = require('moment') // Date formatter
+    // res.locals.moment = require('moment') // Date formatter
     next()
 })
 

@@ -29,7 +29,7 @@ block appContent
                             tr
                                 td(data-label="Name")
                                     a#row1Link(href=editAction + row.id)
-                                        =row.name
+                                        =row.name ? row.name : 'UNDEFINED'
 
                                 td(data-label="Start Time")
                                     = row.startTime

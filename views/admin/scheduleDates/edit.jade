@@ -1,23 +1,68 @@
-extend ../layout
-
 include ../../mixins/addressSelector
-
+include ../includes/formActionButtons
 include parts/form
 
-append stylesheets
-    link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.css")
+extend ../layout
 
 append javascripts
-    script(src="/jquery_timepicker/jquery.timepicker.min.js")
-    script(src="/javascripts/moment.js")
-    script(src="/javascripts/daterangepicker.min.js")
-    script(src="/javascripts/moment.js")
-    script(src="/javascripts/searchAPIs.js")
-
     script(src="/javascripts/scheduleDayForm.js")
     script.
         $(function(){
-            scheduleEventFormScripts('#{data.id}', '#{data.id}')
+            // scheduleEventFormScripts('#{data.id}', '#{data.id}')
+
+              $('#editEvent')
+                    .form({
+                        fields: {
+                            dateField: 'empty',
+                            startTime: 'empty',
+                            endTime: 'empty',
+                            location: 'empty'
+                        }
+                    }
+                )
+                $('.ui.delete.button').click(function(){
+                    deleteEntry('#{data.id}')
+                    $.ajax({
+                        url: '#{apiItem}' + '#{data.id}',
+                        type: 'DELETE',
+                        success: function(result) {
+                            window.location.replace('#{apiCollection}')
+                        }
+                    })
+                })
+                $('#dateField').daterangepicker(
+                  {
+                    format: 'MM/DD/YYYY',
+                    startDate: new Date(),
+                    singleDatePicker: true,
+                    timePicker: false
+                  }
+                )
+
+                var timePickerDefaults = {
+                    forceRoundTime: false,
+                    minTime: '5:00am',
+                    maxTime: '12:00am',
+                    useSelect: true,
+                    className: 'dropdown'
+
+                }
+                var endTime = $('#endTime')
+                endTime.timepicker(timePickerDefaults)
+                $('#startTime').timepicker(
+                    timePickerDefaults, {
+                    setTime: '#{data.startTime}'
+                    }
+                )
+                    .on('changeTime', function(settings) {
+                        endTime.timepicker(timePickerDefaults, {
+                            minTime: target('ui-timepicker-value')
+                        })
+                    }
+                )
+                endTime.timepicker(timePickerDefaults)
+                $('select.dropdown').dropdown()
+
             $('.addressSelector').search(localAddressSearch)
         })
 
@@ -47,15 +92,10 @@ append appContent
 
             +locationSelector(data)
 
-    .ui.row
-        .ui.primary.submit.button.right.floated
-            case formMode
-                when 'edit': | Update
-                default: | Save
+        .ui.row
 
-        a.ui.button.right.floated(href=list)
-            | Cancel
+            +actionButtons(formMode)
 
-        if formMode == 'edit'
-            .ui.delete.icon.button.left.floated(title='Delete')
-                i.trash.outline.icon
+        .ui.hidden.clearing.divider
+
+        .ui.error.message

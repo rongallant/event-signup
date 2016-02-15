@@ -12,7 +12,6 @@ var URL_BASE = "/admin/activities"
 
 /* POST New item created. */
 router.post('/', function(req, res, next) {
-  console.log('POST')
   var data = new Activity({
     _contact: mongoose.Types.ObjectId(req.body._contact),
     name: req.body.name,
@@ -22,10 +21,9 @@ router.post('/', function(req, res, next) {
   })
   data.save(function(err, data) {
       if (err) {
-        res.status(500).json({ error: err })
+        res.status(501).json({ "status" : "error", "error" : err })
       } else {
-        // 201 Created
-        res.status(201).json({ "status" : "ok", data })
+        res.status(201).json({ "status" : "success", data })
       }
   })
 })
@@ -36,36 +34,31 @@ router.get('/:id', function(req, res, next) {
     .populate('_contact')
     .exec(function(err, data) {
       if (err) {
-        res.status(400).json({ error: err.message })
+        res.status(404).json({ "status" : "error", "error" : err })
       } else {
-  console.log('The rsult are an array: ', data);
-        res.status(200).json({ "status" : "ok", data })
+        res.status(200).json({ "status" : "success", data })
       }
   })
 })
 
 /* PUT Updates an item. */
 router.put('/', function(req, res, next) {
-  console.log('PUT')
-
-  console.table(req.body)
-
   Activity.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
       if (err) {
-        res.status(500).json({ error: err.message })
+        res.status(501).json({ "status" : "error", "error" : err })
       } else {
-        res.status(201).json({ "status" : "ok", "itemId": req.body.id })
+        res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
       }
-    })
+  })
 })
 
 /* DELETE Deletes an item. */
 router.delete('/:id', function(req, res, next) {
-  Activity.findOneAndRemove(req.params.id, function (err) {
+  Activity.findByIdAndRemove(req.params.id, function (err) {
       if (err) {
-        res.status(500).json({ error: err.message })
+        res.status(501).json({ "status" : "error", "error" : err })
       } else {
-        res.status(204).json({ "status" : "ok" })
+        res.status(204).json({ "status" : "success" })
       }
   })
 })

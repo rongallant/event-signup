@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate')
 
 var AddressSchema = new Schema({
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
@@ -22,6 +23,8 @@ var AddressSchema = new Schema({
         virtuals: true
     }
 })
+
+AddressSchema.plugin(mongoosePaginate);
 
 // Formated Address
 AddressSchema.virtual('fullAddress').get(function () {

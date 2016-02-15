@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate')
 
 var ScheduleDateSchema = new Schema({
     _address: { type: Schema.Types.ObjectId, ref: 'Address' },
@@ -16,5 +17,7 @@ var ScheduleDateSchema = new Schema({
         virtuals: true
     }
 })
+
+ScheduleDateSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('ScheduleDate', ScheduleDateSchema)

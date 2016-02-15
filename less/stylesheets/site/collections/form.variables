@@ -1,7 +1,7 @@
 /*******************************
     User Variable Overrides
 *******************************/
-$alert('Bam')
+
 $.fn.form.settings = {
     templates: {
         // template that produces label
