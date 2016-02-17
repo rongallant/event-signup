@@ -1,4 +1,4 @@
-var debugMode = false
+var debugMode = true
 
 var googleAddressSearch = {
     apiSettings: {
@@ -44,7 +44,9 @@ var googleAddressSearchAndPopulate = {
                     $('#postalCode').val(components[x]['short_name'])
                     break
                 case 'country':
-                    $('#country').val(components[x]['long_name'])
+                    var countryField = $('#countryField')
+                    countryField.dropdown('set value', components[x]['short_name'].toLowerCase())
+                    countryField.dropdown({action: 'activate'})
                     break
                 case 'street_number':
                    address += partVal(components[x]['short_name'])
@@ -65,7 +67,7 @@ var googleAddressSearchAndPopulate = {
 
 function updateMap(query) {
     if (query) {
-        var gMap = 'https://www.google.com/maps/embed/v1/place?key=AIzaSyCszYBdD5JzHMDPJcdcCR0R7HWTcykLPpE&q=' + query
+        var gMap = '//www.google.com/maps/embed/v1/place?key=AIzaSyCszYBdD5JzHMDPJcdcCR0R7HWTcykLPpE&q=' + query
         $('#gMap').attr('data-url', gMap).embed().closest('rail').removeClass('hidden')
     } else {
         $('#gMap').closest('rail').addClass('hidden')
@@ -120,13 +122,13 @@ var localPersonSearch = {
 
 var localAddressSearch = {
     apiSettings: {
-        url: '/api/addresses/search/{query}',
+        url: '/api/addresses?q={query}',
         onResponse: function(qResponse) {
             if (!qResponse) return
             var response = {
                 results: []
             }
-            $.each(qResponse, function(index, value) {
+            $.each(qResponse.docs, function(index, value) {
                 var maxResults = 8
                 if (index >= maxResults) return false
                 var v = value

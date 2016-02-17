@@ -49,10 +49,10 @@ var apiEvent = require('./routes/api/event'),
   apiPersons = require('./routes/api/persons'),
 
   apiAddress = require('./routes/api/address'),
-  apiAddresses = require('./routes/api/address'),
+  apiAddresses = require('./routes/api/addresses'),
 
   apiScheduleDate = require('./routes/api/scheduleDate'),
-  apiScheduleDates = require('./routes/api/scheduleDate'),
+  apiScheduleDates = require('./routes/api/scheduleDates'),
 
   apiActivity = require('./routes/api/activity'),
   apiActivities = require('./routes/api/activities')

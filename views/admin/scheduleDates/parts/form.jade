@@ -19,5 +19,5 @@ mixin scheduleDayDateTime(data)
 mixin locationSelector(data)
 
     .field.required
-        label(for="location") Location
-        +addressSelector("location", data._address, data.id)
+        label(for="_address") Location
+        +addressSelector("_address", data._address.shortAddress, data.id)

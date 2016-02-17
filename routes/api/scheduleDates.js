@@ -1,8 +1,8 @@
 var express = require('express'),
-  router = express.Router()
+    router = express.Router()
 
-var Activity = require("../../models/activity")
-var URL_BASE = "/admin/activities"
+var ScheduleDate = require("../../models/scheduleDate")
+var URL_BASE = "/admin/scheduleDates"
 
 /************************************************************
  * REST API
@@ -20,22 +20,20 @@ router.get('/:currPage?', function(req, res, next) {
         var regex = new RegExp(req.query.q, 'i')
         query = {
             $or: [
-                { "name": regex },
-                { "description": regex },
+                { "scheduleDay": regex },
                 { "startTime": regex },
                 { "endTime": regex }
             ]
         }
     }
     var options = {
-        select: 'name startTime endTime _contact',
-        sort: { updatedAt: -1 },
-        populate: '_contact',
+        sort: { scheduleDay: -1 },
+        populate: '_address',
         lean: false,
         page: req.params.currPage,
         limit: req.app.locals.resultsPerPage
     }
-    Activity.paginate(query, options, function(err, data) {
+    ScheduleDate.paginate(query, options, function(err, data) {
         if (err) {
             res.status(500).json({ error: err.message })
         } else {

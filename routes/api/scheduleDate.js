@@ -6,94 +6,60 @@ var express = require('express'),
 var ScheduleDate = require("../../models/scheduleDate")
 var URL_BASE = "/admin/scheduleDates"
 
-/* LIST Returns all item. */
-router.get('/', function(req, res, next) {
-    ScheduleDate.find()
-        .populate('_address')
-        .exec(function(err, data) {
-            if (err) {
-                res.status(500).json({ error: err })
-            } else {
-                res.json(data)
-            }
-        }
-    )
-})
+/************************************************************
+ * REST API
+ ************************************************************/
 
-/* CREATE New item created. */
+/* POST New item created. */
 router.post('/', function(req, res, next) {
-    var data = new ScheduleDate({
-        scheduleDay: req.body.scheduleDay,
-        startTime: req.body.startTime,
-        endTime: req.body.endTime,
-        _address: mongoose.Types.ObjectId(req.body._address),
-    })
-    data.save(function(err) {
-        if (err) {
-            res.status(500).json({ error: err })
-        } else {
-            res.redirect(path.join(URL_BASE + '/success/created/' + data._id))
-        }
-    })
+  var data = new ScheduleDate({
+    _address: mongoose.Types.ObjectId(req.body._address),
+    scheduleDay: req.body.scheduleDay,
+    startTime: req.body.startTime,
+    endTime: req.body.endTime
+  })
+  data.save(function(err, data) {
+      if (err) {
+        res.status(501).json({ "status" : "error", "error" : err })
+      } else {
+        res.status(201).json({ "status" : "success", data })
+      }
+  })
 })
 
-/* EDIT Returns single item. */
+/* GET Returns single item. */
 router.get('/:id', function(req, res, next) {
-    ScheduleDate.findById(req.params.id)
-        .populate('_address')
-        .exec(function(err, data) {
-            if (err) {
-                res.status(404).json({ error: err })
-            } else {
-                res.json(data)
-            }
-        }
-    )
+  ScheduleDate.findById(req.params.id)
+    .populate('_address')
+    .exec(function(err, data) {
+      if (err) {
+        res.status(404).json({ "status" : "error", "error" : err })
+      } else {
+        res.status(200).json({ "status" : "success", data })
+      }
+  })
 })
 
-/* UPDATE Updates an item. */
-router.put('/:id', function(req, res, next) {
-    ScheduleDate.findById(req.params.id)
-        .update({$set:req.body}, function (err, data) {
-            if (err) {
-                res.status(500).json({ error: err })
-            } else {
-                res.redirect(path.join(URL_BASE + '/success/updated/' + req.params.id))
-            }
-        }
-    )
+/* PUT Updates an item. */
+router.put('/', function(req, res, next) {
+  ScheduleDate.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
+      if (err) {
+        res.status(501).json({ "status" : "error", "error" : err })
+      } else {
+        res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
+      }
+  })
 })
 
 /* DELETE Deletes an item. */
 router.delete('/:id', function(req, res, next) {
-    ScheduleDate.findOneAndRemove(req.params.id, function (err) {
-        if (err) {
-            res.status(500).json({ error: err })
-        } else {
-            res.status(200)
-        }
-    })
-})
-
-/* SEARCH Returns all item. */
-router.get('/search/:q', function(req, res, next) {
-  var regex = new RegExp(req.params.q, 'i');
-  ScheduleDate.find()
-    .or({scheduleDay: regex})
-    .or({startTime: regex})
-    .or({endTime: regex})
-    // .or({_address:{$elemMatch:{address1: regex}}})
-    // .or({_address:{$elemMatch:{city: regex}}})
-    // .or({_address:{$elemMatch:{state: regex}}})
-    // .or({_address:{$elemMatch:{country: regex}}})
-    // .or({_address:{$elemMatch:{postalCode: regex}}})
-    // .populate('_contact')
-    .exec(function(err, results) {
-        if (err) {
-          res.status(500).json({ error: err })
-        } else {
-          res.json(results);
-        }
+  ScheduleDate.findByIdAndRemove(req.params.id, function (err) {
+      if (err) {
+        res.status(501).json({ "status" : "error", "error" : err })
+      } else {
+        res.status(204).json({ "status" : "success" })
+      }
   })
 })
+
 module.exports = router

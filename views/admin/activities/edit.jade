@@ -45,8 +45,6 @@ append javascripts
                 }
             })
 
-            $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
-
             $('.ui.delete.modal').modal({
                 onApprove: function(){
                     $.ajax({
@@ -68,6 +66,11 @@ append javascripts
                     })
                 }
             })
+            $form.find('.delete.button').click(function(){
+                $('.ui.delete.modal').modal('show')
+            })
+
+            // Timepicker
             $form.find('#startTime').timepicker({
                 minTime: '5:00am',
                 maxTime: '12:00am',
@@ -91,15 +94,18 @@ append javascripts
                 var out = moment($(this).timepicker('getTime')).add(1, 'h').format('h:mma')
                 // Set hidden field
                 endTimeField.find('#endTime').val(out)
+
                 endTimeField.find('#endTime').timepicker('setTime', out)
+
+                endTimeField.find('#endTime').timepicker('option', { minTime: $(this).timepicker('getTime') })
+
                 endTimeField.find('.ui-timepicker-select').dropdown()
             })
-            $form.find('.ui.checkbox').checkbox()
             $form.find('.ui-timepicker-select').dropdown()
+
+            $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
+            $form.find('.ui.checkbox').checkbox()
             $form.find('.personSelector').search(localPersonSearch)
-            $form.find('.delete.button').click(function(){
-                $('.ui.delete.modal').modal('show')
-            })
         })
 
 append appContent

@@ -1,5 +1,7 @@
 extend ../layout
 
+include ../../mixins/pagination
+
 append javascripts
     script.
         $(function(){
@@ -30,6 +32,21 @@ append javascripts
                     $('form.batch input.batch').removeAttr('checked').closest('tr').removeClass('active')
                 }
             })
+
+            // var gMapUrl = 'https://www.google.com/maps/embed/v1/place?key=AIzaSyCszYBdD5JzHMDPJcdcCR0R7HWTcykLPpE&q='
+            var gMapUrl = 'https://www.google.com/maps/embed/v1/view'
+                gMapUrl += '?key=AIzaSyCszYBdD5JzHMDPJcdcCR0R7HWTcykLPpE'
+                gMapUrl += '&zoom=18'
+                gMapUrl += '&center='
+
+            $('.map').popup({
+                onShow: function(){
+                    var gMap = $(this).closest('.googlemap').find('.gMap')
+                    var mapUrl = gMapUrl + gMap.attr('data-location').replace(/\s+/g, '')
+                    console.log(mapUrl)
+                    gMap.attr('data-url', mapUrl).embed()
+                }
+            })
         })
 block appContent
 
@@ -40,31 +57,22 @@ block appContent
         form.batch: table.ui.small.padded.very.basic.selectable.table
             thead
                 tr
-                    th.one.wide.center.aligned
-                        .ui.fitted.checkbox
-                            input.batch-all(type="checkbox")
-                            label
                     th.four.wide Schedule Day
                     th.three.wide Start Time
                     th.three.wide End Time
                     th Address
 
             tbody
-                if !data.length
-                    tr: td.center.aligned(colspan='5')
+                if !data.docs.length
+                    tr: td.center.aligned(colspan='4')
                         .ui.basic.icon.button
                             a(href=createAction)
                                 i.plus.icon
                                 | Add First Schedule Date
 
                 else
-                    each row in data
+                    each row in data.docs
                         tr
-                            td.center.aligned
-                                .ui.fitted.checkbox
-                                    input.batch(type="checkbox", value=row.id)
-                                    label
-
                             td(data-label="Schedule Day")
                                 a(href=editAction + row.id)
                                     = row.scheduleDay?row.scheduleDay:'UNDEFINED'
@@ -75,8 +83,15 @@ block appContent
                             td(data-label="End Time")
                                 = row.endTime
 
-                            td(data-label="Address")
-                                = row._address ? row._address.simpleAddress : ''
+                            td.center.aligned.googlemap(data-label="Address")
+                                if row._address && row._address.location
+                                    a.map(href='https://www.google.com/maps/place/' + row._address.location)
+                                        i.large.red.marker.square.icon
+                                    .ui.fluid.popup.top.left.transition.hidden
+                                        .gMap.ui.embed(data-location=row._address.location)
+
+        .ui.basic.clearing.segment
+            +pagination(1, data.pages, data.page, '/admin/scheduleDates/')
 
     if data.length
 

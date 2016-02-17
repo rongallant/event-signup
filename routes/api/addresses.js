@@ -1,8 +1,8 @@
 var express = require('express'),
-  router = express.Router()
+    router = express.Router()
 
-var Activity = require("../../models/activity")
-var URL_BASE = "/admin/activities"
+var Address = require("../../models/address")
+var URL_BASE = "/admin/addresses"
 
 /************************************************************
  * REST API
@@ -22,20 +22,23 @@ router.get('/:currPage?', function(req, res, next) {
             $or: [
                 { "name": regex },
                 { "description": regex },
-                { "startTime": regex },
-                { "endTime": regex }
+                { "address1": regex },
+                { "address2": regex },
+                { "postalCode": regex },
+                { "city": regex },
+                { "state": regex },
+                { "country": regex }
             ]
         }
     }
     var options = {
-        select: 'name startTime endTime _contact',
         sort: { updatedAt: -1 },
         populate: '_contact',
-        lean: false,
+        lean: false, // False enables virtual params
         page: req.params.currPage,
         limit: req.app.locals.resultsPerPage
     }
-    Activity.paginate(query, options, function(err, data) {
+    Address.paginate(query, options, function(err, data) {
         if (err) {
             res.status(500).json({ error: err.message })
         } else {

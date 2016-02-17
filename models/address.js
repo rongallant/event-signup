@@ -36,7 +36,8 @@ AddressSchema.virtual('fullAddress').get(function () {
             (this.postalCode.length > 0 ? this.postalCode + '\n' : '') +
             (this.country.length > 0 ? this.country : '')
     } catch(err) {
-        return ''
+        console.log(err)
+        return 'ERR'
     }
 })
 
@@ -48,7 +49,8 @@ AddressSchema.virtual('shortAddress').get(function () {
             (this.state.length > 0 ?  ', ' + this.state : '') +
             (this.postalCode.length > 0 ? ', ' + this.postalCode : '')
     } catch(err) {
-        return ''
+        console.log(err)
+        return 'ERR'
     }
 })
 

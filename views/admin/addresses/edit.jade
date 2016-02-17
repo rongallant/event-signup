@@ -5,31 +5,74 @@ include ../includes/formActionButtons
 extend ../layout
 
 append javascripts
-    +personSelectorInit
     script.
         $(function(){
-            var $form =  $('form[name=mainForm]');
+            var validationRules = {
+                name: 'empty',
+                address1: 'empty',
+                city: 'empty',
+                state: 'empty',
+                country: 'empty'
+            }
+
+            var $form =  $('form[name=mainForm]')
+
+            // CREATE / SAVE
             $form.form({
-                fields: {
-                    name: 'empty',
-                    address1: 'empty',
-                    city: 'empty',
-                    state: 'empty',
-                    country: 'empty'
-                },
-                inline : false
+                fields: validationRules,
+                inline : false,
+                onSuccess: function(event, fields){
+                    $.ajax({
+                        type: '#{formMethod}',
+                        data: fields,
+                        url: '#{apiItem}',
+                        dataType: 'JSON',
+                        statusCode: {
+                            201: function() {
+                                console.log('201 Error')
+                                $.get('/message/success/Saved successfully')
+                            },
+                            501: function() {
+                                console.log('501 Error')
+                                $.get('/message/error/Error saving')
+                            }
+                        }
+                    })
+                    .done(function(response) {
+                        location.replace('#{editAction}' + response.data.id)
+                    })
+                    return false
+                }
+            })
+
+            $('.ui.delete.modal').modal({
+                onApprove: function(){
+                    $.ajax({
+                        type: 'delete',
+                        data:  $form.form('get values'),
+                        url: '#{apiItem}#{data.id}',
+                        dataType: 'JSON',
+                        statusCode: {
+                            204: function() {
+                                $.get('/message/success/Deleted successfully')
+                            },
+                            501: function() {
+                                $.get('/message/error/Error deleting')
+                            }
+                        }
+                    })
+                    .done(function(response) {
+                        location.replace('#{listAction}')
+                    })
+                }
+            })
+            $form.find('.delete.button').click(function(){
+                $('.ui.delete.modal').modal('show')
             })
             $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
             $form.find('.ui.checkbox').checkbox()
-            $form.find('select.dropdown').dropdown()
-            $form.find('.ui.delete.button').click(function(){
-                $form
-                    .prop('action', '#{deleteAction}')
-                    .prop('method', 'POST')
-                    .find('input[name=_method]')
-                    .prop('method', 'DELETE')
-            })
-            $form.find('#personSearch').search(localPersonSearch)
+            $form.find('select.dropdown, .selection.dropdown').dropdown()
+            $form.find('.personSelector').search(localPersonSearch)
             $form.find('#addressSearch').search(googleAddressSearchAndPopulate)
             if (('#{data.id}').length > 0) {
                 updateMap('#{encodeURIComponent(data.fullAddress)}')
@@ -38,30 +81,25 @@ append javascripts
 
 append appContent
 
-    - var method
-    if (formMethod != 'post' && formMethod != 'get')
-        - method = 'post'
-    else
-        - method = formMethod
-
-    .ui.right.rail
-        .ui.segment
-            #gMap.ui.embed
-            .ui.hidden.divider
-            .nicePre= data.fullAddress
-
     h1 Address
 
-    form.ui.form(name='mainForm', method=method, action=formAction)
+    form.ui.form(name='mainForm')
+
+        input(type="hidden", name="id", value=data.id)
+
+        div(style='display: none;')
+            input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+
+        input.prompt(type='hidden', id='location', name='location')
+
+        if data.fullAddress
+            .ui.right.rail
+                .ui.segment
+                    #gMap.ui.embed
+                    .ui.hidden.divider
+                    .nicePre= data.fullAddress
 
         .ui.raised.segment
-
-            div(style='display: none;')
-                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
-
-            input(type='hidden', name='_method', value=formMethod)
-
-            input.prompt(type='hidden', id='location', name='location')
 
             .field.required
                 label(for='name') Address Name
@@ -72,8 +110,8 @@ append appContent
                 textarea(name='description', id='description',  rows='2')=data.description
 
             .field.required
-                label(for='mainPerson') Main Contact
-                +personSelector('mainPerson', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+                label(for='_contact') Main Contact
+                +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
 
         .ui.raised.segment
 
@@ -106,7 +144,7 @@ append appContent
 
             .field.required
                 label(for='country') Country
-                input(type='text', name='country', id='country', value=data.country, required)
+                +countryField('country', data.country, data.country)
 
         .ui.row
             +actionButtons(formMode)

@@ -8,81 +8,120 @@ append javascripts
     script(src="/javascripts/scheduleDayForm.js")
     script.
         $(function(){
-            // scheduleEventFormScripts('#{data.id}', '#{data.id}')
+            var validationRules = {
+                dateField: 'empty',
+                startTime: 'empty',
+                endTime: 'empty',
+                location: 'empty'
+            }
 
-              $('#editEvent')
-                    .form({
-                        fields: {
-                            dateField: 'empty',
-                            startTime: 'empty',
-                            endTime: 'empty',
-                            location: 'empty'
-                        }
-                    }
-                )
-                $('.ui.delete.button').click(function(){
-                    deleteEntry('#{data.id}')
+            var $form =  $('form[name=mainForm]')
+
+            // CREATE / SAVE
+            $form.form({
+                fields: validationRules,
+                inline : false,
+                onSuccess: function(event, fields){
                     $.ajax({
-                        url: '#{apiItem}' + '#{data.id}',
-                        type: 'DELETE',
-                        success: function(result) {
-                            window.location.replace('#{apiCollection}')
+                        type: '#{formMethod}',
+                        data: fields,
+                        url: '#{apiItem}',
+                        dataType: 'JSON',
+                        statusCode: {
+                            201: function() {
+                                console.log('201 Error')
+                                $.get('/message/success/Saved successfully')
+                            },
+                            501: function() {
+                                console.log('501 Error')
+                                $.get('/message/error/Error saving')
+                            }
                         }
                     })
-                })
-                $('#dateField').daterangepicker(
-                  {
-                    format: 'MM/DD/YYYY',
-                    startDate: new Date(),
-                    singleDatePicker: true,
-                    timePicker: false
-                  }
-                )
-
-                var timePickerDefaults = {
-                    forceRoundTime: false,
-                    minTime: '5:00am',
-                    maxTime: '12:00am',
-                    useSelect: true,
-                    className: 'dropdown'
-
+                    .done(function(response) {
+                        location.replace('#{editAction}' + response.data.id)
+                    })
+                    return false
                 }
-                var endTime = $('#endTime')
-                endTime.timepicker(timePickerDefaults)
-                $('#startTime').timepicker(
-                    timePickerDefaults, {
-                    setTime: '#{data.startTime}'
-                    }
-                )
-                    .on('changeTime', function(settings) {
-                        endTime.timepicker(timePickerDefaults, {
-                            minTime: target('ui-timepicker-value')
-                        })
-                    }
-                )
-                endTime.timepicker(timePickerDefaults)
-                $('select.dropdown').dropdown()
+            })
+
+            $('.ui.delete.modal').modal({
+                onApprove: function(){
+                    $.ajax({
+                        type: 'delete',
+                        data:  $form.form('get values'),
+                        url: '#{apiItem}#{data.id}',
+                        dataType: 'JSON',
+                        statusCode: {
+                            204: function() {
+                                $.get('/message/success/Deleted successfully')
+                            },
+                            501: function() {
+                                $.get('/message/error/Error deleting')
+                            }
+                        }
+                    })
+                    .done(function(response) {
+                        location.replace('#{listAction}')
+                    })
+                }
+            })
+            $form.find('.delete.button').click(function(){
+                $('.ui.delete.modal').modal('show')
+            })
+
+            $('#dateField').daterangepicker(
+              {
+                format: 'MM/DD/YYYY',
+                startDate: new Date(),
+                singleDatePicker: true,
+                timePicker: false
+              }
+            )
+
+            // Timepicker
+            $form.find('#startTime').timepicker({
+                minTime: '5:00am',
+                maxTime: '12:00am',
+                match: 'text',
+                useSelect: true,
+                noneOption: ' ',
+                className: 'ui selection dropdown'
+            })
+            var endTimeField = $form.find('#endTimeField')
+            endTimeField.find('#endTime').timepicker({
+                minTime: '5:00am',
+                maxTime: '12:00am',
+                match: 'text',
+                useSelect: true,
+                noneOption: ' ',
+                className: 'ui selection dropdown',
+                showDuration: true
+            })
+            $('#startTime').on('changeTime', function() {
+                // Get selected time
+                var out = moment($(this).timepicker('getTime')).add(1, 'h').format('h:mma')
+                // Set hidden field
+                endTimeField.find('#endTime').val(out)
+                endTimeField.find('#endTime').timepicker('setTime', out)
+                endTimeField.find('#endTime').timepicker('option', { minTime: $(this).timepicker('getTime') })
+                endTimeField.find('.ui-timepicker-select').dropdown()
+            })
+            $form.find('.ui-timepicker-select').dropdown()
 
             $('.addressSelector').search(localAddressSearch)
         })
 
 append appContent
 
-    - var method
-    if (formMethod != 'post' && formMethod != 'get')
-        - method = 'post'
-    else
-        - method = formMethod
-
     h1 Schedule Date
 
-    form#editEvent.ui.form(method=formMethod action=formAction)
+    form.ui.form(name='mainForm')
+
+        input(type="hidden", name="id", value=data.id)
 
         div(style='display: none;')
             input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
-
-        - if (formMethod != 'post' && formMethod != 'get')
-            input(type='hidden', name='_method', value=formMethod)
 
         .ui.raised.segment
 

@@ -12,6 +12,7 @@ appDesc['apiCollection'] = '/addresses'
 appDesc['folder'] = '/addresses'
 appDesc['singularName'] = "Address"
 appDesc['pluralName'] = "Addresses"
+appDesc['newObject'] = new Address()
 
 router.use(function(req, res, next) {
     appSettings.appPaths(req, res, appDesc)
@@ -22,58 +23,55 @@ router.use(function(req, res, next) {
  * PAGES
  ************************************************************/
 
-// LIST
-router.get('/', function(req, res, next){
-    request(res.locals.apiCollection, function (err, data) {
+function hasVal(variable){
+    return (typeof variable !== 'undefined')
+}
+
+router.get('/edit/:id', function(req, res, next) {
+    request(res.locals.apiItem + req.params.id, function (err, data){
         if (err) { return next(err) }
-        res.render(res.locals.listView, {
-            title: appDesc['pluralName'],
+        res.render(path.join(res.locals.editView), {
+            title: "Editing " + appDesc['singularName'],
             user: req.user,
-            data: JSON.parse(data.body)
+            data: JSON.parse(data.body).data,
+            formMode: 'edit',
+            formMethod: 'PUT',
+            formAction: res.locals.apiItem + req.params.id
         })
     })
 })
 
-router.get('/success/:code', function(req, res, next) {
-    if (req.params.code == 'deleted') {
-        req.flash('success', 'Deleted successfully!')
-    }
-    res.redirect(res.locals.listAction)
-})
-
-router.get('/success/:code/:id', function(req, res, next) {
-    if (req.params.code == 'updated') {
-        req.flash('success', 'Updated successfully!')
-    } else
-    if (req.params.code == 'created') {
-        req.flash('success', 'Created successfully!')
-    }
-    res.redirect(path.join(res.locals.editAction, req.params.id))
-})
-
-// Create
 router.get('/create', function(req, res) {
+    req.session.redirectTo = res.locals.editView
     res.render(res.locals.editView, {
         title: 'Create New ' + appDesc['singularName'],
         user: req.user,
-        data: new Address(),
+        data: appDesc['newObject'],
         formMode: 'create',
-        formMethod: 'post',
+        formMethod: 'POST',
         formAction: res.locals.apiItem
     })
 })
 
-// Edit
-router.get('/edit/:id', function(req, res, next) {
-    request(res.locals.apiItem + req.params.id, function (err, data){
+router.get('/:currPage?', function(req, res, next){
+    var apiUri = res.locals.apiCollection
+    if (hasVal(req.params.currPage))
+        apiUri += req.params.currPage
+    else
+        apiUri += 1
+    if (hasVal(req.query.q))
+        apiUri += '?q=' + req.query.q
+    console.log('apiUri: ' + apiUri)
+    request(apiUri, function (err, data) {
         if (err) { return next(err) }
-        res.render(res.locals.editView, {
-            title: "Editing " + appDesc['singularName'],
+
+        console.log(data)
+
+
+        res.render(res.locals.listView, {
+            title: appDesc['pluralName'],
             user: req.user,
-            data: JSON.parse(data.body),
-            formMode: 'edit',
-            formMethod: 'PUT',
-            formAction: res.locals.apiItem + req.params.id
+            data: JSON.parse(data.body)
         })
     })
 })
