@@ -29,10 +29,6 @@ function hasVal(variable){
 router.get('/edit/:id', function(req, res, next) {
     request(res.locals.apiItem + req.params.id, function (err, data){
         if (err) { return next(err) }
-
-        console.log('page data')
-        console.table(JSON.parse(data.body).data)
-
         res.render(path.join(res.locals.editView), {
             title: "Editing " + appDesc['singularName'],
             user: req.user,
@@ -46,8 +42,6 @@ router.get('/edit/:id', function(req, res, next) {
 
 router.get('/create', function(req, res) {
     req.session.redirectTo = res.locals.editView
-    console.log('create activity')
-
     res.render(res.locals.editView, {
         title: 'Create New ' + appDesc['singularName'],
         user: req.user,
@@ -69,13 +63,10 @@ router.get('/:currPage?', function(req, res, next){
     console.log('apiUri: ' + apiUri)
     request(apiUri, function (err, data) {
         if (err) { return next(err) }
-
-        console.table(JSON.parse(data.body).docs)
-
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
             user: req.user,
-            data: JSON.parse(data.body)
+            data: JSON.parse(data.body).data
         })
     })
 })

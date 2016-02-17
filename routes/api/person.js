@@ -20,11 +20,11 @@ router.post('/', function(req, res, next) {
         _address: mongoose.Types.ObjectId(req.body._address),
         _emergencyContact: mongoose.Types.ObjectId(req.body._emergencyContact)
     })
-    data.save(function(err) {
+    data.save(function(err, data) {
         if (err) {
             res.status(500).json({ error: err })
         } else {
-            res.status(201).json({ "status" : "success", data })
+            res.status(201).json({ "status" : "success", "itemId": req.body.id })
         }
     })
 })

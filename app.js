@@ -43,7 +43,7 @@ var index = require('./routes/index'),
  ***********************************************************/
 
 var apiEvent = require('./routes/api/event'),
-  apiEvents = require('./routes/api/event'),
+  apiEvents = require('./routes/api/events'),
 
   apiPerson = require('./routes/api/person'),
   apiPersons = require('./routes/api/persons'),

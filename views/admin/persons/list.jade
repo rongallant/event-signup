@@ -1,3 +1,5 @@
+include ../../mixins/pagination
+
 extend ../layout
 
 block appContent
@@ -44,10 +46,12 @@ block appContent
                                 if (row.isChild == true)
                                     i.large.child.box.icon(title="Child")
 
-    if data.length
+        .ui.basic.clearing.segment
+            +pagination(1, data.pages, data.page, '/admin/persons/')
 
-        .ui.row
-            .ui.icon.button.right.floated
+    if data.docs.length
+        .row
+            .ui.icon.button.left.floated
                 a(href=createAction)
                     i.plus.icon
                     | Add Person

@@ -6,7 +6,7 @@ include ../includes/formActionButtons
 extend ../layout
 
 append javascripts
-    +personSelectorInit
+    // +personSelectorInit
     script.
         $(function(){
             // Validation Rules
@@ -47,17 +47,12 @@ append javascripts
                         url: '#{apiItem}',
                         dataType: 'JSON'
                     }).done(function(response) {
-                        console.log('RESPONSE')
-                        console.table(response)
                         $.get( "/message/success/" + "Successfully saved")
                         location.replace('#{editAction}' + response.itemId)
                     })
                     return false
                 }
             })
-
-            $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
-            $form.find('.ui.checkbox').checkbox()
 
             // Is a child fields.
             var childAge = $form.find("#childAge")
@@ -100,6 +95,10 @@ append javascripts
                 $('.ui.delete.modal').modal('show')
             })
 
+            $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
+            $form.find('.ui.checkbox').checkbox()
+            $form.find('.personSelector').search(localPersonSearch)
+            $form.find('.addressSelector').search(localAddressSearch)
         })
 
 append appContent

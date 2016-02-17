@@ -10,7 +10,7 @@ function scheduleEventFormScripts(dataId, apiUrl) {
         }
     )
     $('.ui.delete.button').click(function(){
-        deleteEntry(dataId)
+        // deleteEntry(dataId)
         $.ajax({
             url: apiUrl + dataId,
             type: 'DELETE',
@@ -40,15 +40,15 @@ function scheduleEventFormScripts(dataId, apiUrl) {
     endTime.timepicker(timePickerDefaults)
     $('#startTime').timepicker(
         timePickerDefaults, {
-        setTime: '#{data.startTime}'
+            setTime: '#{data.startTime}'
         }
     )
-        .on('changeTime', function(settings) {
-            endTime.timepicker(timePickerDefaults, {
-                minTime: target('ui-timepicker-value')
-            })
-        }
-    )
+        // .on('changeTime', function(settings) {
+        //     endTime.timepicker(timePickerDefaults, {
+        //         minTime: target('ui-timepicker-value')
+    //         })
+    //     }
+    // )
     endTime.timepicker(timePickerDefaults)
     $('select.dropdown').dropdown()
 }

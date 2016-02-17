@@ -1,38 +1,43 @@
+include ../../mixins/pagination
+
 extend ../layout
 
 block appContent
 
     h1 Events
 
-    .ui.raised.segment
+    .ui.raised.segments
+        .ui.segment
 
-        table.ui.small.padded.very.basic.selectable.table
-            thead
-                tr
-                    th Name
-                    th Contact
-                    th.right.aligned Date/Time
+            table.ui.small.padded.very.basic.selectable.table
+                thead
+                    tr
+                        th Name
+                        th Contact
+                        th.right.aligned Date/Time
 
-            tbody
-                if !data.length
-                    tr: td.center.aligned(colspan='5')
-                        .ui.basic.icon.button
-                            a(href=createAction)
-                                i.plus.icon
-                                | Add First Event
+                tbody
+                    if !data.docs.length
+                        tr: td.center.aligned(colspan='5')
+                            .ui.basic.icon.button
+                                a(href=createAction)
+                                    i.plus.icon
+                                    | Add First Event
 
-                else
-                    each row in data
-                        tr
-                            td(data-label="Name")
-                                a#row1Link(href=editAction + row.id)= row.name
-                            td(data-label="Contact") Olddog
-                            td.right.aligned(data-label="Date/Time") Saturday, 11:00am - 2:00pm
+                    else
+                        each row in data.docs
+                            tr
+                                td(data-label="Name")
+                                    a#row1Link(href=editAction + row.id)= row.name
+                                td(data-label="Contact")= row._contact ? row._contact.fullName : 'UNDEFINED'
+                                td.right.aligned(data-label="Date/Time") Saturday, 11:00am - 2:00pm
 
-    if data.length
+            .ui.basic.clearing.segment
+                +pagination(1, data.pages, data.page, '/admin/events/')
 
-        .ui.row
-            .ui.icon.button.right.floated
+    if data.docs.length
+        .row
+            .ui.icon.button.left.floated
                 a(href=createAction)
                     i.plus.icon
                     | Add Event
