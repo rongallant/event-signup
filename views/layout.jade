@@ -25,10 +25,9 @@ html
             meta(name='msapplication-TileColor', content='#3372DF')
             link(rel='shortcut icon', href='images/favicon.png')
 
-        block stylesheets
-
         link(rel='stylesheet', href='/semantic/dist/semantic.min.css')
-        // link(rel='stylesheet', href='/stylesheets/style.css')
+        block stylesheets
+        link(rel='stylesheet', href='/stylesheets/style.css')
 
     body
         block header
@@ -40,10 +39,10 @@ html
             script(src="/noty/js/noty/packaged/jquery.noty.packaged.min.js")
             script(src="/javascripts/javascripts.js")
 
-            //- Message Handling
-            if error && error.length > 0
-                script $(function(){toaster('error', '#{error}')})
-            if success && success.length > 0
-                script $(function(){toaster('success', '#{success}')})
-            if info && info.length > 0
-                script  $(function(){toaster('info', '#{info}')})
+        //- Message Handling
+        if error && error.length > 0
+            script $(function(){toaster('error', '#{error}')})
+        if success && success.length > 0
+            script $(function(){toaster('success', '#{success}')})
+        if info && info.length > 0
+            script  $(function(){toaster('info', '#{info}')})

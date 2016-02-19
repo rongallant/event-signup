@@ -2,7 +2,7 @@ include ../../mixins/addressSelector
 include ../../mixins/personSelector
 include ../../mixins/scheduleDatesSelector
 include ../scheduleDates/parts/form
-include ../includes/formActionButtons
+include ../includes/formToolbar
 
 extend ../layout
 
@@ -123,88 +123,72 @@ append javascripts
 
 append appContent
 
-    h1 Event
+    .ui.stackable.grid
+        .column
 
-    form.ui.form(name='mainForm')
+            form.ui.form(name='mainForm')
 
-        input(type="hidden", name="id", value=data.id)
+                +formToolbar
 
-        div(style='display: none;')
-            input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                div(style='display: none;')
+                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
-        .ui.raised.segment
+                input(type="hidden", name="id", value=data.id)
 
-            .field.required
-                label(for="eventName") Event Name
-                input(type="text", name="name", id="eventName", value=data.name)
+                .ui.raised.segment
 
-            .field.required
-                label(for="description") Description
-                textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
-                    = data.description
-                .label ( #[i#descriptionCount] / 2000)
+                    .field.required
+                        label(for="eventName") Event Name
+                        input(type="text", name="name", id="eventName", value=data.name)
 
-        .ui.raised.segment
+                    .field.required
+                        label(for="description") Description
+                        textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                            = data.description
+                        .label ( #[i#descriptionCount] / 2000)
 
-            .field.required
-                label(for="_address") Location
-                +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
+                .ui.raised.segment
 
-        .ui.raised.segment
+                    .field.required
+                        label(for="_address") Location
+                        +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
 
-            .field.required
-                label(for='_contact') Main Contact
-                +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+                .ui.raised.segment
 
-        .ui.raised.segment
+                    .field.required
+                        label(for='_contact') Main Contact
+                        +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
 
-            .ui.row
-                a#addSchedules.ui.right.floated.button(href='#')
-                    i.icon.plus
-                    | Add Schedule Day
+                .ui.raised.segment
 
-                .field.required
-                    label.ui.right.floated(for="schedules") Schedule Days
+                    .ui.row
+                        a#addSchedules.ui.right.floated.button(href='#')
+                            i.icon.plus
+                            | Add Schedule Day
 
-            #schedules.ui.relaxed.divided.list
+                        .field.required
+                            label.ui.right.floated(for="schedules") Schedule Days
 
-                .ui.field.item.hidden#sample(style="display:none")
-                    i.large.clock.middle.aligned.icon
-                    .content
-                        a.header
-                        .description
-
-                if data.schedules
-
-                    -each schedule, index in data.schedules
-                        input(type='hidden', name='scheduleDay[#{index}][id]', value=schedule.id)
-                        input(type='hidden', name='scheduleDay[#{index}][scheduleDay]', value=schedule.scheduleDay)
-                        input(type='hidden', name='scheduleDay[#{index}][startTime]', value=schedule.startTime)
-                        input(type='hidden', name='scheduleDay[#{index}][endTime]', value=schedule.endTime)
-                        .item
+                    #schedules.ui.relaxed.divided.list
+                        .ui.field.item.hidden#sample(style="display:none")
                             i.large.clock.middle.aligned.icon
                             .content
-                                a.header= schedule.scheduleDay
-                                .description #{schedule.startTime} - #{schedule.endTime}
+                                a.header
+                                .description
 
-        .ui.row
-            +actionButtons(formMode)
+                        if data.schedules
 
-        .ui.hidden.clearing.divider
+                            -each schedule, index in data.schedules
+                                input(type='hidden', name='scheduleDay[#{index}][id]', value=schedule.id)
+                                input(type='hidden', name='scheduleDay[#{index}][scheduleDay]', value=schedule.scheduleDay)
+                                input(type='hidden', name='scheduleDay[#{index}][startTime]', value=schedule.startTime)
+                                input(type='hidden', name='scheduleDay[#{index}][endTime]', value=schedule.endTime)
+                                .item
+                                    i.large.clock.middle.aligned.icon
+                                    .content
+                                        a.header= schedule.scheduleDay
+                                        .description #{schedule.startTime} - #{schedule.endTime}
 
-        .ui.error.message
+                .ui.hidden.clearing.divider
 
-
-append footer
-    //- Modal
-    #schedulesForm.ui.modal
-        .header Schedule Date
-        .content
-            form.ui.form(name='scheduleDateForm')
-                +scheduleDayDateTime(data)
-                +locationSelector(data)
-        .actions
-            .ui.cancel.button
-                | Cancel
-            .ui.primary.submit.button
-                | Save
+                .ui.error.message

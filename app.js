@@ -14,7 +14,6 @@ var express = require('express'),
   LocalStrategy = require('passport-local').Strategy,
   flash = require('connect-flash'),
   consoletable = require('console.table'),
-  lessMiddleware = require('less-middleware'),
   methodOverride = require('method-override'),
   dateformat = require('dateformat'),
   mongoosePages = require('mongoose-paginate')
@@ -118,16 +117,6 @@ app.use(function(req, res, next){
     // res.locals.moment = require('moment') // Date formatter
     next()
 })
-
-// LESS
-app.use(lessMiddleware(
-  path.join(__dirname, "less"), {
-    dest: path.join(__dirname, 'public'),
-    force: false,
-    debug: false,
-    compress : true
-  }
-))
 
 /************************************************************
  * Paths

@@ -1,0 +1,52 @@
+//- Pagination mixin
+//- ----------------
+//- start=# to start pagination at
+//- numPages=# links to serve up
+//- base=base url before num
+//-
+//- Example:
+//- pagination(3,5,4,'/fda/')
+//- Yields: | « | 3 | 4 | 5 | 6 | 7 | » |
+//- « = /fda/2, 3 = /fda/3, 4 = #, .. 7 = /fda/7, » = /fda/8
+
+
+// +pagination(1, data.pages, data.page, '/admin/persons/')
+
+
+mixin listToolbar
+    - start    = start              || 1
+    - numPages = data.pages         || 10
+    - curr     = data.page          || 1
+    - base     = listAction + '/'   || '#'
+    - var prev = Number(curr) - 1
+    - var next = Number(curr) + 1
+
+    .ui.icon.menu
+        .header.item
+            = title
+
+        a.item(href=createAction)
+            i.plus.icon
+            | New
+
+        if numPages > 1
+            .pagination.right.menu
+                - if(curr==1)
+                    a.icon.item.disabled(href='#')
+                        i.left.chevron.icon
+                - else
+                    a.icon.item(href='#{base}#{prev}')
+                        i.left.chevron.icon
+
+                - for(var i=start;i<start+numPages;i++) {
+                    - if(i==curr)
+                        a.item.active(href='#{base}#{i}') #{i}
+                    - else
+                        a.item(href='#{base}#{i}') #{i}
+                - }
+                - if(curr==numPages)
+                    a.icon.item.disabled(href='#')
+                        i.right.chevron.icon
+                - else
+                    a.icon.item(href='#{base}#{next}')
+                        i.right.chevron.icon

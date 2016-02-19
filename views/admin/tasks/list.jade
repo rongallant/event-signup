@@ -1,54 +1,42 @@
-include ../../mixins/pagination
+include ../includes/listToolbar
 
 extend ../layout
 
 block appContent
 
-    h1 Tasks
+    +listToolbar
 
-    .ui.raised.segments
-        .ui.segment
+    table.ui.padded.fixed.selectable.table
 
-            table.ui.small.padded.very.basic.fixed.selectable.table
-                thead
+        thead
+            tr
+                th Name
+                th Start Time
+                th End Time
+                th Contact
+
+        tbody
+            if !data.docs.length
+                tr: td.center.aligned(colspan='4')
+                    .ui.basic.icon.button
+                        a(href=createAction)
+                            i.plus.icon
+                            | Add First Task
+
+            else
+                each row in data.docs
                     tr
-                        th Name
-                        th Start Time
-                        th End Time
-                        th Contact
+                        td(data-label="Name")
+                            a#row1Link(href=editAction + row.id)
+                                =row.name ? row.name : 'UNDEFINED'
 
-                tbody
-                    if !data.docs.length
-                        tr: td.center.aligned(colspan='4')
-                            .ui.basic.icon.button
-                                a(href=createAction)
-                                    i.plus.icon
-                                    | Add First Task
+                        td(data-label="Start Time")
+                            = row.startTime
 
-                    else
-                        each row in data.docs
-                            tr
-                                td(data-label="Name")
-                                    a#row1Link(href=editAction + row.id)
-                                        =row.name ? row.name : 'UNDEFINED'
+                        td(data-label="End Time")
+                            = row.endTime
 
-                                td(data-label="Start Time")
-                                    = row.startTime
-
-                                td(data-label="End Time")
-                                    = row.endTime
-
-                                td(data-label="Contact")
-                                    if row._contact
-                                        a(href="mailto:#{row._contact.email}")
-                                            = row._contact.fullName
-
-        .ui.basic.clearing.segment
-            +pagination(1, data.pages, data.page, '/admin/meals/')
-
-    if data.docs.length
-        .row
-            .ui.icon.button.left.floated
-                a(href=createAction)
-                    i.plus.icon
-                    | Add Task
+                        td(data-label="Contact")
+                            if row._contact
+                                a(href="mailto:#{row._contact.email}")
+                                    = row._contact.fullName

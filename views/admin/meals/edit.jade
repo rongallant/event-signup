@@ -1,6 +1,6 @@
 include ../../mixins/formFields
 include ../../mixins/personSelector
-include ../includes/formActionButtons
+include ../includes/formToolbar
 
 extend ../layout
 
@@ -114,84 +114,83 @@ append javascripts
 
 append appContent
 
-    h1 Meal
+    .ui.stackable.grid
+        .column
 
-    form.ui.form(name='mainForm')
+            form.ui.form(name='mainForm')
 
-        input(type="hidden", name="id", value=data.id)
+                +formToolbar
 
-        div(style='display: none;')
-            input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                div(style='display: none;')
+                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
-        .ui.raised.segment
+                input(type="hidden", name="id", value=data.id)
 
-            .field.required
-                label(for='name') Meal Name
-                input(type='text', name='_task.name', id='name', value=data._task?data._task.name:'')
+                .ui.raised.segment
 
-            .field.required
-                label(for='description') Meal Description
-                textarea(name='_task.description', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
-                    = data._task?data._task.description:''
-                .label ( #[i#descriptionCount] / 2000)
+                    .field.required
+                        label(for='name') Meal Name
+                        input(type='text', name='_task.name', id='name', value=data._task?data._task.name:'')
 
-            .field
-                label(for='allergins') Allergins
-                input(type='text', name='allergins', id='allergins', value=data.allergins)
+                    .field.required
+                        label(for='description') Meal Description
+                        textarea(name='_task.description', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                            = data._task?data._task.description:''
+                        .label ( #[i#descriptionCount] / 2000)
 
-        .ui.raised.segment
+                    .field
+                        label(for='allergins') Allergins
+                        input(type='text', name='allergins', id='allergins', value=data.allergins)
 
-            .two.fields
+                .ui.raised.segment
 
-                .field.required
-                    label(for="startTime") Start Time
-                    input(type="text", name="_task.startTime", id="startTime", value=data._task?data._task.startTime:'')
+                    .two.fields
 
-                .field.required#endTimeField
-                    label(for="endTime") End Time
-                    input(type="text", name="_task.endTime", id="endTime", value=data._task?data._task.endTime:'')
+                        .field.required
+                            label(for="startTime") Start Time
+                            input(type="text", name="_task.startTime", id="startTime", value=data._task?data._task.startTime:'')
 
-            .field.required
-                label(for='location') Location (Being served at)
-                input(type='text', name='_task.location', id='location', value=data._task?data._task.location:'')
+                        .field.required#endTimeField
+                            label(for="endTime") End Time
+                            input(type="text", name="_task.endTime", id="endTime", value=data._task?data._task.endTime:'')
+
+                    .field.required
+                        label(for='location') Location (Being served at)
+                        input(type='text', name='_task.location', id='location', value=data._task?data._task.location:'')
 
 
-        .ui.raised.segment
+                .ui.raised.segment
 
-            .field.required
-                label(for='_contact') Main Contact
-                -var contactVal = ''
-                if data._task && data._task._contact
-                   contactVal = data._task._contact
-                +personSelector('_contact', contactVal.id, contactVal.fullName)
+                    .field.required
+                        label(for='_contact') Main Contact
+                        -var contactVal = ''
+                        if data._task && data._task._contact
+                           contactVal = data._task._contact
+                        +personSelector('_contact', contactVal.id, contactVal.fullName)
 
-            .two.fields
+                    .two.fields
 
-                .field.required
-                    label(for='effort') Effort
-                    select.ui.dropdown(name='effort', id='effort')
-                        option
-                        option 1
-                        option 2
-                        option 3
-                        option 4
-                        option 5
+                        .field.required
+                            label(for='effort') Effort
+                            select.ui.dropdown(name='effort', id='effort')
+                                option
+                                option 1
+                                option 2
+                                option 3
+                                option 4
+                                option 5
 
-                .field.required
-                    label(for='personsRequired') Persons Required
-                    input(type='text', name='personsRequired', id='personsRequired', value=data.personsRequired)
+                        .field.required
+                            label(for='personsRequired') Persons Required
+                            input(type='text', name='personsRequired', id='personsRequired', value=data.personsRequired)
 
-            .field.required
-                label(for='') Volunteers
-                ol
-                    li John Smith
-                    li John Rambo
-                    li Brad Thomas
+                    .field.required
+                        label(for='') Volunteers
+                        ol
+                            li John Smith
+                            li John Rambo
+                            li Brad Thomas
 
-        .ui.row
+                .ui.hidden.clearing.divider
 
-            +actionButtons(formMode)
-
-        .ui.hidden.clearing.divider
-
-        .ui.error.message
+                .ui.error.message

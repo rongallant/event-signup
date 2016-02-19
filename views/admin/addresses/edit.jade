@@ -1,6 +1,6 @@
 include ../../mixins/formFields
 include ../../mixins/personSelector
-include ../includes/formActionButtons
+include ../includes/formToolbar
 
 extend ../layout
 
@@ -81,76 +81,76 @@ append javascripts
 
 append appContent
 
-    h1 Address
+    .ui.stackable.grid
+        .sixteen.wide.tablet.ten.wide.computer.column
 
-    form.ui.form(name='mainForm')
+            form.ui.form(name='mainForm')
 
-        input(type="hidden", name="id", value=data.id)
+                +formToolbar
 
-        div(style='display: none;')
-            input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                div(style='display: none;')
+                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
-        input.prompt(type='hidden', id='location', name='location')
+                input(type="hidden", name="id", value=data.id)
+
+                input.prompt(type='hidden', id='location', name='location')
+
+                .ui.raised.segment
+
+                    .field.required
+                        label(for='name') Address Name
+                        input(type='text', name='name', id=name, value=data.name)
+
+                    .field
+                        label(for='description') Address Description
+                        textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                            = data.description
+                        .label ( #[i#descriptionCount] / 2000)
+
+                    .field.required
+                        label(for='_contact') Main Contact
+                        +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+
+                .ui.raised.segment
+
+                    .two.fields
+
+                        .field
+                            label(for='address1') Address 1 (Search)
+                            #addressSearch.ui.search
+                                .ui.icon.input
+                                    input.prompt(type='text', id='address1', name='address1', autocomplete='off', value=data.address1, placeholder='Search for address...')
+                                    i.marker.icon
+
+                        .field
+                            label(for='address2') Address 2
+                            input(type='text', name='address2', id='address2', value=data.address2)
+
+                    .three.fields
+
+                        .field.required
+                            label(for='city') City
+                            input(type='text', name='city', id='city', value=data.city, required)
+
+                        .field.required
+                            label(for='state') State
+                            input(type='text', name='state', id='state', value=data.state, required)
+
+                        .field.required
+                            label(for='postalCode') Zip Code
+                            input(type='text', name='postalCode', id='postalCode', value=data.postalCode, required)
+
+                    .field.required
+                        label(for='country') Country
+                        +countryField('country', data.country, data.country)
+
+                .ui.hidden.clearing.divider
+
+                .ui.error.message
 
         if data.fullAddress
-            .ui.right.rail
+            .sixteen.wide.tablet.six.wide.computer.column
                 .ui.segment
                     #gMap.ui.embed
                     .ui.hidden.divider
                     .nicePre= data.fullAddress
-
-        .ui.raised.segment
-
-            .field.required
-                label(for='name') Address Name
-                input(type='text', name='name', id=name, value=data.name)
-
-            .field
-                label(for='description') Address Description
-                textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
-                    = data.description
-                .label ( #[i#descriptionCount] / 2000)
-
-            .field.required
-                label(for='_contact') Main Contact
-                +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
-
-        .ui.raised.segment
-
-            .two.fields
-
-                .field
-                    label(for='address1') Address 1 (Search)
-                    #addressSearch.ui.search
-                        .ui.icon.input
-                            input.prompt(type='text', id='address1', name='address1', autocomplete='off', value=data.address1, placeholder='Search for address...')
-                            i.marker.icon
-
-                .field
-                    label(for='address2') Address 2
-                    input(type='text', name='address2', id='address2', value=data.address2)
-
-            .three.fields
-
-                .field.required
-                    label(for='city') City
-                    input(type='text', name='city', id='city', value=data.city, required)
-
-                .field.required
-                    label(for='state') State
-                    input(type='text', name='state', id='state', value=data.state, required)
-
-                .field.required
-                    label(for='postalCode') Zip Code
-                    input(type='text', name='postalCode', id='postalCode', value=data.postalCode, required)
-
-            .field.required
-                label(for='country') Country
-                +countryField('country', data.country, data.country)
-
-        .ui.row
-            +actionButtons(formMode)
-
-        .ui.hidden.clearing.divider
-
-        .ui.error.message

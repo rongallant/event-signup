@@ -1,6 +1,6 @@
-extend ../layout
+include ../includes/listToolbar
 
-include ../../mixins/pagination
+extend ../layout
 
 append javascripts
     script.
@@ -50,11 +50,12 @@ append javascripts
         })
 block appContent
 
-    h1 Schedule Dates
+    form.batch
 
-    .ui.raised.segment
+        +listToolbar
 
-        form.batch: table.ui.small.padded.very.basic.selectable.table
+        table.ui.padded.fixed.selectable.table
+
             thead
                 tr
                     th.four.wide Schedule Day
@@ -89,14 +90,3 @@ block appContent
                                         i.large.red.marker.square.icon
                                     .ui.fluid.popup.top.left.transition.hidden
                                         .gMap.ui.embed(data-location=row._address.location)
-
-        .ui.basic.clearing.segment
-            +pagination(1, data.pages, data.page, '/admin/scheduleDates/')
-
-    if data.length
-
-        .ui.row
-            .ui.icon.button.right.floated
-                a(href=createAction)
-                    i.plus.icon
-                    | Add Schedule Date

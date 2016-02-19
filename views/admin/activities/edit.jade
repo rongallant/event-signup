@@ -1,6 +1,6 @@
 include ../../mixins/formFields
 include ../../mixins/personSelector
-include ../includes/formActionButtons
+include ../includes/formToolbar
 
 extend ../layout
 
@@ -110,29 +110,28 @@ append javascripts
 
 append appContent
 
-    h1 Activity
+    .ui.stackable.grid
+        .column
 
-    form.ui.form(name='mainForm')
+            form.ui.form(name='mainForm')
 
-        input(type="hidden", name="id", value=data.id)
+                +formToolbar
 
-        div(style='display: none;')
-            input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                input(type="hidden", name="id", value=data.id)
 
-        .ui.raised.segment
+                div(style='display: none;')
+                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
-            include parts/formFields
+                .ui.raised.segment
 
-        .ui.raised.segment
+                    include parts/formFields
 
-            .field.required
-                label(for='_contact') Main Contact
-                +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+                .ui.raised.segment
 
-        .ui.row
+                    .field.required
+                        label(for='_contact') Main Contact
+                        +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
 
-            +actionButtons(formMode)
+                .ui.hidden.clearing.divider
 
-        .ui.hidden.clearing.divider
-
-        .ui.error.message
+                .ui.error.message

@@ -6,7 +6,7 @@ var VendorSchema = new Schema({
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
     companyName: String,
     companyDetails: String,
-    companyWebsite: String,
+    companyWebsite: String
 }, {
     strict: true,
     timestamps: true,

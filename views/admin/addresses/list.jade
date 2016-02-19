@@ -1,56 +1,43 @@
-include ../../mixins/pagination
+include ../includes/listToolbar
 
 extend ../layout
 
 block appContent
 
-    h1 Address
+    +listToolbar
 
-    .ui.raised.segments
-        .ui.segment
+    table.ui.padded.fixed.selectable.table
 
-            table.ui.small.padded.very.basic.single.line.selectable.table
-                thead
+        thead
+            tr
+                th Name
+                th Address
+                th State
+                th Map
+
+        tbody
+            if !data.docs.length
+
+                tr: td.center.aligned(colspan='5')
+                    .ui.basic.icon.button
+                        a(href=createAction)
+                            i.plus.icon
+                            | Add First Address
+
+            else
+                each row in data.docs
                     tr
-                        th Name
-                        th Address
-                        th State
-                        th Map
+                        td(data-label="Name")
+                            a#row1Link(href=editAction + row.id)
+                                = row.name ? row.name : 'No Name'
 
-                tbody
-                    if !data.docs.length
+                        td(data-label="Address")
+                                = row.shortAddress
 
-                        tr: td.center.aligned(colspan='5')
-                            .ui.basic.icon.button
-                                a(href=createAction)
-                                    i.plus.icon
-                                    | Add First Address
+                        td(data-label="State")
+                                = row.state
 
-                    else
-                        each row in data.docs
-                            tr
-                                td(data-label="Name")
-                                    a#row1Link(href=editAction + row.id)
-                                        = row.name ? row.name : 'No Name'
-
-                                td(data-label="Address")
-                                        = row.shortAddress
-
-                                td(data-label="State")
-                                        = row.state
-
-                                td.center.aligned(data-label="Map")
-                                    if row.location
-                                        a(href='https://www.google.com/maps/place/' + row.location)
-                                            i.large.red.marker.square.icon
-
-        .ui.basic.clearing.segment
-            +pagination(1, data.pages, data.page, '/admin/addresses/')
-
-    if data.length
-
-        .ui.row
-            .ui.icon.button.right.floated
-                a(href=createAction)
-                    i.plus.icon
-                    | Add Address
+                        td.center.aligned(data-label="Map")
+                            if row.location
+                                a(href='https://www.google.com/maps/place/' + row.location)
+                                    i.large.red.marker.square.icon

@@ -2,6 +2,19 @@ extends ../layout
 
 append stylesheets
     link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.min.css")
+    style(type='text/css').
+        html.ios {
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        html.ios,
+        html.ios body {
+            height: initial !important;
+        }
+        .segment.main {
+            margin-top: 50px;
+            padding-left: 175px;
+        }
 
 append javascripts
     script(src="/jquery_timepicker/jquery.timepicker.js")
@@ -11,68 +24,42 @@ append javascripts
     script(src="/datepair/dist/jquery.datepair.min.js")
     script(src='/javascripts/jquery-maxlength.js')
     script(src="/javascripts/searchAPIs.js")
+    script.
+        $(function(){
+            $('.launch.icon').click(function(){
+                $('#mainSidemenu').sidebar('toggle')
+            })
+            $('a.newItem').prop('href', '#{createAction}')
+            $('[data-content], [data-title]').popup()
+        })
 
 block content
+
+    #mainSidemenu.ui.fixed.inverted.left.thin.vertical.visible.sidebar.menu
+
+        .item
+            .header Members
+            .menu
+                a.item(href='/admin/addresses/') Addresses
+                a.item(href='/admin/persons/') People
+                a.item(href='#') Reservations
+        .item
+            .header Events
+            .menu
+                a.item(href='/admin/activities/')  Activities
+                a.item(href='/admin/events/') Events
+                a.item(href='/admin/meals/') Meals
+                a.item(href='/admin/scheduleDates/') Schedule Dates
+                a.item(href='/admin/tasks/') Tasks
+
     .ui.fixed.inverted.menu
-        .ui.container
-            a.header.item(href='/')
-                | Hamicon
 
-            .ui.simple.dropdown.item
-                | Main
-                i.dropdown.icon
-                .menu
+        a.launch.icon.item
+            i.content.icon
+        a.header.item(href='#')
+            // img.logo(src='assets/images/logo.png')
+            | Hamicon
 
-                    .header Events
-                    a.item(href='/admin/events/') List Events
-                    a.item(href='/admin/events/create/') New Event
-                    .divider
-
-                    .header Persons
-                    a.item(href='/admin/persons/') List Persons
-                    a.item(href='/admin/persons/create/') New Person
-
-            .ui.simple.dropdown.item
-                | Parts
-                i.dropdown.icon
-                .menu
-
-                    .header Addresses
-                    a.item(href='/admin/addresses/') List Addresses
-                    a.item(href='/admin/addresses/create/') New Address
-                    .divider
-
-                    .header Schedule Dates
-                    a.item(href='/admin/scheduleDates/') List Schedule Dates
-                    a.item(href='/admin/scheduleDates/create/') New Schedule Date
-                    .divider
-
-                    .header Activities
-                    a.item(href='/admin/activities/') List Activities
-                    a.item(href='/admin/activities/create/') New Activity
-                    .divider
-
-                    .header Tasks
-                    a.item(href='/admin/tasks/') List Tasks
-                    a.item(href='/admin/tasks/create/') New Task
-                    .divider
-
-                    .header Meals
-                    a.item(href='/admin/meals/') List Meals
-                    a.item(href='/admin/meals/create/') New Meal
-
-    .ui.main.text.container
-
-        .ui.breadcrumb
-            a(href="/").section Home
-
-            if url
-                - var folders = url.split('/')
-                each val in folders
-                    if val.length != 24 && val.length > 0
-                        i.right.chevron.icon.divider
-                        .section= val
-            .ui.hidden.divider
+    .ui.basic.segment.main
 
         block appContent
-            //- Content Renders Here

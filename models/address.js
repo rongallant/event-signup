@@ -3,16 +3,16 @@ var mongoose = require('mongoose'),
     mongoosePaginate = require('mongoose-paginate')
 
 var AddressSchema = new Schema({
-    _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
-    name: String,
-    description: String,
-    address1: String,
-    address2: String,
-    city: String,
-    state: String,
-    country: String,
-    postalCode: String,
-    location: { type: String }
+    name:  { type: String },
+    description:  { type: String },
+    address1:  { type: String },
+    address2:  { type: String },
+    city:  { type: String },
+    state:  { type: String },
+    country:  { type: String },
+    postalCode:  { type: String },
+    location: { type: String },
+    _contact: { type: Schema.Types.ObjectId, ref: 'Person' }
 }, {
     strict: true,
     timestamps: true,

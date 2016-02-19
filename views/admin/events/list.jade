@@ -1,43 +1,76 @@
-include ../../mixins/pagination
+include ../includes/listToolbar
 
 extend ../layout
 
+append javascripts
+    script.
+        $(function(){
+            $('.contact .ui.button').popup({
+                    inline   : true,
+                    hoverable: true,
+                    position : 'bottom left',
+                    delay: {
+                    show: 300,
+                    hide: 800
+                }
+            })
+        })
+
 block appContent
 
-    h1 Events
+    +listToolbar
 
-    .ui.raised.segments
-        .ui.segment
+    table.ui.padded.selectable.table
 
-            table.ui.small.padded.very.basic.selectable.table
-                thead
+        thead
+            tr
+                th Name
+                th Date/Time
+                th.right.aligned Contact
+
+        tbody
+            if !data.docs.length
+                tr: td.center.aligned(colspan='5')
+                    .ui.basic.icon.button
+                        a(href=createAction)
+                            i.plus.icon
+                            | Add First Event
+
+            else
+                each row in data.docs
                     tr
-                        th Name
-                        th Contact
-                        th.right.aligned Date/Time
+                        td(data-label="Name")
+                            a#row1Link(href=editAction + row.id)= row.name
 
-                tbody
-                    if !data.docs.length
-                        tr: td.center.aligned(colspan='5')
-                            .ui.basic.icon.button
-                                a(href=createAction)
-                                    i.plus.icon
-                                    | Add First Event
+                        td(data-label="Date/Time")
+                            if row.schedules
+                                .ui.list
+                                each schedule in row.schedules
+                                    .content
+                                       .description
+                                            i.calendar.icon
+                                            #{schedule.scheduleDay}
+                                            i.clock.icon
+                                            #{schedule.startTime} - #{schedule.endTime}
 
-                    else
-                        each row in data.docs
-                            tr
-                                td(data-label="Name")
-                                    a#row1Link(href=editAction + row.id)= row.name
-                                td(data-label="Contact")= row._contact ? row._contact.fullName : 'UNDEFINED'
-                                td.right.aligned(data-label="Date/Time") Saturday, 11:00am - 2:00pm
+                        td.right.aligned.contact(data-label="Contact")
+                            if row._contact
+                                .ui.icon.button.very.basic
+                                    i.user.icon
+                                .ui.flowing.popup.left.transition
+                                    .ui.left.aligned
+                                        .column
+                                            h4.ui.header #{row._contact.nickName} (#{ row._contact.fullName})
 
-            .ui.basic.clearing.segment
-                +pagination(1, data.pages, data.page, '/admin/events/')
+                                        if row._contact.email
+                                            a.ui.button.basic(href='mailto:'  + row._contact.email)
+                                               i.mail.outline.icon
+                                               = row._contact.email
 
-    if data.docs.length
-        .row
-            .ui.icon.button.left.floated
-                a(href=createAction)
-                    i.plus.icon
-                    | Add Event
+                                        if row._contact.phone
+                                            a.ui.button.basic(href='tel:'  + row._contact.phone)
+                                               i.phone.icon
+                                               = row._contact.phone
+
+                            else
+                                'UNDEFINED'

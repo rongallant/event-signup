@@ -1,6 +1,8 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    mongoosePaginate = require('mongoose-paginate')
+    mongoosePaginate = require('mongoose-paginate'),
+    Vendor = require("./vendor"),
+    Pet = require("./pet")
 
 var PersonSchema = new Schema({
     nickName: {
@@ -33,8 +35,8 @@ var PersonSchema = new Schema({
     lu_id: {},
     _address: { type: Schema.Types.ObjectId, ref: 'Address'  },
     _emergencyContact: { type: Schema.Types.ObjectId, ref: 'Person'  },
-    _vendor: { type: Schema.Types.ObjectId, ref: 'Vendor'  },
-    _pet: { type: Schema.Types.ObjectId, ref: 'Pet'  }
+    _vendor: { type: Vendor.schema  },
+    _pet: { type: Pet.schema  }
 }, {
     strict: true,
     timestamps: true,

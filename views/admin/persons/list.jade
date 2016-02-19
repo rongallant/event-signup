@@ -1,57 +1,56 @@
-include ../../mixins/pagination
+include ../includes/listToolbar
 
 extend ../layout
 
 block appContent
 
-    h1 People
+    +listToolbar
 
-    .ui.raised.segment
+    table.ui.padded.fixed.selectable.table
 
-        table.ui.small.padded.very.basic.selectable.table
-            thead
-                tr
-                    th Nickname
-                    th Name
-                    th
-                    th.center.aligned Child
+        thead
+            tr
+                th Nickname
+                th Name
+                th
+                th.right.aligned Attributes
 
-            tbody
-                if !data.docs.length
-                    tr: td.center.aligned(colspan='5')
-                        .ui.basic.icon.button
-                            a(href=createAction)
-                                i.plus.icon
-                                | Add First Person
+        tbody
+            if !data.docs.length
+                tr: td.center.aligned(colspan='5')
+                    .ui.basic.icon.button
+                        a(href=createAction)
+                            i.plus.icon
+                            | Add First Person
 
-                else
-                    each row in data.docs
-                        tr
-                            td(data-label="Nickname")
-                                a#row1Link(href=editAction + row.id)
-                                    = row.nickName
+            else
+                each row in data.docs
+                    tr
+                        td(data-label="Nickname")
+                            a#row1Link(href=editAction + row.id)
+                                = row.nickName
 
-                            td(data-label="Name")
-                                = row.fullName
+                        td(data-label="Name")
+                            = row.fullName
 
-                            td.right.aligned(data-label="")
-                                if row.email
-                                    a(href='mailto:' + row.email, title=row.email)
-                                        i.large.mail.square.icon
-                                if row.phone
-                                    a(href='tel:' + row.phone, title=row.phone)
-                                        i.large.phone.square.icon
+                        td.right.aligned(data-label="")
+                            if row.email
+                                a(href='mailto:' + row.email, title=row.email, data-content='Email #{row.email}')
+                                    i.large.mail.square.icon
+                            if row.phone
+                                a(href='tel:' + row.phone, title=row.phone, data-content='Call #{row.phone}')
+                                    i.large.phone.square.icon
 
-                            td.center.aligned(data-label="Child")
-                                if (row.isChild == true)
-                                    i.large.child.box.icon(title="Child")
+                        td.right.aligned(data-label="Attributes")
 
-        .ui.basic.clearing.segment
-            +pagination(1, data.pages, data.page, '/admin/persons/')
+                            if (row.isChild == true)
+                                span.popup(title="Is Child", data-content="Child is #{row.childAge} years old")
+                                    i.large.child.box.icon
 
-    if data.docs.length
-        .row
-            .ui.icon.button.left.floated
-                a(href=createAction)
-                    i.plus.icon
-                    | Add Person
+                            if row._vendor && row._vendor.companyName
+                                span.popup(title="Is Vendor", data-content="Vendor for #{row._vendor.companyName}")
+                                    i.large.building.outline.icon
+
+                            if row._pet && row._pet.petName
+                                span.popup(title="Has Pet", data-content='#{row._pet.petType} "#{row._pet.petName}" is #{row._pet.petWeight}lbs')
+                                    i.large.paw.icon

@@ -1,6 +1,6 @@
 include ../../mixins/formFields
 include ../../mixins/personSelector
-include ../includes/formActionButtons
+include ../includes/formToolbar
 
 extend ../layout
 
@@ -113,80 +113,79 @@ append javascripts
 
 append appContent
 
-    h1 Task
+    .ui.stackable.grid
+        .column
 
-    form.ui.form(name='mainForm')
+            form.ui.form(name='mainForm')
 
-        input(type="hidden", name="id", value=data.id)
+                +formToolbar
 
-        div(style='display: none;')
-            input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                div(style='display: none;')
+                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
-        .ui.raised.segment
+                input(type="hidden", name="id", value=data.id)
 
-            .field.required
-                label(for='name') Task Name
-                input(type='text', name='name', id='name', value=data.name)
+                .ui.raised.segment
 
-            .field.required
-                label(for='description') Task Description
-                textarea(name='description', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
-                    = data.description
-                .label ( #[i#descriptionCount] / 2000)
+                    .field.required
+                        label(for='name') Task Name
+                        input(type='text', name='name', id='name', value=data.name)
 
-            .field.required
-                label(for='_contact') Main Contact
-                -var contactVal = ''
-                if data && data._contact
-                   contactVal = data._contact
-                +personSelector('_contact', contactVal.id, contactVal.fullName)
+                    .field.required
+                        label(for='description') Task Description
+                        textarea(name='description', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                            = data.description
+                        .label ( #[i#descriptionCount] / 2000)
 
-        .ui.raised.segment
+                    .field.required
+                        label(for='_contact') Main Contact
+                        -var contactVal = ''
+                        if data && data._contact
+                           contactVal = data._contact
+                        +personSelector('_contact', contactVal.id, contactVal.fullName)
 
-            .two.fields
+                .ui.raised.segment
 
-                .field.required
-                    label(for="startTime") Start Time
-                    input(type="text", name="startTime", id="startTime", value=data.startTime)
+                    .two.fields
 
-                .field.required#endTimeField
-                    label(for="endTime") End Time
-                    input(type="text", name="endTime", id="endTime", value=data.endTime)
+                        .field.required
+                            label(for="startTime") Start Time
+                            input(type="text", name="startTime", id="startTime", value=data.startTime)
 
-            .field.required
-                label(for='location') Location (Being served at)
-                input(type='text', name='location', id='location', value=data.location)
+                        .field.required#endTimeField
+                            label(for="endTime") End Time
+                            input(type="text", name="endTime", id="endTime", value=data.endTime)
+
+                    .field.required
+                        label(for='location') Location (Being served at)
+                        input(type='text', name='location', id='location', value=data.location)
 
 
-        .ui.raised.segment
+                .ui.raised.segment
 
-            .two.fields
+                    .two.fields
 
-                .field.required
-                    label(for='effort') Effort
-                    select.ui.dropdown(name='effort', id='effort')
-                        option
-                        option 1
-                        option 2
-                        option 3
-                        option 4
-                        option 5
+                        .field.required
+                            label(for='effort') Effort
+                            select.ui.dropdown(name='effort', id='effort')
+                                option
+                                option 1
+                                option 2
+                                option 3
+                                option 4
+                                option 5
 
-                .field.required
-                    label(for='personsRequired') Persons Required
-                    input(type='text', name='personsRequired', id='personsRequired', value=data.personsRequired)
+                        .field.required
+                            label(for='personsRequired') Persons Required
+                            input(type='text', name='personsRequired', id='personsRequired', value=data.personsRequired)
 
-            .field.required
-                label(for='') Volunteers
-                ol
-                    li John Smith
-                    li John Rambo
-                    li Brad Thomas
+                    .field.required
+                        label(for='') Volunteers
+                        ol
+                            li John Smith
+                            li John Rambo
+                            li Brad Thomas
 
-        .ui.row
+                .ui.hidden.clearing.divider
 
-            +actionButtons(formMode)
-
-        .ui.hidden.clearing.divider
-
-        .ui.error.message
+                .ui.error.message
