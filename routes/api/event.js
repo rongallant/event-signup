@@ -3,8 +3,7 @@ var express = require('express'),
   mongoose = require('mongoose')
 
 var Event = require("../../models/event")
-
-var URL_BASE = "/admin/events"
+var ScheduleDate = require("../../models/scheduleDate")
 
 /************************************************************
  * REST API
@@ -12,17 +11,30 @@ var URL_BASE = "/admin/events"
 
 /* POST New item created. */
 router.post('/', function(req, res, next) {
+
+    console.log("CREATE NEW EVENT")
+    console.log('req.body')
+    console.log(req.body)
+
     var data = new Event({
         _address: mongoose.Types.ObjectId(req.body._address),
         _contact: mongoose.Types.ObjectId(req.body._contact),
         name: req.body.name,
-        description: req.body.description,
-        startTime: req.body.startTime,
-        endTime: req.body.endTime
-        // schedules: [{
-        //     type: Schema.Types.ObjectId, ref: 'ScheduleDate'
-        // }]
+        description: req.body.description
     })
+
+    console.log('schedules')
+    console.table(req.body.schedules)
+
+    for (var i in req.body.schedules) {
+        console.log('ADD req.body.schedules[i].scheduleDay = ' + req.body.schedules[i].scheduleDay)
+        data.schedules.push(new ScheduleDate({
+            scheduleDay: req.body.schedules[i].scheduleDay,
+            startTime: req.body.schedules[i].startTime,
+            endTime: req.body.schedules[i].endTime
+        }))
+    }
+
     data.save(function(err, data) {
         if (err) {
             res.status(501).json({ "status" : "error", "error" : err })
@@ -34,8 +46,9 @@ router.post('/', function(req, res, next) {
 
 /* GET Returns single item. */
 router.get('/:id', function(req, res, next) {
+    console.log("GET SINGLE EVENT")
     Event.findById(req.params.id)
-        .populate('_contact')
+        .populate('schedules _contact _address')
         .exec(function(err, data) {
             if (err) {
                 res.status(404).json({ "status" : "error", "error" : err })

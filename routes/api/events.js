@@ -3,8 +3,6 @@ var express = require('express'),
 
 var Event = require("../../models/event")
 
-var URL_BASE = "/admin/events"
-
 /************************************************************
  * REST API
  ************************************************************/
@@ -22,24 +20,22 @@ router.get('/:currPage?', function(req, res, next) {
         query = {
             $or: [
                 { "name": regex },
-                { "description": regex },
-                { "startTime": regex },
-                { "endTime": regex }
+                { "description": regex }
             ]
         }
     }
     var options = {
         sort: { updatedAt: -1 },
-        populate: '_contact _address',
+        populate: 'schedules _contact _address ',
         lean: false,
         page: req.params.currPage,
         limit: req.app.locals.resultsPerPage
     }
     Event.paginate(query, options, function(err, data) {
         if (err) {
-                res.status(500).json({ error: err.message })
+            res.status(500).json({ error: err.message })
         } else {
-                res.status(200).json(data)
+            res.status(200).json(data)
         }
     })
 })
