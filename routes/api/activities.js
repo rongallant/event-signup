@@ -28,10 +28,9 @@ router.get('/:currPage?', function(req, res, next) {
         }
     }
     var options = {
-        select: 'name startTime endTime _contact',
         sort: { updatedAt: -1 },
         populate: '_contact',
-        lean: false,
+        lean: false, // False enables virtual params
         page: req.params.currPage,
         limit: req.app.locals.resultsPerPage
     }

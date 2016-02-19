@@ -37,6 +37,7 @@ var index = require('./routes/index'),
   addresses = require('./routes/admin/addresses'),
   scheduleDates = require('./routes/admin/scheduleDates'),
   activities = require('./routes/admin/activities'),
+  tasks = require('./routes/admin/tasks'),
   meals = require('./routes/admin/meals')
 
 /************************************************************
@@ -57,6 +58,9 @@ var apiEvent = require('./routes/api/event'),
 
   apiActivity = require('./routes/api/activity'),
   apiActivities = require('./routes/api/activities'),
+
+  apiTask = require('./routes/api/task'),
+  apiTasks = require('./routes/api/tasks'),
 
   apiMeal = require('./routes/api/meal'),
   apiMeals = require('./routes/api/meals')
@@ -158,6 +162,10 @@ app.use('/api/scheduleDates', apiScheduleDates)
 app.use('/admin/activities', activities)
 app.use('/api/activity', apiActivity)
 app.use('/api/activities', apiActivities)
+
+app.use('/admin/tasks', tasks)
+app.use('/api/task', apiTask)
+app.use('/api/tasks', apiTasks)
 
 app.use('/admin/meals', meals)
 app.use('/api/meal', apiMeal)

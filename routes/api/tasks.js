@@ -1,8 +1,7 @@
 var express = require('express'),
   router = express.Router()
 
-var Pet = require("../../models/pet")
-var URL_BASE = "/admin/pets"
+var Task = require("../../models/task")
 
 /************************************************************
  * REST API
@@ -20,9 +19,11 @@ router.get('/:currPage?', function(req, res, next) {
         var regex = new RegExp(req.query.q, 'i')
         query = {
             $or: [
-                { "petName": regex },
-                { "petType": regex },
-                { "petWeight": regex }
+                { "name": regex },
+                { "description": regex },
+                { "location": regex },
+                { "startTime": regex },
+                { "endTime": regex }
             ]
         }
     }
@@ -33,7 +34,7 @@ router.get('/:currPage?', function(req, res, next) {
         page: req.params.currPage,
         limit: req.app.locals.resultsPerPage
     }
-    Pet.paginate(query, options, function(err, data) {
+    Task.paginate(query, options, function(err, data) {
         if (err) {
             res.status(500).json({ error: err.message })
         } else {

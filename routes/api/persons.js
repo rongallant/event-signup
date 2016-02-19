@@ -31,7 +31,7 @@ router.get('/:currPage?', function(req, res, next) {
     var options = {
         sort: { updatedAt: -1 },
         populate: '_address _emergencyContact',
-        lean: false,
+        lean: false, // False enables virtual params
         page: req.params.currPage,
         limit: req.app.locals.resultsPerPage
     }

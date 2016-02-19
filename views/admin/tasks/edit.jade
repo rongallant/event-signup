@@ -13,7 +13,6 @@ append javascripts
                 location: {rules:[{type:'empty'}, {type:'maxLength[250]'}]},
                 startTime: {rules:[{type:'empty'}, {type:'maxLength[7]'}]},
                 endTime: {rules:[{type:'empty'}, {type:'maxLength[7]'}]},
-                // allergins: {},
                 personsRequired: {rules:[{type:'empty'}, {type:'number'}]},
                 effort: {rules:[{type:'empty'}, {type:'number'}]}, // 1-5
                 _contact: {rules:[{type:'empty'}]}
@@ -114,7 +113,7 @@ append javascripts
 
 append appContent
 
-    h1 Meal
+    h1 Task
 
     form.ui.form(name='mainForm')
 
@@ -126,18 +125,21 @@ append appContent
         .ui.raised.segment
 
             .field.required
-                label(for='name') Meal Name
-                input(type='text', name='_task.name', id='name', value=data._task?data._task.name:'')
+                label(for='name') Task Name
+                input(type='text', name='name', id='name', value=data.name)
 
             .field.required
-                label(for='description') Meal Description
-                textarea(name='_task.description', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
-                    = data._task?data._task.description:''
+                label(for='description') Task Description
+                textarea(name='description', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                    = data.description
                 .label ( #[i#descriptionCount] / 2000)
 
-            .field
-                label(for='allergins') Allergins
-                input(type='text', name='allergins', id='allergins', value=data.allergins)
+            .field.required
+                label(for='_contact') Main Contact
+                -var contactVal = ''
+                if data && data._contact
+                   contactVal = data._contact
+                +personSelector('_contact', contactVal.id, contactVal.fullName)
 
         .ui.raised.segment
 
@@ -145,25 +147,18 @@ append appContent
 
                 .field.required
                     label(for="startTime") Start Time
-                    input(type="text", name="_task.startTime", id="startTime", value=data._task?data._task.startTime:'')
+                    input(type="text", name="startTime", id="startTime", value=data.startTime)
 
                 .field.required#endTimeField
                     label(for="endTime") End Time
-                    input(type="text", name="_task.endTime", id="endTime", value=data._task?data._task.endTime:'')
+                    input(type="text", name="endTime", id="endTime", value=data.endTime)
 
             .field.required
                 label(for='location') Location (Being served at)
-                input(type='text', name='_task.location', id='location', value=data._task?data._task.location:'')
+                input(type='text', name='location', id='location', value=data.location)
 
 
         .ui.raised.segment
-
-            .field.required
-                label(for='_contact') Main Contact
-                -var contactVal = ''
-                if data._task && data._task._contact
-                   contactVal = data._task._contact
-                +personSelector('_contact', contactVal.id, contactVal.fullName)
 
             .two.fields
 

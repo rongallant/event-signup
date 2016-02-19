@@ -6,11 +6,9 @@ var GuestSchema = new Schema({
     arrivingDate: Date,
     departingDate: Date,
     additionalInformation: String,
-
     daysAttending: [{
         type: Schema.Types.ObjectId, ref: 'ScheduleDate'
     }],
-
     _person: { type: Schema.Types.ObjectId, ref: 'Person' },
     _reservation: { type: Schema.Types.ObjectId, ref: 'Reservation' },
     _activities: [{ type: Schema.Types.ObjectId, ref: 'Activity' }],

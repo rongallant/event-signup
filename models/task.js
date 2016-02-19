@@ -3,14 +3,14 @@ var mongoose = require('mongoose'),
     mongoosePaginate = require('mongoose-paginate')
 
 var TaskSchema = new Schema({
-    _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
-    location: { type: String },
+    name: { type: String, maxlength: 70 },
+    description: { type: String, maxlength: 2000 },
     startTime: String,
     endTime: String,
-    title: { type: String },
-    description: { type: String },
+    location: { type: String },
+    effort: Number, // Scale of 1-5
     personsRequired: Number,
-    effort: Number // Scale of 1-5
+    _contact: { type: Schema.Types.ObjectId, ref: 'Person' }
 }, {
     strict: true,
     timestamps: true,

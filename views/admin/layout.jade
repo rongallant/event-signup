@@ -4,7 +4,6 @@ append stylesheets
     link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.min.css")
 
 append javascripts
-    // script(src="/jquery_timepicker/jquery.timepicker.min.js")
     script(src="/jquery_timepicker/jquery.timepicker.js")
     script(src="/javascripts/moment.min.js")
     script(src="/javascripts/daterangepicker.min.js")
@@ -51,6 +50,11 @@ block content
                     .header Activities
                     a.item(href='/admin/activities/') List Activities
                     a.item(href='/admin/activities/create/') New Activity
+                    .divider
+
+                    .header Tasks
+                    a.item(href='/admin/tasks/') List Tasks
+                    a.item(href='/admin/tasks/create/') New Task
                     .divider
 
                     .header Meals

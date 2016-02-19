@@ -19,19 +19,19 @@ router.get('/:currPage?', function(req, res, next) {
         var regex = new RegExp(req.query.q, 'i')
         query = {
             $or: [
-                { "name": regex },
-                { "description": regex },
-                { "location": regex },
+                { "_task.name": regex },
+                { "_task.description": regex },
+                { "_task.location": regex },
                 { "allergins": regex },
-                { "startTime": regex },
-                { "endTime": regex }
+                { "s_task.tartTime": regex },
+                { "_task.endTime": regex }
             ]
         }
     }
     var options = {
         sort: { updatedAt: -1 },
-        populate: '_contact',
-        lean: false,
+        populate: '_task',
+        lean: false, // False enables virtual params
         page: req.params.currPage,
         limit: req.app.locals.resultsPerPage
     }

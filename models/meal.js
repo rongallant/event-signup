@@ -1,21 +1,11 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    mongoosePaginate = require('mongoose-paginate')
+    mongoosePaginate = require('mongoose-paginate'),
+    Task = require("./task")
 
 var MealSchema = new Schema({
-
-    name: { type: String },
-    description: { type: String },
-    location: { type: String },
-    allergins: [{ type: String }],
-
-
-    startTime: String,
-    endTime: String,
-
-    personsRequired: { type: Number },
-    effort: { type: Number }, // Scale of 1-5
-    _contact: { type: Schema.Types.ObjectId, ref: 'Person' }
+    _task: { type: Task.schema, default: new Task() },
+    allergins: [{ type: String }]
 
 }, {
     strict: true,

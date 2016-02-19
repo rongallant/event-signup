@@ -4,8 +4,8 @@ var mongoose = require('mongoose'),
 
 var ActivitySchema = new Schema({
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
-    name: { type: String },
-    description: { type: String },
+    name: { type: String, maxlength: 70 },
+    description: { type: String, maxlength: 2000 },
     startTime: String,
     endTime: String
 }, {
