@@ -36,7 +36,8 @@ var index = require('./routes/index'),
   persons = require('./routes/admin/persons'),
   addresses = require('./routes/admin/addresses'),
   scheduleDates = require('./routes/admin/scheduleDates'),
-  activities = require('./routes/admin/activities')
+  activities = require('./routes/admin/activities'),
+  meals = require('./routes/admin/meals')
 
 /************************************************************
  * Rest API
@@ -55,7 +56,10 @@ var apiEvent = require('./routes/api/event'),
   apiScheduleDates = require('./routes/api/scheduleDates'),
 
   apiActivity = require('./routes/api/activity'),
-  apiActivities = require('./routes/api/activities')
+  apiActivities = require('./routes/api/activities'),
+
+  apiMeal = require('./routes/api/meal'),
+  apiMeals = require('./routes/api/meals')
 
 /************************************************************
  * App Config
@@ -155,6 +159,9 @@ app.use('/admin/activities', activities)
 app.use('/api/activity', apiActivity)
 app.use('/api/activities', apiActivities)
 
+app.use('/admin/meals', meals)
+app.use('/api/meal', apiMeal)
+app.use('/api/meals', apiMeals)
 
 /************************************************************
  * Database

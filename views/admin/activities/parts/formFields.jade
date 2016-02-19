@@ -5,7 +5,10 @@
 
 .field.required
     label(for='description') Activity Description
-    textarea(name='description', id='description', rows='2')= data.description
+    textarea(name='description', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+        = data.description
+    .label ( #[i#descriptionCount] / 2000)
+
 
 .two.fields
 

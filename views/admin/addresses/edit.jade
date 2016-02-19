@@ -107,7 +107,9 @@ append appContent
 
             .field
                 label(for='description') Address Description
-                textarea(name='description', id='description',  rows='2')=data.description
+                textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                    = data.description
+                .label ( #[i#descriptionCount] / 2000)
 
             .field.required
                 label(for='_contact') Main Contact

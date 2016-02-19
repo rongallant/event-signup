@@ -1,5 +1,3 @@
-'use strict'
-
 var mongoose = require('mongoose'),
     passportLocalMongoose = require('passport-local-mongoose'),
     Schema = mongoose.Schema,
@@ -8,6 +6,15 @@ var mongoose = require('mongoose'),
 var AccountSchema = new Schema({
     email: { type: String, index: { unique: true } }, //  Use as username
     _person: { type: Schema.Types.ObjectId, ref: 'Person' },
+}, {
+    strict: true,
+    timestamps: true,
+    toObject: {
+        virtuals: true
+    },
+    toJSON: {
+        virtuals: true
+    }
 })
 
 AccountSchema.plugin(passportLocalMongoose)

@@ -16,7 +16,6 @@ var GuestSchema = new Schema({
     _activities: [{ type: Schema.Types.ObjectId, ref: 'Activity' }],
     _tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }],
     _meals: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
-
     _pet: { type: Schema.Types.ObjectId, ref: 'Pet' }
 
 }, {

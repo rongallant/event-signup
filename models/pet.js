@@ -4,9 +4,9 @@ var mongoose = require('mongoose'),
 
 var PetSchema = new Schema({
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
-    name: String,
-    weight: String,
-    animal: { type: String, default: 'Dog' }
+    petName: String,
+    petWeight: String,
+    petType: { type: String, default: 'Dog' }
 }, {
     strict: true,
     timestamps: true,

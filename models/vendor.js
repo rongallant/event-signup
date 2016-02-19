@@ -4,8 +4,9 @@ var mongoose = require('mongoose'),
 
 var VendorSchema = new Schema({
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
-    companyWebsite: String,
-    companyDetails: String
+    companyName: String,
+    companyDetails: String,
+    companyWebsite: String
 }, {
     strict: true,
     timestamps: true,

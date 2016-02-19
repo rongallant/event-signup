@@ -3,8 +3,6 @@ var mongoose = require('mongoose'),
     mongoosePaginate = require('mongoose-paginate')
 
 var PersonSchema = new Schema({
-    _address: { type: Schema.Types.ObjectId, ref: 'Address'  },
-    _emergencyContact: { type: Schema.Types.ObjectId, ref: 'Person'  },
     nickName: {
         type: String,
         maxlength: 70,
@@ -32,7 +30,11 @@ var PersonSchema = new Schema({
     childAge: { type: Number, min: 0, max: 17 },
     gearList: { type: String, maxlength: 2000 },
     cr_id: {},
-    lu_id: {}
+    lu_id: {},
+    _address: { type: Schema.Types.ObjectId, ref: 'Address'  },
+    _emergencyContact: { type: Schema.Types.ObjectId, ref: 'Person'  },
+    _vendor: { type: Schema.Types.ObjectId, ref: 'Vendor'  },
+    _pet: { type: Schema.Types.ObjectId, ref: 'Pet'  }
 }, {
     strict: true,
     timestamps: true,
@@ -56,8 +58,8 @@ PersonSchema.virtual('fullName').get(function () {
 
 // Save timestamp
 PersonSchema.pre('save', function(next) {
-  this.starttime = new Date()
-  next()
+    this.starttime = new Date()
+    next()
 })
 
 module.exports = mongoose.model('Person', PersonSchema)

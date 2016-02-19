@@ -75,6 +75,7 @@ append javascripts
             })
             $form.find('.personSelector').search(localPersonSearch)
             $form.find('.addressSelector').search(localAddressSearch)
+            $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
 
             var scheduleDateValidationRules = {
                 dateField: 'empty',
@@ -105,11 +106,9 @@ append javascripts
                     return false
                 }
             })
-
             $('#schedulesForm .submit.button').click(function(){
                 $scheduleDateForm.form('submit')
             })
-
         })
 
         function newHidden(key, name, value) {
@@ -141,7 +140,9 @@ append appContent
 
             .field.required
                 label(for="description") Description
-                textarea(type="text", name="description", id="description", rows="4")= data.description
+                textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                    = data.description
+                .label ( #[i#descriptionCount] / 2000)
 
         .ui.raised.segment
 

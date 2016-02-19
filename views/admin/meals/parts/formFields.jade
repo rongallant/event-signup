@@ -1,0 +1,55 @@
+
+.field.required
+    label(for='name') Meal Name
+    input(type='text', name='name', id='name', value=data.name)
+
+.field.required
+    label(for='description') Meal Description
+    textarea(name='description', id='description', rows='2')= data.description
+
+.field.required
+    label(for='location') Location (Being served at)
+    textarea(name='location', id='location', rows='2')= data.location
+
+
+.field
+    label(for='allergins') Allergins
+    input(type='text', name='allergins', id='allergins', value=data.allergins)
+
+.two.fields
+
+    .field.required
+        label(for="startTime") Start Time
+        input(type="text", name="startTime", id="startTime", value=data.startTime)
+
+    .field.required#endTimeField
+        label(for="endTime") End Time
+        input(type="text", name="endTime", id="endTime", value=data.endTime)
+
+
+
+.two.fields
+
+
+
+    .field.required
+        label(for='effort') Effort
+        input(type='range', name='effort', id='effort', min="1", max="5", value=data.effort)
+
+
+
+
+    .field.required
+        label(for='personsRequired') Persons Required
+        input(type='text', name='personsRequired', id='personsRequired', value=data.personsRequired)
+
+
+.field.required
+    label(for='_contact') Main Contact
+    +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+
+
+    // .field.required
+    //     label(for='_contacts') List of cooks
+    //     +personSelector('_contacts', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+
