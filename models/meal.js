@@ -4,9 +4,8 @@ var mongoose = require('mongoose'),
     Task = require("./task")
 
 var MealSchema = new Schema({
-    _task: { type: Task.schema, default: new Task() },
+    _task: { type: Task.schema },
     allergins: [{ type: String }]
-
 }, {
     strict: true,
     timestamps: true,

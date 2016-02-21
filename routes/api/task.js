@@ -35,6 +35,9 @@ router.get('/:id', function(req, res, next) {
     Task.findById(req.params.id)
         .populate('_contact')
         .exec(function(err, data) {
+
+            console.table(data)
+
             if (err) {
                 res.status(404).json({ "status" : "error", "error" : err })
             } else {
@@ -46,13 +49,16 @@ router.get('/:id', function(req, res, next) {
 
 /* PUT Updates an item. */
 router.put('/', function(req, res, next) {
-    Task.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
-        if (err) {
-            res.status(501).json({ "status" : "error", "error" : err })
-        } else {
-            res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
+    Task.findByIdAndUpdate(req.body.id, {$set:req.body})
+        .populate('_contact')
+        .exec(function(err, data) {
+            if (err) {
+                res.status(501).json({ "status" : "error", "error" : err })
+            } else {
+                res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
+            }
         }
-    })
+    )
 })
 
 /* DELETE Deletes an item. */

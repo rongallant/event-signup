@@ -3,8 +3,12 @@ include ../../mixins/personSelector
 include ../../mixins/scheduleDatesSelector
 include ../scheduleDates/parts/form
 include ../includes/formToolbar
+include ../includes/formElements
 
 extend ../layout
+
+block toolbar
+    +formToolbar
 
 append javascripts
     script(src="/javascripts/scheduleDayForm.js")
@@ -27,15 +31,14 @@ append javascripts
                         url: '#{apiItem}',
                         dataType: 'JSON',
                         statusCode: {
-                            201: function() {
+                            201: function(data, textStatus, jqXHR) {
                                 console.log('201 Error')
                                 $.get('/message/success/Saved successfully')
-                            },
-                            501: function() {
-                                console.log('501 Error')
-                                $.get('/message/error/Error saving')
                             }
                         }
+                    })
+                    .error(function(response) {
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
                     })
                     .done(function(response) {
                         location.replace('#{editAction}' + response.data.id)
@@ -44,7 +47,7 @@ append javascripts
                 }
             }
 
-            var $form =  $('form[name=mainForm]')
+            var $form = $('form[name=mainForm]')
 
             // CREATE / SAVE
             $form.form(validationRules)
@@ -100,14 +103,24 @@ append javascripts
                     $clone.append(newHidden(i, 'startTime', fields.startTime))
                     $clone.append(newHidden(i, 'endTime', fields.endTime))
                     $clone.appendTo("#schedules")
-                    $clone.show()
-                    $('#schedulesForm').modal('hide')
+                    $clone.show().transition('drop')
+                    $('#schedulesForm').modal('tada')
                     $form.form(validationRules)
                     return false
                 }
             })
             $('#schedulesForm .submit.button').click(function(){
                 $scheduleDateForm.form('submit')
+            })
+
+            // Delete Schedule Row
+            $('#schedules .removeRow').each(function(){
+                $(this).click(function(){
+                    $(this).closest('.schedule.item').transition('horizontal flip', 500, function() {
+                        $(this).remove()
+                        $form.form(validationRules)
+                    })
+                })
             })
         })
 
@@ -123,72 +136,70 @@ append javascripts
 
 append appContent
 
-    .ui.stackable.grid
-        .column
+    form.ui.form(name='mainForm')
 
-            form.ui.form(name='mainForm')
+        +mainFormWrapper
 
-                +formToolbar
+            +formSegment
 
-                div(style='display: none;')
-                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                .field.required
+                    label(for="eventName") Event Name
+                    input(type="text", name="name", id="eventName", value=data.name)
 
-                input(type="hidden", name="id", value=data.id)
+                .field.required
+                    label(for="description") Description
+                    textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                        = data.description
+                    .label ( #[i#descriptionCount] / 2000)
 
-                .ui.raised.segment
+            +formSegment
 
+                .field.required
+                    label(for="_address") Location
+                    +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
+
+            +formSegment
+
+                .field.required
+                    label(for='_contact') Main Contact
+                    +personSelector('_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+
+            +formSegment
+
+                .ui.row
                     .field.required
-                        label(for="eventName") Event Name
-                        input(type="text", name="name", id="eventName", value=data.name)
+                        label.ui.right.floated(for="schedules") Schedule Days
+                        +scheduleDatesSelector
+                #schedules.ui.relaxed.divided.list
+                    .ui.field.item.hidden#sample(style="display:none")
+                        i.large.clock.middle.aligned.icon
+                        .content
+                            a.header
+                            .description
 
-                    .field.required
-                        label(for="description") Description
-                        textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
-                            = data.description
-                        .label ( #[i#descriptionCount] / 2000)
-
-                .ui.raised.segment
-
-                    .field.required
-                        label(for="_address") Location
-                        +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
-
-                .ui.raised.segment
-
-                    .field.required
-                        label(for='_contact') Main Contact
-                        +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
-
-                .ui.raised.segment
-
-                    .ui.row
-                        a#addSchedules.ui.right.floated.button(href='#')
-                            i.icon.plus
-                            | Add Schedule Day
-
-                        .field.required
-                            label.ui.right.floated(for="schedules") Schedule Days
-
-                    #schedules.ui.relaxed.divided.list
-                        .ui.field.item.hidden#sample(style="display:none")
-                            i.large.clock.middle.aligned.icon
-                            .content
-                                a.header
-                                .description
-
-                        if data.schedules
-
-                            -each schedule, index in data.schedules
+                    if data.schedules
+                        -each schedule, index in data.schedules
+                            .schedule.item
                                 input(type='hidden', name='scheduleDay[#{index}][id]', value=schedule.id)
                                 input(type='hidden', name='scheduleDay[#{index}][scheduleDay]', value=schedule.scheduleDay)
                                 input(type='hidden', name='scheduleDay[#{index}][startTime]', value=schedule.startTime)
                                 input(type='hidden', name='scheduleDay[#{index}][endTime]', value=schedule.endTime)
-                                .item
-                                    i.large.clock.middle.aligned.icon
-                                    .content
-                                        a.header= schedule.scheduleDay
-                                        .description #{schedule.startTime} - #{schedule.endTime}
+                                .content.right.floated
+                                    a.icon.removeRow.button(href='#')
+                                        i.delete.icon.right.aligned
+                                i.large.clock.middle.aligned.icon
+                                .content
+                                    a.header= schedule.scheduleDay
+                                    .description #{schedule.startTime} - #{schedule.endTime}
 
-                .ui.hidden.clearing.divider
+                    .item
+                        a#addSchedules.ui.right.floated.button(href='#')
+                            i.icon.plus
+                            | Add Schedule Day
 
-                .ui.error.message
+
+            div(style='display: none;')
+                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                input(type="hidden", name="id", value=data.id)
+
+        +messageContainer

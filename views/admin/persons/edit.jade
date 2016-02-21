@@ -2,8 +2,12 @@ include ../../mixins/addressSelector
 include ../../mixins/personSelector
 include ../../mixins/formFields
 include ../includes/formToolbar
+include ../includes/formElements
 
 extend ../layout
+
+block toolbar
+    +formToolbar
 
 append javascripts
     script.
@@ -46,20 +50,16 @@ append javascripts
                         url: '#{apiItem}',
                         dataType: 'JSON',
                         statusCode: {
-                            201: function() {
+                            201: function(data, textStatus, jqXHR) {
                                 console.log('201 Error')
                                 $.get('/message/success/Saved successfully')
-                            },
-                            501: function() {
-                                console.log('501 Error')
-                                $.get('/message/error/Error saving')
                             }
                         }
                     })
+                    .error(function(response) {
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
+                    })
                     .done(function(response) {
-
-                        console.log(response)
-
                         location.replace('#{editAction}' + response.data.id)
                     })
                     return false
@@ -112,106 +112,100 @@ append javascripts
 
 append appContent
 
-    .ui.stackable.grid
-        .column
+    form.ui.form(name='mainForm')
 
-            form#editPerson.ui.form(name='mainForm')
+        +mainFormWrapper
 
-                +formToolbar
+            +formSegment
 
-                div(style='display: none;')
-                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                .field.required
+                    label(for='nickName') Nickname
+                    input(type="text", name='nickName', id='nickName', value=data.nickName)
 
-                input(type="hidden", name="id", value=data.id)
-
-                .ui.raised.segment
+                .two.fields
 
                     .field.required
-                        label(for='nickName') Nickname
-                        input(type="text", name='nickName', id='nickName', value=data.nickName)
+                        label(for='firstName') First Name
+                        input(type="text", name='firstName', id='firstName', value=data.firstName)
 
-                    .two.fields
+                    .field.required
+                        label(for='lastName') Last Name
+                        input(type="text", name='lastName', id='lastName', value=data.lastName)
 
-                        .field.required
-                            label(for='firstName') First Name
-                            input(type="text", name='firstName', id='firstName', value=data.firstName)
+                .two.fields
 
-                        .field.required
-                            label(for='lastName') Last Name
-                            input(type="text", name='lastName', id='lastName', value=data.lastName)
+                    .field.required
+                        label(for='email') Email
+                        input(type="email", name='email', id='email', value=data.email)
 
-                    .two.fields
+                    .field.required
+                        label(for='phone') Phone
+                        input(type="text", name='phone', id='phone', value=data.phone)
 
-                        .field.required
-                            label(for='email') Email
-                            input(type="email", name='email', id='email', value=data.email)
+                .field
+                    label(for='isChild') Is Child
+                    .ui.left.labeled.input
+                        .ui.label
+                            .ui.fitted.checkbox
+                                input(type='checkbox', name='isChild', id='isChild', checked=data.isChild)
+                        input(type='number', name='childAge', id='childAge', max='17', maxlength='2', placeholder='Childs age...', value=data.childAge)
 
-                        .field.required
-                            label(for='phone') Phone
-                            input(type="text", name='phone', id='phone', value=data.phone)
-
-                    .field
-                        label(for='isChild') Is Child
-                        .ui.left.labeled.input
-                            .ui.label
-                                .ui.fitted.checkbox
-                                    input(type='checkbox', name='isChild', id='isChild', checked=data.isChild)
-                            input(type='number', name='childAge', id='childAge', max='17', maxlength='2', placeholder='Childs age...', value=data.childAge)
-
-                    .field
-                        label(for='_address') Address
-                        +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
+                .field
+                    label(for='_address') Address
+                    +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
 
 
-                    .field
-                        label(for='_emergencyContact') Emergency Contact
-                        +personSelector('_emergencyContact', data._emergencyContact?data._emergencyContact.fullName:'', data._emergencyContact?data._emergencyContact.id:'')
+                .field
+                    label(for='_emergencyContact') Emergency Contact
+                    +personSelector('_emergencyContact', data._emergencyContact?data._emergencyContact.fullName:'', data._emergencyContact?data._emergencyContact.id:'')
 
-                .ui.raised.segment
+            +formSegment
 
-                    +field('gearList', 'Hammock Setup', data.gearList)
-                        textarea(name='gearList', id='gearList', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='gearListCount', wrap='virtual')
-                            = data.gearList
-                        .label ( #[i#gearListCount] / 2000)
+                +field('gearList', 'Hammock Setup', data.gearList)
+                    textarea(name='gearList', id='gearList', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='gearListCount', wrap='virtual')
+                        = data.gearList
+                    .label ( #[i#gearListCount] / 2000)
 
-                .ui.raised.segment
+            +formSegment
 
-                    h4 Pet
+                h4 Pet
 
-                    .ui.three.fields
-
-                        .field
-                            label(for='petName') Pet's Name
-                            input(type="text", name='_pet.petName', id='petName', value=data._pet?data._pet.petName:'')
-
-                        .field
-                            label(for='petWeight') Pet's Weight (LBS)
-                            input(type="number", name='_pet.petWeight', id='petWeight', value=data._pet?data._pet.petWeight:'')
-
-                        .field
-                            label(for='petType') Pet's Type
-                            input(type="text", name='_pet.petType', id='petType', value=data._pet?data._pet.petType:'')
-
-                .ui.raised.segment
-
-                    h4 Vendor
+                .ui.three.fields
 
                     .field
-                        label(for='companyName') Company Name
-                        input(type="text", name='_vendor.companyName', id='companyName', value=data._vendor?data._vendor.companyName:'')
+                        label(for='petName') Pet's Name
+                        input(type="text", name='_pet.petName', id='petName', value=data._pet?data._pet.petName:'')
 
                     .field
-                        label(for='companyDetails') Company Details
-                        textarea(name='_vendor.companyDetails', id='companyDetails', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='companyDetailsCount', wrap='virtual')
-                            = data._vendor?data._vendor.companyDetails:''
-                        .label ( #[i#companyDetailsCount] / 2000)
+                        label(for='petWeight') Pet's Weight (LBS)
+                        input(type="number", name='_pet.petWeight', id='petWeight', value=data._pet?data._pet.petWeight:'')
 
                     .field
-                        label(for='companyWebsite') Company Website
-                        .ui.labeled.input
-                            .ui.label http://
-                            input(type="text", name='_vendor.companyWebsite', id='companyWebsite', value=data._vendor?data._vendor.companyWebsite:'')
+                        label(for='petType') Pet's Type
+                        input(type="text", name='_pet.petType', id='petType', value=data._pet?data._pet.petType:'')
 
-                .ui.hidden.clearing.divider
+            +formSegment
 
-                .ui.error.message
+                h4 Vendor
+
+                .field
+                    label(for='companyName') Company Name
+                    input(type="text", name='_vendor.companyName', id='companyName', value=data._vendor?data._vendor.companyName:'')
+
+                .field
+                    label(for='companyDetails') Company Details
+                    textarea(name='_vendor.companyDetails', id='companyDetails', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='companyDetailsCount', wrap='virtual')
+                        = data._vendor?data._vendor.companyDetails:''
+                    .label ( #[i#companyDetailsCount] / 2000)
+
+                .field
+                    label(for='companyWebsite') Company Website
+                    .ui.labeled.input
+                        .ui.label http://
+                        input(type="text", name='_vendor.companyWebsite', id='companyWebsite', value=data._vendor?data._vendor.companyWebsite:'')
+
+            div(style='display: none;')
+                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                input(type="hidden", name="id", value=data.id)
+
+        +messageContainer

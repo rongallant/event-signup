@@ -2,9 +2,10 @@ include ../includes/listToolbar
 
 extend ../layout
 
-block appContent
-
+block toolbar
     +listToolbar
+
+block appContent
 
     table.ui.padded.fixed.selectable.table
 
@@ -13,7 +14,7 @@ block appContent
                 th Name
                 th Address
                 th State
-                th Map
+                th.right.aligned Map
 
         tbody
             if !data.docs.length
@@ -37,7 +38,7 @@ block appContent
                         td(data-label="State")
                                 = row.state
 
-                        td.center.aligned(data-label="Map")
+                        td.right.aligned(data-label="Map")
                             if row.location
                                 a(href='https://www.google.com/maps/place/' + row.location)
                                     i.large.red.marker.square.icon

@@ -1,6 +1,7 @@
 include ../../mixins/formFields
 include ../../mixins/personSelector
 include ../includes/formToolbar
+include ../includes/formElements
 
 extend ../layout
 
@@ -28,15 +29,14 @@ append javascripts
                         url: '#{apiItem}',
                         dataType: 'JSON',
                         statusCode: {
-                            201: function() {
+                            201: function(data, textStatus, jqXHR) {
                                 console.log('201 Error')
                                 $.get('/message/success/Saved successfully')
-                            },
-                            501: function() {
-                                console.log('501 Error')
-                                $.get('/message/error/Error saving')
                             }
                         }
+                    })
+                    .error(function(response) {
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
                     })
                     .done(function(response) {
                         location.replace('#{editAction}' + response.data.id)
@@ -108,30 +108,27 @@ append javascripts
             $form.find('.personSelector').search(localPersonSearch)
         })
 
+block toolbar
+    +formToolbar
+
 append appContent
 
-    .ui.stackable.grid
-        .column
+    form.ui.form(name='mainForm')
 
-            form.ui.form(name='mainForm')
+        +mainFormWrapper
 
-                +formToolbar
-
+            div(style='display: none;')
+                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
                 input(type="hidden", name="id", value=data.id)
 
-                div(style='display: none;')
-                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+            +formSegment
 
-                .ui.raised.segment
+                include parts/formFields
 
-                    include parts/formFields
+            +formSegment
 
-                .ui.raised.segment
+                .field.required
+                    label(for='_contact') Main Contact
+                    +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
 
-                    .field.required
-                        label(for='_contact') Main Contact
-                        +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
-
-                .ui.hidden.clearing.divider
-
-                .ui.error.message
+        +messageContainer

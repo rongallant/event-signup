@@ -4,7 +4,8 @@ var express = require('express'),
 
 var router = express.Router(),
     Address = require('../../models/address'),
-    appSettings = require('../utils/appSettings')
+    appSettings = require('../utils/appSettings'),
+    countries = require("i18n-iso-countries")
 
 var appDesc = []
 appDesc['apiSingle'] = '/address'
@@ -30,6 +31,7 @@ function hasVal(variable){
 router.get('/edit/:id', function(req, res, next) {
     request(res.locals.apiItem + req.params.id, function (err, data){
         if (err) { return next(err) }
+        res.locals.countries = countries
         res.render(path.join(res.locals.editView), {
             title: "Editing " + appDesc['singularName'],
             user: req.user,
@@ -64,10 +66,6 @@ router.get('/:currPage?', function(req, res, next){
     console.log('apiUri: ' + apiUri)
     request(apiUri, function (err, data) {
         if (err) { return next(err) }
-
-        console.log(data)
-
-
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
             user: req.user,

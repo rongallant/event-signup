@@ -7,7 +7,7 @@ html
             meta(http-equiv='X-UA-Compatible', content='IE=edge')
             meta(name='viewport', content='width=device-width, initial-scale=1')
 
-            title #{title} | Hancon.com
+            title #{title} | #{locals.apptitle}
             meta(name='description', content='')
 
             //- Add to homescreen for Chrome on Android
@@ -29,7 +29,7 @@ html
         block stylesheets
         link(rel='stylesheet', href='/stylesheets/style.css')
 
-    body
+    body.pushable
         block header
         block content
         block footer

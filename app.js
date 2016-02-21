@@ -71,7 +71,8 @@ var apiEvent = require('./routes/api/event'),
 var app = express()
 
 // Global variables
-app.locals.title = 'Hangcon.com'
+app.locals.apptitle = 'HANGCON'
+app.locals.url = 'hangcon.com'
 app.locals.email = 'ron@rongallant.com'
 app.locals.resultsPerPage = 10
 

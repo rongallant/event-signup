@@ -13,7 +13,7 @@ var TaskSchema = new Schema({
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' }
 }, {
     strict: true,
-    timestamps: true,
+    // timestamps: true,
     toObject: {
         virtuals: true
     },

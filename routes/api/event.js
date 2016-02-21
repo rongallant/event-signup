@@ -11,20 +11,12 @@ var ScheduleDate = require("../../models/scheduleDate")
 
 /* POST New item created. */
 router.post('/', function(req, res, next) {
-
-    console.log("CREATE NEW EVENT")
-    console.log('req.body')
-    console.log(req.body)
-
     var data = new Event({
         _address: mongoose.Types.ObjectId(req.body._address),
         _contact: mongoose.Types.ObjectId(req.body._contact),
         name: req.body.name,
         description: req.body.description
     })
-
-    console.log('schedules')
-    console.table(req.body.schedules)
 
     for (var i in req.body.schedules) {
         console.log('ADD req.body.schedules[i].scheduleDay = ' + req.body.schedules[i].scheduleDay)

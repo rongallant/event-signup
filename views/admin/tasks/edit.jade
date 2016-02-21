@@ -1,8 +1,12 @@
 include ../../mixins/formFields
 include ../../mixins/personSelector
 include ../includes/formToolbar
+include ../includes/formElements
 
 extend ../layout
+
+block toolbar
+    +formToolbar
 
 append javascripts
     script.
@@ -31,15 +35,14 @@ append javascripts
                         url: '#{apiItem}',
                         dataType: 'JSON',
                         statusCode: {
-                            201: function() {
+                            201: function(data, textStatus, jqXHR) {
                                 console.log('201 Error')
                                 $.get('/message/success/Saved successfully')
-                            },
-                            501: function() {
-                                console.log('501 Error')
-                                $.get('/message/error/Error saving')
                             }
                         }
+                    })
+                    .error(function(response) {
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
                     })
                     .done(function(response) {
                         location.replace('#{editAction}' + response.data.id)
@@ -113,79 +116,69 @@ append javascripts
 
 append appContent
 
-    .ui.stackable.grid
-        .column
+    form.ui.form(name='mainForm')
 
-            form.ui.form(name='mainForm')
+        +mainFormWrapper
 
-                +formToolbar
+            +formSegment
 
-                div(style='display: none;')
-                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                .field.required
+                    label(for='name') Task Name
+                    input(type='text', name='name', id='name', value=data.name)
 
+                .field.required
+                    label(for='description') Task Description
+                    textarea(name='description', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                        = data.description
+                    .label ( #[i#descriptionCount] / 2000)
+
+                .field.required
+                    label(for='_contact') Main Contact
+                    +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+
+            +formSegment
+
+                .two.fields
+
+                    .field.required
+                        label(for="startTime") Start Time
+                        input(type="text", name="startTime", id="startTime", value=data.startTime)
+
+                    .field.required#endTimeField
+                        label(for="endTime") End Time
+                        input(type="text", name="endTime", id="endTime", value=data.endTime)
+
+                .field.required
+                    label(for='location') Location (Being served at)
+                    input(type='text', name='location', id='location', value=data.location)
+
+            +formSegment
+
+                .two.fields
+
+                    .field.required
+                        label(for='effort') Effort
+                        select.ui.dropdown(name='effort', id='effort')
+                            option
+                            each val in [1,2,3,4,5]
+                                if data.effort == val
+                                    option(selected)= val
+                                else
+                                    option= val
+
+                    .field.required
+                        label(for='personsRequired') Persons Required
+                        input(type='number', name='personsRequired', id='personsRequired', value=data.personsRequired)
+
+                .field.required
+                    label(for='') Volunteers
+                    ol
+                        li John Smith
+                        li John Rambo
+                        li Brad Thomas
+
+            div(style='display: none;')
+                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
                 input(type="hidden", name="id", value=data.id)
 
-                .ui.raised.segment
-
-                    .field.required
-                        label(for='name') Task Name
-                        input(type='text', name='name', id='name', value=data.name)
-
-                    .field.required
-                        label(for='description') Task Description
-                        textarea(name='description', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
-                            = data.description
-                        .label ( #[i#descriptionCount] / 2000)
-
-                    .field.required
-                        label(for='_contact') Main Contact
-                        -var contactVal = ''
-                        if data && data._contact
-                           contactVal = data._contact
-                        +personSelector('_contact', contactVal.id, contactVal.fullName)
-
-                .ui.raised.segment
-
-                    .two.fields
-
-                        .field.required
-                            label(for="startTime") Start Time
-                            input(type="text", name="startTime", id="startTime", value=data.startTime)
-
-                        .field.required#endTimeField
-                            label(for="endTime") End Time
-                            input(type="text", name="endTime", id="endTime", value=data.endTime)
-
-                    .field.required
-                        label(for='location') Location (Being served at)
-                        input(type='text', name='location', id='location', value=data.location)
-
-
-                .ui.raised.segment
-
-                    .two.fields
-
-                        .field.required
-                            label(for='effort') Effort
-                            select.ui.dropdown(name='effort', id='effort')
-                                option
-                                option 1
-                                option 2
-                                option 3
-                                option 4
-                                option 5
-
-                        .field.required
-                            label(for='personsRequired') Persons Required
-                            input(type='text', name='personsRequired', id='personsRequired', value=data.personsRequired)
-
-                    .field.required
-                        label(for='') Volunteers
-                        ol
-                            li John Smith
-                            li John Rambo
-                            li Brad Thomas
-
-                .ui.hidden.clearing.divider
-
-                .ui.error.message
+        +messageContainer

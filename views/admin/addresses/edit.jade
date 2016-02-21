@@ -1,8 +1,12 @@
 include ../../mixins/formFields
 include ../../mixins/personSelector
 include ../includes/formToolbar
+include ../includes/formElements
 
 extend ../layout
+
+block toolbar
+    +formToolbar
 
 append javascripts
     script.
@@ -28,15 +32,14 @@ append javascripts
                         url: '#{apiItem}',
                         dataType: 'JSON',
                         statusCode: {
-                            201: function() {
+                            201: function(data, textStatus, jqXHR) {
                                 console.log('201 Error')
                                 $.get('/message/success/Saved successfully')
-                            },
-                            501: function() {
-                                console.log('501 Error')
-                                $.get('/message/error/Error saving')
                             }
                         }
+                    })
+                    .error(function(response) {
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
                     })
                     .done(function(response) {
                         location.replace('#{editAction}' + response.data.id)
@@ -75,7 +78,7 @@ append javascripts
             $form.find('.personSelector').search(localPersonSearch)
             $form.find('#addressSearch').search(googleAddressSearchAndPopulate)
             if (('#{data.id}').length > 0) {
-                updateMap('#{encodeURIComponent(data.fullAddress)}')
+                updateMap('#{data.delimitedAddress)}')
             }
         })
 
@@ -86,34 +89,27 @@ append appContent
 
             form.ui.form(name='mainForm')
 
-                +formToolbar
+                +mainFormWrapper
 
-                div(style='display: none;')
-                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                    +formSegment
 
-                input(type="hidden", name="id", value=data.id)
+                        .field.required
+                            label(for='_contact') Main Contact
+                            +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
 
-                input.prompt(type='hidden', id='location', name='location')
+                    +formSegment
 
-                .ui.raised.segment
+                        .field.required
+                            label(for='name') Address Name
+                            input(type='text', name='name', id=name, value=data.name)
 
-                    .field.required
-                        label(for='name') Address Name
-                        input(type='text', name='name', id=name, value=data.name)
+                        .field
+                            label(for='description') Address Description
+                            textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                                = data.description
+                            .label ( #[i#descriptionCount] / 2000)
 
-                    .field
-                        label(for='description') Address Description
-                        textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
-                            = data.description
-                        .label ( #[i#descriptionCount] / 2000)
-
-                    .field.required
-                        label(for='_contact') Main Contact
-                        +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
-
-                .ui.raised.segment
-
-                    .two.fields
+                    +formSegment
 
                         .field
                             label(for='address1') Address 1 (Search)
@@ -126,31 +122,36 @@ append appContent
                             label(for='address2') Address 2
                             input(type='text', name='address2', id='address2', value=data.address2)
 
-                    .three.fields
+                        .fields
+
+                            .field.eight.wide.required
+                                label(for='city') City
+                                input(type='text', name='city', id='city', value=data.city, required)
+
+                            .field.required
+                                label(for='state') State
+                                input(type='text', name='state', id='state', value=data.state, required)
+
+                            .field.required
+                                label(for='postalCode') Zip Code
+                                input(type='text', name='postalCode', id='postalCode', value=data.postalCode, required)
 
                         .field.required
-                            label(for='city') City
-                            input(type='text', name='city', id='city', value=data.city, required)
+                            label(for='country') Country
+                            +countryField('country', data.country, data.country)
 
-                        .field.required
-                            label(for='state') State
-                            input(type='text', name='state', id='state', value=data.state, required)
+                    div(style='display:none;float:left')
+                        input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                        input(type="hidden", name="id", value=data.id)
+                        input.prompt(type='hidden', id='location', name='location')
 
-                        .field.required
-                            label(for='postalCode') Zip Code
-                            input(type='text', name='postalCode', id='postalCode', value=data.postalCode, required)
-
-                    .field.required
-                        label(for='country') Country
-                        +countryField('country', data.country, data.country)
-
-                .ui.hidden.clearing.divider
-
-                .ui.error.message
+                +messageContainer
 
         if data.fullAddress
             .sixteen.wide.tablet.six.wide.computer.column
-                .ui.segment
+                +formSegmentAlt
                     #gMap.ui.embed
                     .ui.hidden.divider
                     .nicePre= data.fullAddress
+
+

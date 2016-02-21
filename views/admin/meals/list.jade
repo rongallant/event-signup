@@ -2,9 +2,10 @@ include ../includes/listToolbar
 
 extend ../layout
 
-block appContent
-
+block toolbar
     +listToolbar
+
+block appContent
 
     table.ui.padded.fixed.selectable.table
 
@@ -29,15 +30,15 @@ block appContent
                     tr
                         td(data-label="Name")
                             a#row1Link(href=editAction + row.id)
-                                =row.name ? row.name : 'UNDEFINED'
+                                =row._task.name ? row._task.name : 'UNDEFINED'
 
                         td(data-label="Start Time")
-                            = row.startTime
+                            = row._task.startTime
 
                         td(data-label="End Time")
-                            = row.endTime
+                            = row._task.endTime
 
                         td(data-label="Contact")
-                            if row._contact
-                                a(href="mailto:#{row._contact.email}")
-                                    = row._contact.fullName
+                            if row._task._contact
+                                a(href="mailto:#{row._task._contact.email}")
+                                    = row._task._contact.fullName

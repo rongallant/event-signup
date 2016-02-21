@@ -16,6 +16,7 @@
     "express": "~4.13.1",
     "express-session": "^1.13.0",
     "extend": "^3.0.0",
+    "i18n-iso-countries": "^0.12.0",
     "jade": "~1.11.0",
     "jquery": "^2.2.0",
     "kerberos": "0.0.18",

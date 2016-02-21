@@ -2,19 +2,7 @@ extends ../layout
 
 append stylesheets
     link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.min.css")
-    style(type='text/css').
-        html.ios {
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-        }
-        html.ios,
-        html.ios body {
-            height: initial !important;
-        }
-        .segment.main {
-            margin-top: 50px;
-            padding-left: 175px;
-        }
+    link(rel="stylesheet", type="text/css", href="/stylesheets/admin.css")
 
 append javascripts
     script(src="/jquery_timepicker/jquery.timepicker.js")
@@ -24,19 +12,47 @@ append javascripts
     script(src="/datepair/dist/jquery.datepair.min.js")
     script(src='/javascripts/jquery-maxlength.js')
     script(src="/javascripts/searchAPIs.js")
-    script.
-        $(function(){
-            $('.launch.icon').click(function(){
-                $('#mainSidemenu').sidebar('toggle')
-            })
-            $('a.newItem').prop('href', '#{createAction}')
-            $('[data-content], [data-title]').popup()
-        })
+    script(src="/javascripts/admin.js")
 
 block content
 
-    #mainSidemenu.ui.fixed.inverted.left.thin.vertical.visible.sidebar.menu
+    // Top Menu
+    #mainMenuTop.ui.inverted.top.main.menu
 
+        a.item.launch.icon.show-mobile
+            i.content.icon
+
+        a.item.header(href='/')
+            | #{locals.apptitle}
+            if title
+                | &nbsp;- #{title}
+
+        .right.menu.hide-mobile
+            .ui.right.dropdown.item
+                | Members
+                i.dropdown.icon
+                .menu
+                    a.item(href='/admin/addresses/') Addresses
+                    a.item(href='/admin/persons/') People
+                    a.item(href='#') Reservations
+
+            .ui.right.dropdown.item
+                | Events
+                i.dropdown.icon
+                .menu
+                    a.item(href='/admin/activities/')  Activities
+                    a.item(href='/admin/events/') Events
+                    a.item(href='/admin/meals/') Meals
+                    a.item(href='/admin/scheduleDates/') Schedule Dates
+                    a.item(href='/admin/tasks/') Tasks
+
+    // Side menu
+    #mainMenuLeft.ui.inverted.left.vertical.sidebar.menu.thin
+
+        a.item.launch.icon.show-mobile
+            i.content.icon
+
+        a.item.header(href='/') Home
         .item
             .header Members
             .menu
@@ -52,14 +68,10 @@ block content
                 a.item(href='/admin/scheduleDates/') Schedule Dates
                 a.item(href='/admin/tasks/') Tasks
 
-    .ui.fixed.inverted.menu
+    #mainContent.pusher
 
-        a.launch.icon.item
-            i.content.icon
-        a.header.item(href='#')
-            // img.logo(src='assets/images/logo.png')
-            | Hamicon
+        block toolbar
 
-    .ui.basic.segment.main
+        .ui.main.container
 
-        block appContent
+            block appContent
