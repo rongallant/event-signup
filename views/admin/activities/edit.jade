@@ -71,39 +71,37 @@ append javascripts
             })
 
             // Timepicker
-            $form.find('#startTime').timepicker({
-                minTime: '5:00am',
-                maxTime: '12:00am',
-                match: 'text',
-                useSelect: true,
-                noneOption: ' ',
-                className: 'ui selection dropdown'
-            })
-            var endTimeField = $form.find('#endTimeField')
-            endTimeField.find('#endTime').timepicker({
-                minTime: '5:00am',
-                maxTime: '12:00am',
-                match: 'text',
-                useSelect: true,
-                noneOption: ' ',
-                className: 'ui selection dropdown',
-                showDuration: true
-            })
-            $('#startTime').on('changeTime', function() {
-                // Get selected time
-                var out = moment($(this).timepicker('getTime')).add(1, 'h').format('h:mma')
-                // Set hidden field
-                endTimeField.find('#endTime').val(out)
+            // $form.find('#startTime').timepicker({
+            //     minTime: '5:00am',
+            //     maxTime: '12:00am',
+            //     match: 'text',
+            //     useSelect: true,
+            //     noneOption: ' ',
+            //     className: 'ui selection dropdown'
+            // })
+            // var endTimeField = $form.find('#endTimeField')
+            // endTimeField.find('#endTime').timepicker({
+            //     minTime: '5:00am',
+            //     maxTime: '12:00am',
+            //     match: 'text',
+            //     useSelect: true,
+            //     noneOption: ' ',
+            //     className: 'ui selection dropdown',
+            //     showDuration: true
+            // })
+            // $('#startTime').on('changeTime', function() {
+            //     // Get selected time
+            //     var out = moment($(this).timepicker('getTime')).add(1, 'h').format('h:mma')
+            //     // Set hidden field
+            //     endTimeField.find('#endTime').val(out)
 
-                endTimeField.find('#endTime').timepicker('setTime', out)
+            //     endTimeField.find('#endTime').timepicker('setTime', out)
 
-                endTimeField.find('#endTime').timepicker('option', { minTime: $(this).timepicker('getTime') })
+            //     endTimeField.find('#endTime').timepicker('option', { minTime: $(this).timepicker('getTime') })
 
-                endTimeField.find('.ui-timepicker-select').dropdown()
-            })
-            $form.find('.ui-timepicker-select').dropdown()
-
-            $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
+            //     endTimeField.find('.ui-timepicker-select').dropdown()
+            // })
+            // $form.find('.ui-timepicker-select').dropdown()
             $form.find('.ui.checkbox').checkbox()
             $form.find('.personSelector').search(localPersonSearch)
         })
@@ -129,6 +127,6 @@ append appContent
 
                 .field.required
                     label(for='_contact') Main Contact
-                    +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+                    +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
 
         +messageContainer

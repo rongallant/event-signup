@@ -52,7 +52,7 @@ router.put('/', function(req, res, next) {
         if (err) {
             res.status(501).json({ "status" : "error", "error" : err })
         } else {
-            res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
+            res.status(201).json({ "status" : "success", "data" : { "id" : req.body.id } })
         }
     })
 })

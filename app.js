@@ -75,6 +75,8 @@ app.locals.apptitle = 'HANGCON'
 app.locals.url = 'hangcon.com'
 app.locals.email = 'ron@rongallant.com'
 app.locals.resultsPerPage = 10
+global.viewPatternDate = "D MMMM, YYYY"
+global.viewPatternTime = "h:mm A"
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -129,6 +131,8 @@ app.use('/themes', express.static(path.join(__dirname, 'node_modules', 'semantic
 app.use('/javascripts', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
 app.use('/javascripts', express.static(path.join(__dirname, 'node_modules', 'semantic-ui-daterangepicker')))
 app.use('/javascripts', express.static(path.join(__dirname, 'semantic', 'dist')))
+app.use('/pickadate', express.static(path.join(__dirname, 'node_modules', 'pickadate', 'lib', 'compressed')))
+app.use('/moment', express.static(path.join(__dirname, 'node_modules', 'moment', 'min')))
 
 app.use('/', index)
 app.use('/admin', admin)

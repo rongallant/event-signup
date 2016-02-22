@@ -1,9 +1,9 @@
 var express = require('express'),
-  router = express.Router(),
-  mongoose = require('mongoose')
+    router = express.Router(),
+    mongoose = require('mongoose'),
+    moment = require('moment')
 
 var Event = require("../../models/event")
-var ScheduleDate = require("../../models/scheduleDate")
 
 /************************************************************
  * REST API
@@ -12,21 +12,15 @@ var ScheduleDate = require("../../models/scheduleDate")
 /* POST New item created. */
 router.post('/', function(req, res, next) {
     var data = new Event({
-        _address: mongoose.Types.ObjectId(req.body._address),
-        _contact: mongoose.Types.ObjectId(req.body._contact),
         name: req.body.name,
-        description: req.body.description
+        description: req.body.description,
+        startDate: req.body.startDate,
+        startTime: req.body.startTime,
+        endDate: req.body.endDate,
+        endTime: req.body.endTime,
+        _address: mongoose.Types.ObjectId(req.body._address),
+        _contact: mongoose.Types.ObjectId(req.body._contact)
     })
-
-    for (var i in req.body.schedules) {
-        console.log('ADD req.body.schedules[i].scheduleDay = ' + req.body.schedules[i].scheduleDay)
-        data.schedules.push(new ScheduleDate({
-            scheduleDay: req.body.schedules[i].scheduleDay,
-            startTime: req.body.schedules[i].startTime,
-            endTime: req.body.schedules[i].endTime
-        }))
-    }
-
     data.save(function(err, data) {
         if (err) {
             res.status(501).json({ "status" : "error", "error" : err })
@@ -38,9 +32,8 @@ router.post('/', function(req, res, next) {
 
 /* GET Returns single item. */
 router.get('/:id', function(req, res, next) {
-    console.log("GET SINGLE EVENT")
     Event.findById(req.params.id)
-        .populate('schedules _contact _address')
+        .populate('_contact _address')
         .exec(function(err, data) {
             if (err) {
                 res.status(404).json({ "status" : "error", "error" : err })
@@ -49,6 +42,16 @@ router.get('/:id', function(req, res, next) {
             }
         }
     )
+})
+
+function dateTimeToDate(strDate, strTime) {
+    return moment(strDate + ' ' + strTime, global.viewPatternDate +' '+global.viewPatternTime).format()
+}
+// set dateTime
+router.put('/', function(req, res, next) {
+     req.body.startDateTime = dateTimeToDate(req.body.startDate, req.body.startTime)
+     req.body.endDateTime = dateTimeToDate(req.body.endDate, req.body.endTime)
+     next()
 })
 
 /* PUT Updates an item. */

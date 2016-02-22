@@ -122,21 +122,26 @@ append appContent
 
             +formSegment
 
-                .field.required
-                    label(for='name') Task Name
-                    input(type='text', name='name', id='name', value=data.name)
+                +formSegmentHeader("Task Details")
 
-                .field.required
+                +formSegmentIntro
+
+                .fields
+
+                    .field.twelve.wide.required
+                        label(for='name') Task Name
+                        input(type='text', name='name', id='name', value=data.name)
+
+                .field.required.textarea
                     label(for='description') Task Description
-                    textarea(name='description', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                    +textarea('description', 'description', '2000')
                         = data.description
-                    .label ( #[i#descriptionCount] / 2000)
-
-                .field.required
-                    label(for='_contact') Main Contact
-                    +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
 
             +formSegment
+
+                +formSegmentHeader("Task Schedule")
+
+                +formSegmentIntro
 
                 .two.fields
 
@@ -148,30 +153,44 @@ append appContent
                         label(for="endTime") End Time
                         input(type="text", name="endTime", id="endTime", value=data.endTime)
 
-                .field.required
-                    label(for='location') Location (Being served at)
-                    input(type='text', name='location', id='location', value=data.location)
+                .fields
+
+                    .field.ten.wide.required
+                        label(for='location') Location (Being served at)
+                        input(type='text', name='location', id='location', value=data.location)
 
             +formSegment
 
-                .two.fields
+                +formSegmentHeader("Work Effort")
 
-                    .field.required
-                        label(for='effort') Effort
-                        select.ui.dropdown(name='effort', id='effort')
-                            option
-                            each val in [1,2,3,4,5]
-                                if data.effort == val
-                                    option(selected)= val
-                                else
-                                    option= val
+                +formSegmentIntro
 
-                    .field.required
-                        label(for='personsRequired') Persons Required
-                        input(type='number', name='personsRequired', id='personsRequired', value=data.personsRequired)
+                    .fields
+
+                        .field.ten.wide.required
+                            label(for='_contact') Main Contact
+                            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+
+                    .fields
+
+                        .field.three.wide.required
+                            label(for='effort') Effort
+                            select.ui.dropdown(name='effort', id='effort')
+                                option
+                                each val in [1,2,3,4,5]
+                                    if data.effort == val
+                                        option(selected)= val
+                                    else
+                                        option= val
+
+                    .fields
+
+                        .field.two.wide.required
+                            label(for='personsRequired') Persons Required
+                            input(type='number', name='personsRequired', id='personsRequired', value=data.personsRequired)
 
                 .field.required
-                    label(for='') Volunteers
+                    label() Volunteers
                     ol
                         li John Smith
                         li John Rambo

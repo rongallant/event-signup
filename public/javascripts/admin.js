@@ -2,14 +2,13 @@
 $(function(){
     $('a.newItem').prop('href', '#{createAction}')
     $('[data-content], [data-title]').popup()
+    $('[name=mainForm]').find('textarea[data-maxsize]').maxLengthCounter()
 
     var $topMenu = $('#mainMenuTop')
 
     var $leftMenu = $('#mainMenuLeft')
 
-    $leftMenu
-        .sidebar('attach events', '.open.button', 'show')
-        .sidebar('setting', 'transition', 'overlay')
+    $leftMenu.sidebar('setting', 'transition', 'overlay')
 
     $('.launch.icon').click(function(){
         $leftMenu.sidebar('toggle')

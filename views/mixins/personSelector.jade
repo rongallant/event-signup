@@ -1,11 +1,4 @@
-mixin personSelector(fieldId, fieldDisplayValue, fieldValue)
-    .ui.search.personSelector
-        .ui.icon.input
-            input(type='hidden', name=fieldId, value=fieldValue)
-            input.prompt(type='text', id=fieldId, autocomplete='off', placeholder='Search for person...', value=fieldDisplayValue)
-            i.search.icon
-
-mixin personSelector(fieldName, fieldId, fieldDisplayValue, fieldValue)
+mixin personSelector(fieldName, fieldId, fieldValue, fieldDisplayValue)
     .ui.search.personSelector
         .ui.icon.input
             input(type='hidden', name=fieldName, value=fieldValue)

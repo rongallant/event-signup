@@ -123,21 +123,30 @@ append appContent
 
             +formSegment
 
-                .field.required
-                    label(for='name') Meal Name
-                    input(type='text', name='_task[name]', id='name', value=data._task?data._task.name:'')
+                +formSegmentHeader("Meal Details")
 
-                .field.required
+                +formSegmentIntro
+
+                .fields
+
+                    .field.twelve.wide.required
+                        label(for='name') Meal Name
+                        input(type='text', name='_task[name]', id='name', value=data._task?data._task.name:'')
+
+                .field.required.textarea
                     label(for='description') Meal Description
-                    textarea(name='_task[description]', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
-                        = data._task?data._task.description:''
-                    .label ( #[i#descriptionCount] / 2000)
+                    +textarea('description', 'description', '2000')
+                        = data.description
 
                 .field
                     label(for='allergins') Allergins
                     input(type='text', name='allergins', id='allergins', value=data.allergins)
 
             +formSegment
+
+                +formSegmentHeader("Meal Schedule")
+
+                +formSegmentIntro
 
                 .two.fields
 
@@ -149,34 +158,44 @@ append appContent
                         label(for="endTime") End Time
                         input(type="text", name="_task[endTime]", id="endTime", value=data._task?data._task.endTime:'')
 
-                .field.required
-                    label(for='location') Location (Being served at)
-                    input(type='text', name='_task[location]', id='location', value=data._task?data._task.location:'')
+                .fields
+
+                    .field.ten.wide.required
+                        label(for='location') Location (Being served at)
+                        input(type='text', name='_task[location]', id='location', value=data._task?data._task.location:'')
 
             +formSegment
 
-                .field.required
-                    label(for='_contact') Main Contact
-                    if data._task && data._task._contact
-                        +personSelector('_task[_contact]', '_contact', data._task._contact.fullName, data._task._contact.id)
-                    else
-                        +personSelector('_task[_contact]', '_contact', '', '')
+                +formSegmentHeader("Work Effort")
 
-                .two.fields
+                +formSegmentIntro
 
-                    .field.required
-                        label(for='effort') Effort
-                        select.ui.dropdown(name='_task[effort]', id='effort')
-                            option
-                            each val in [1,2,3,4,5]
-                                if data._task && data._task.effort == val
-                                    option(selected)= val
-                                else
-                                    option= val
+                    .fields
 
-                    .field.required
-                        label(for='personsRequired') Persons Required
-                        input(type='number', name='_task[personsRequired]', id='personsRequired', value=data._task?data._task.personsRequired:'')
+                        .field.ten.wide.required
+                            label(for='_contact') Main Contact
+                            if data._task && data._task._contact
+                                +personSelector('_contact', '_contact', data._task._contact?data._task._contact.id:'', data._task._contact?data._task._contact.fullName:'')
+                            else
+                                +personSelector('_contact', '_contact', '', '')
+
+                    .fields
+
+                        .field.three.wide.required
+                            label(for='effort') Effort
+                            select.ui.dropdown(name='_task[effort]', id='effort')
+                                option
+                                each val in [1,2,3,4,5]
+                                    if data._task && data._task.effort == val
+                                        option(selected)= val
+                                    else
+                                        option= val
+
+                    .fields
+
+                        .field.two.wide.required
+                            label(for='personsRequired') Persons Required
+                            input(type='number', name='_task[personsRequired]', id='personsRequired', value=data._task?data._task.personsRequired:'')
 
                 .field.required
                     label() Volunteers

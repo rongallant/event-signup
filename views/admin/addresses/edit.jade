@@ -93,30 +93,36 @@ append appContent
 
                     +formSegment
 
-                        .field.required
-                            label(for='_contact') Main Contact
-                            +personSelector('_contact', data._contact?data._contact.fullName:'', data._contact?data._contact.id:'')
+                        .fields
 
-                    +formSegment
+                            .field.ten.wide.required
+                                label(for='name') Address Name
+                                input(type='text', name='name', id=name, value=data.name)
 
-                        .field.required
-                            label(for='name') Address Name
-                            input(type='text', name='name', id=name, value=data.name)
-
-                        .field
+                        .field.textarea
                             label(for='description') Address Description
-                            textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                            +textarea('description', 'description', '2000')
                                 = data.description
-                            .label ( #[i#descriptionCount] / 2000)
+
+                        .fields
+
+                            .field.ten.wide.required
+                                label(for='_contact') Main Contact
+                                +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
 
                     +formSegment
+
+                        +formSegmentHeader("Address")
+
+                        +formSegmentIntro.
+                            p Your address is used to know where you are coming from and is another way to contact you in case we need to.
 
                         .field
                             label(for='address1') Address 1 (Search)
                             #addressSearch.ui.search
                                 .ui.icon.input
                                     input.prompt(type='text', id='address1', name='address1', autocomplete='off', value=data.address1, placeholder='Search for address...')
-                                    i.marker.icon
+                                    i.red.marker.icon
 
                         .field
                             label(for='address2') Address 2
@@ -128,17 +134,19 @@ append appContent
                                 label(for='city') City
                                 input(type='text', name='city', id='city', value=data.city, required)
 
-                            .field.required
+                            .field.three.wide.required
                                 label(for='state') State
                                 input(type='text', name='state', id='state', value=data.state, required)
 
-                            .field.required
+                            .field.five.wide.required
                                 label(for='postalCode') Zip Code
                                 input(type='text', name='postalCode', id='postalCode', value=data.postalCode, required)
 
-                        .field.required
-                            label(for='country') Country
-                            +countryField('country', data.country, data.country)
+                        .fields
+
+                            .field.ten.wide.required
+                                label(for='country') Country
+                                +countryField('country', data.country, data.country)
 
                     div(style='display:none;float:left')
                         input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')

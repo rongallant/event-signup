@@ -1,6 +1,7 @@
 var express = require('express'),
     request = require('request'),
-    path = require("path")
+    path = require("path"),
+    moment = require("moment")
 
 var router = express.Router(),
     Event = require("../../models/event"),
@@ -53,6 +54,7 @@ router.get('/create', function(req, res) {
 })
 
 router.get('/:currPage?', function(req, res, next){
+    res.locals.moment = moment
     var apiUri = res.locals.apiCollection
     if (hasVal(req.params.currPage))
         apiUri += req.params.currPage

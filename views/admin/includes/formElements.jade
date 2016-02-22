@@ -14,3 +14,17 @@ mixin formSegment
 mixin formSegmentAlt
     .ui.raised.segment
         block
+
+mixin formSegmentHeader(header, subHeader)
+    h4.ui.header= header
+
+mixin formSegmentIntro
+    block
+
+mixin textarea(fieldName, fieldId, maxLength)
+    span.counter
+        span(id='#{fieldId}Count')
+        | / #{maxLength}
+    textarea(name=fieldName, id=fieldId, rows="2", placeholder='Limit is #{maxLength} characters.', data-maxsize=maxLength, data-output='#{fieldId}Count', wrap='virtual')
+        block
+

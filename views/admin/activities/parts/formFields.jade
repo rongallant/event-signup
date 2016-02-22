@@ -3,12 +3,10 @@
     label(for='name') Activity Name
     input(type='text', name='name', id='name', value=data.name)
 
-.field.required
+.field.required.textarea
     label(for='description') Activity Description
-    textarea(name='description', id='description', placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+    +textarea('description', 'description', '2000')
         = data.description
-    .label ( #[i#descriptionCount] / 2000)
-
 
 .two.fields
 

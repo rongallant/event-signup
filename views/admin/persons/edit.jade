@@ -118,6 +118,10 @@ append appContent
 
             +formSegment
 
+                +formSegmentHeader('Person Details')
+
+                +formSegmentIntro
+
                 .field.required
                     label(for='nickName') Nickname
                     input(type="text", name='nickName', id='nickName', value=data.nickName)
@@ -157,18 +161,25 @@ append appContent
 
                 .field
                     label(for='_emergencyContact') Emergency Contact
-                    +personSelector('_emergencyContact', data._emergencyContact?data._emergencyContact.fullName:'', data._emergencyContact?data._emergencyContact.id:'')
+                    +personSelector('_emergencyContact', '_emergencyContact', data._emergencyContact?data._emergencyContact.id:'', data._emergencyContact?data._emergencyContact.fullName:'')
 
             +formSegment
 
-                +field('gearList', 'Hammock Setup', data.gearList)
-                    textarea(name='gearList', id='gearList', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='gearListCount', wrap='virtual')
+                +formSegmentHeader('Hammock Setup')
+
+                +formSegmentIntro
+                    p Tell us a little about your hammock setup or any other gear that may be of interest.
+
+                .field.required.textarea
+                    label(for='gearList') Hammock Setup
+                    +textarea('gearList', 'gearList', '2000')
                         = data.gearList
-                    .label ( #[i#gearListCount] / 2000)
 
             +formSegment
 
-                h4 Pet
+                +formSegmentHeader('Do you have a pet?')
+
+                +formSegmentIntro
 
                 .ui.three.fields
 
@@ -186,17 +197,18 @@ append appContent
 
             +formSegment
 
-                h4 Vendor
+                +formSegmentHeader('Are you a vendor?')
+
+                +formSegmentIntro
 
                 .field
                     label(for='companyName') Company Name
                     input(type="text", name='_vendor.companyName', id='companyName', value=data._vendor?data._vendor.companyName:'')
 
-                .field
+                .field.textarea
                     label(for='companyDetails') Company Details
-                    textarea(name='_vendor.companyDetails', id='companyDetails', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='companyDetailsCount', wrap='virtual')
-                        = data._vendor?data._vendor.companyDetails:''
-                    .label ( #[i#companyDetailsCount] / 2000)
+                    +textarea('_vendor.companyDetails', 'companyDetails', '2000')
+                        = data.description
 
                 .field
                     label(for='companyWebsite') Company Website

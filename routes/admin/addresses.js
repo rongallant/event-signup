@@ -63,7 +63,6 @@ router.get('/:currPage?', function(req, res, next){
         apiUri += 1
     if (hasVal(req.query.q))
         apiUri += '?q=' + req.query.q
-    console.log('apiUri: ' + apiUri)
     request(apiUri, function (err, data) {
         if (err) { return next(err) }
         res.render(res.locals.listView, {

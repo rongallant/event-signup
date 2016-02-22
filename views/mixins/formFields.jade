@@ -31,11 +31,6 @@ mixin checkField(field, label, isChecked)
             input(type="checkbox", name=field, id=field, checked=isChecked)
             label(for=field)= label
 
-mixin textareaField(field, label, value)
-    .field
-        label(for=field)= label
-        textarea(name=field, id=field,  pattern="[A-Z,a-z, ]*")=value
-
 mixin field(field, label, value)
     .field
         label(for=field)= label

@@ -20,14 +20,16 @@ router.get('/:currPage?', function(req, res, next) {
         query = {
             $or: [
                 { "name": regex },
-                { "description": regex }
+                { "description": regex },
+                { "startDateTime": regex },
+                { "endDateTime": regex }
             ]
         }
     }
     var options = {
         sort: { updatedAt: -1 },
-        populate: 'schedules _contact _address ',
-        lean: true, // False enables virtual params
+        populate: '_contact _address ',
+        lean: false, // False enables virtual params
         page: req.params.currPage,
         limit: req.app.locals.resultsPerPage
     }

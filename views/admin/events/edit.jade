@@ -7,12 +7,25 @@ include ../includes/formElements
 
 extend ../layout
 
+append stylesheets
+    link(rel="stylesheet", type="text/css", href="/pickadate/themes/classic.css")
+    link(rel="stylesheet", type="text/css", href="/pickadate/themes/classic.date.css")
+    link(rel="stylesheet", type="text/css", href="/pickadate/themes/classic.time.css")
+
 block toolbar
     +formToolbar
 
 append javascripts
     script(src="/javascripts/scheduleDayForm.js")
+    script(src="/pickadate/picker.js")
+    script(src="/pickadate/picker.date.js")
+    script(src="/pickadate/picker.time.js")
     script.
+        function addDays(date, days) {
+            var result = new Date(date)
+            result.setDate(result.getDate() + days)
+            return result
+        }
         $(function(){
             scheduleEventFormScripts('#{data.id}', '#{data.id}')
             var validationRules = {
@@ -73,66 +86,17 @@ append javascripts
                     })
                 }
             })
-            $form.find('.delete.button').click(function(){
+            $('.delete.button').click(function(){
                 $('.ui.delete.modal').modal('show')
             })
             $form.find('.personSelector').search(localPersonSearch)
             $form.find('.addressSelector').search(localAddressSearch)
             $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
-
-            var scheduleDateValidationRules = {
-                dateField: 'empty',
-                startTime: 'empty',
-                endTime: 'empty'
-            }
-            $scheduleDateForm = $('form[name=scheduleDateForm]')
-            $form.find('#addSchedules').click(function(){
-                $scheduleDateForm.form('clear')
-                $('#schedulesForm').modal('show')
-            })
-            var count = 0;
-            $scheduleDateForm.form({
-                fields: scheduleDateValidationRules,
-                inline : false,
-                onSuccess: function(event, fields){
-                    var i = count++
-                    $clone = $("#sample").clone()
-                    $clone.find('.header').text(fields.scheduleDay)
-                    $clone.find('.description').text(fields.startTime + ' - ' + fields.endTime)
-                    $clone.append(newHidden(i, 'scheduleDay', fields.scheduleDay))
-                    $clone.append(newHidden(i, 'startTime', fields.startTime))
-                    $clone.append(newHidden(i, 'endTime', fields.endTime))
-                    $clone.appendTo("#schedules")
-                    $clone.show().transition('drop')
-                    $('#schedulesForm').modal('tada')
-                    $form.form(validationRules)
-                    return false
-                }
-            })
-            $('#schedulesForm .submit.button').click(function(){
-                $scheduleDateForm.form('submit')
-            })
-
-            // Delete Schedule Row
-            $('#schedules .removeRow').each(function(){
-                $(this).click(function(){
-                    $(this).closest('.schedule.item').transition('horizontal flip', 500, function() {
-                        $(this).remove()
-                        $form.form(validationRules)
-                    })
-                })
-            })
+            $form.find('#startDate').pickadate()
+            $form.find('#startTime').pickatime()
+            $form.find('#endDate').pickadate()
+            $form.find('#endTime').pickatime()
         })
-
-        function newHidden(key, name, value) {
-            // Create a hidden input element, and append it to the form:
-            var input = document.createElement('input')
-            input.type = 'hidden'
-            input.id = 'schedules_' + name + '_' + key
-            input.name = 'schedules[' + key + '][' + name + ']'
-            input.value = value
-            return input
-        }
 
 append appContent
 
@@ -142,61 +106,56 @@ append appContent
 
             +formSegment
 
+                +formSegmentHeader('Event Details')
+
+                +formSegmentIntro
+
                 .field.required
                     label(for="eventName") Event Name
                     input(type="text", name="name", id="eventName", value=data.name)
 
-                .field.required
-                    label(for="description") Description
-                    textarea(name='description', id='description', rows="2", placeholder='Limit is 2000 characters.', data-maxsize='2000', data-output='descriptionCount', wrap='virtual')
+                .field.required.textarea
+                    label(for='description') Activity Description
+                    +textarea('description', 'description', '2000')
                         = data.description
-                    .label ( #[i#descriptionCount] / 2000)
+
+                .fields
+
+                    .field.ten.wide.required
+                        label(for="_address") Location
+                        +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
+
+                .fields
+
+                    .field.ten.wide.required
+                        label(for='_contact') Main Contact
+                        +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
 
             +formSegment
 
-                .field.required
-                    label(for="_address") Location
-                    +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
+                +formSegmentHeader('Event Schedule')
 
-            +formSegment
+                +formSegmentIntro
 
-                .field.required
-                    label(for='_contact') Main Contact
-                    +personSelector('_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+                .fields
 
-            +formSegment
+                    .field.ten.wide.required
+                        label(for="startDate") Start Date
+                        input(type='text', name="startDate", id="startDate", value=data.startDate, placeholder='Date')
 
-                .ui.row
-                    .field.required
-                        label.ui.right.floated(for="schedules") Schedule Days
-                        +scheduleDatesSelector
-                #schedules.ui.relaxed.divided.list
-                    .ui.field.item.hidden#sample(style="display:none")
-                        i.large.clock.middle.aligned.icon
-                        .content
-                            a.header
-                            .description
+                    .field.six.wide.required
+                        label(for="startDate") Start Time
+                        input(type='text', name="startTime", id="startTime", value=data.startTime, placeholder='Time')
 
-                    if data.schedules
-                        -each schedule, index in data.schedules
-                            .schedule.item
-                                input(type='hidden', name='scheduleDay[#{index}][id]', value=schedule.id)
-                                input(type='hidden', name='scheduleDay[#{index}][scheduleDay]', value=schedule.scheduleDay)
-                                input(type='hidden', name='scheduleDay[#{index}][startTime]', value=schedule.startTime)
-                                input(type='hidden', name='scheduleDay[#{index}][endTime]', value=schedule.endTime)
-                                .content.right.floated
-                                    a.icon.removeRow.button(href='#')
-                                        i.delete.icon.right.aligned
-                                i.large.clock.middle.aligned.icon
-                                .content
-                                    a.header= schedule.scheduleDay
-                                    .description #{schedule.startTime} - #{schedule.endTime}
+                .fields
 
-                    .item
-                        a#addSchedules.ui.right.floated.button(href='#')
-                            i.icon.plus
-                            | Add Schedule Day
+                    .field.ten.wide.required
+                        label(for="endDate") End Date
+                        input(type='text', name="endDate", id="endDate", value=data.endDate, placeholder='Date')
 
+                    .field.six.wide.required
+                        label(for="endDate") End Time
+                        input(type='text', name="endTime", id="endTime", value=data.endTime, placeholder='Time')
 
             div(style='display: none;')
                 input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')

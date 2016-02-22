@@ -7,19 +7,18 @@ block toolbar
 
 block appContent
 
-    table.ui.padded.fixed.selectable.table
+    table.ui.padded.selectable.table
 
         thead
             tr
                 th Name
                 th Address
-                th State
                 th.right.aligned Map
 
         tbody
             if !data.docs.length
 
-                tr: td.center.aligned(colspan='5')
+                tr: td.center.aligned(colspan='3')
                     .ui.basic.icon.button
                         a(href=createAction)
                             i.plus.icon
@@ -34,9 +33,6 @@ block appContent
 
                         td(data-label="Address")
                                 = row.shortAddress
-
-                        td(data-label="State")
-                                = row.state
 
                         td.right.aligned(data-label="Map")
                             if row.location

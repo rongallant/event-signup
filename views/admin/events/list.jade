@@ -21,17 +21,18 @@ block toolbar
 
 block appContent
 
-    table.ui.padded.selectable.table
+    table.ui.selectable.table
 
         thead
             tr
                 th Name
-                th Date/Time
+                th Description
+                th Dates
                 th.right.aligned Contact
 
         tbody
             if !data.docs.length
-                tr: td.center.aligned(colspan='5')
+                tr: td.center.aligned(colspan='4')
                     .ui.basic.icon.button
                         a(href=createAction)
                             i.plus.icon
@@ -43,16 +44,15 @@ block appContent
                         td(data-label="Name")
                             a#row1Link(href=editAction + row.id)= row.name
 
-                        td(data-label="Date/Time")
-                            if row.schedules
-                                .ui.list
-                                each schedule in row.schedules
-                                    .content
-                                       .description
-                                            i.calendar.icon
-                                            #{schedule.scheduleDay}
-                                            i.clock.icon
-                                            #{schedule.startTime} - #{schedule.endTime}
+                        td(data-label="Description")
+                            = row.description
+
+                        td(data-label="Dates")
+                            = moment(row.startDateTime).format('M/D/YY')
+                            | &nbsp;
+                            i.long.right.arrow.icon
+                            | &nbsp;
+                            = moment(row.endDateTime).format('M/D/YY')
 
                         td.right.aligned.contact(data-label="Contact")
                             if row._contact
@@ -61,7 +61,7 @@ block appContent
                                 .ui.flowing.popup.left.transition
                                     .ui.left.aligned
                                         .column
-                                            h4.ui.header #{row._contact.nickName} (#{ row._contact.fullName})
+                                            h4.ui.header #{row._contact.nickName} (#{row._contact.fullName})
 
                                         if row._contact.email
                                             a.ui.button.basic(href='mailto:'  + row._contact.email)
@@ -74,4 +74,5 @@ block appContent
                                                = row._contact.phone
 
                             else
+
                                 'UNDEFINED'
