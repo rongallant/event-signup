@@ -1,0 +1,31 @@
+extends ../layout
+
+append stylesheets
+    style.
+        body {
+            margin-top:100px
+        }
+        @media only screen and (min-width: 1200px) {
+            .ui.container {
+                width: 951px;
+            }
+        }
+
+append javascripts
+
+append frontContent
+
+    .ui.primary.pointing.menu.fixed
+        .header.item
+            a(href='/')
+                img.ui.small.image(src="/images/hangcon-h-logo.png", height="60", alt='HANGCON Homepage')
+
+        .right.menu
+            a.item(href='/guest/about') About
+            a.item(href='/admin') Admin
+            a.item Help
+            a.item Log Out
+
+    .ui.container
+
+        block signupContent

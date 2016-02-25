@@ -22,20 +22,22 @@ mixin formToolbar
 
         .right.menu
 
-            .ui.dropdown.link.item.icon
-                | &nbsp;&nbsp;
-                i.ellipsis.vertical.icon
-                | &nbsp;&nbsp;
+            if formMode != 'edit'
 
-                .menu
+                a.item(href=listAction, title='Back to list')
+                    i.list.icon
+                    | Back to list
 
-                    .header Actions
+            else
 
-                    a.item(href=listAction, title='Back to list')
-                        i.list.icon
-                        | Back to list
+                .ui.dropdown.link.item.icon
+                    | &nbsp;&nbsp;
+                    i.ellipsis.vertical.icon
+                    | &nbsp;&nbsp;
 
-                    if formMode == 'edit'
+                    .menu
+
+                        .header Actions
 
                         a.item(href=createAction, title='New')
                             i.plus.icon
@@ -56,3 +58,7 @@ mixin formToolbar
                                 .ui.positive.labeled.icon.button
                                     i.checkmark.icon
                                     | Delete Now
+
+                        a.item(href=listAction, title='Back to list')
+                            i.list.icon
+                            | Back to list

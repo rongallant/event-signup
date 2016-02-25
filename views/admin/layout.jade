@@ -3,7 +3,10 @@ extends ../layout
 append stylesheets
     link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.min.css")
     link(rel="stylesheet", type="text/css", href="/stylesheets/admin.css")
-
+    style.
+        body {
+            margin-top: 64px
+        }
 append javascripts
     script(src="/jquery_timepicker/jquery.timepicker.js")
     script(src="/javascripts/moment.min.js")
@@ -15,19 +18,26 @@ append javascripts
     script(src="/javascripts/admin.js")
 
 block content
+    body.pushable
 
     // Top Menu
-    #mainMenuTop.ui.inverted.top.main.menu
+    // #mainMenuTop.ui.inverted.top.main.menu
+
+
+    #mainMenuTop.ui.primary.pointing.menu.fixed
 
         a.item.launch.icon.show-mobile
             i.content.icon
 
-        a.item.header(href='/')
-            | #{locals.apptitle}
-            if title
-                | &nbsp;- #{title}
+        .header.item
+            a(href='/')
+                img.ui.small.image(src="/images/hangcon-h-logo.png", height="60", alt='HANGCON Homepage')
 
         .right.menu.hide-mobile
+
+            a.item(href='/guest')
+                | Guest View
+
             .ui.right.dropdown.item
                 | Members
                 i.dropdown.icon
@@ -51,6 +61,9 @@ block content
 
         a.item.launch.icon.show-mobile
             i.content.icon
+
+        a.item(href='/guest')
+            | Guest View
 
         a.item.header(href='/') Home
         .item

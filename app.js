@@ -29,7 +29,11 @@ var Account = require('./models/account')
  ***********************************************************/
 
 var index = require('./routes/index'),
+
   login = require('./routes/login'),
+  signup = require('./routes/front/guests/signup'),
+  guests = require('./routes/front/guests/guest'),
+
   admin = require('./routes/admin'),
   events = require('./routes/admin/events'),
   persons = require('./routes/admin/persons'),
@@ -134,6 +138,11 @@ app.use('/javascripts', express.static(path.join(__dirname, 'semantic', 'dist'))
 app.use('/pickadate', express.static(path.join(__dirname, 'node_modules', 'pickadate', 'lib', 'compressed')))
 app.use('/moment', express.static(path.join(__dirname, 'node_modules', 'moment', 'min')))
 
+// Guest Section
+app.use('/signup', signup)
+app.use('/guest', guests)
+
+// Admin Section
 app.use('/', index)
 app.use('/admin', admin)
 

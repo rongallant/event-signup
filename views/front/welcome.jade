@@ -1,0 +1,111 @@
+extends layout
+
+append javascripts
+    script(src='/javascripts/jquery.slimscroll.min.js')
+    script(src='/fullPagejs/jquery.fullpage.min.js')
+    script.
+        $(function(){
+            $('#fullpage').fullpage({
+                fitToSection: true,
+                css3: true,
+                lockAnchors: false,
+                navigation: true,
+                resize : true,
+                verticalCentered: true,
+                controlArrows: true,
+                autoScrolling: false
+            })
+            $('#welcome .shape').shape()
+            $('#cta').click(function(){
+                $.fn.fullpage.moveTo(3)
+            })
+        })
+
+append stylesheets
+    link(rel='stylesheet', href='/fullPagejs/jquery.fullpage.min.css')
+    style.
+        html {
+            background: url(images/hammock-bg-lg.jpg) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+        body {
+            background: transparent;
+        }
+        .ui.basic.segment.inverted {
+            background: none;
+        }
+        .ui.segment {
+            text-align: left;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        #welcome .ui.basic.segment.inverted {
+            background-color: rgba(255,255,255,.2);
+            width: 300px;
+        }
+        #welcome .header {
+            text-align: center;
+        }
+        #welcome {
+            margin: 0 auto;
+            max-width: 100%;
+            text-align: center;
+            width: 300px;
+        }
+        #welcome .ui.square.shape {
+            margin-bottom: 20px;
+        }
+        #about {
+            background-color: rgba(254, 154, 118, 1);
+        }
+        #signup {
+            background-color: rgba(165, 42, 42, 1);
+        }
+        #signup .segment {
+            background-color: rgba(255, 255, 255, .9);
+        }
+        .titleyear {
+            text-align: center;
+            font-size: 75px;
+            margin-left: 15px;
+            letter-spacing: 25px;
+        }
+        #signup .ui.segment {
+            width: 600px;
+        }
+
+append content
+
+    #fullpage
+
+        section#welcome.section
+
+            .ui.segment.inverted
+                img.ui.image(src='/images/hangcon-logo.png')
+                .titleyear 2016
+
+            .ui.center.aligned.basic.segment
+                button(type='button')#cta.massive.ui.black.button Reserve Your Spot
+
+        section#about.text.section
+
+            .ui.text.container
+
+                h1.ui.header
+                    | Introducing Hangcon
+                    .sub.header  A Hammock Hanging Convention
+
+                p Over the past five years, we, the hangers in Florida have reveled in the chance to share our hospitality with the growing hammocking community in the Florida Hangs. They've grown and grown into a spectacular event.
+                .ui.right.aligned.basic.segment
+                    button(type='button')#cta.big.ui.basic.button
+                        | Reserve Your Spot
+                        i.right.long.arrow.icon
+
+
+        section#signup.section.panel2
+
+                .ui.segment
+                    include parts/signupform

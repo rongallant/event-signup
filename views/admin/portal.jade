@@ -65,9 +65,16 @@ append javascripts
 append appContent
 
     .ui.cards
+
+        .card
+
+            .content: .header
+
+
         .card
             canvas.image(id="myChart", width="100%", height="300")
             .content: .header Guests per day
+
 
         .card
             .content: .header Equipment needed
@@ -75,5 +82,4 @@ append appContent
 
         .card
             .content: .header Food needed
-
 

@@ -2,8 +2,13 @@ var express = require('express')
 var router = express.Router()
 
 // Domain Root
+
 router.get('/', function(req, res, next) {
-    res.redirect('/admin')
+    console.log('Welcome')
+    res.render("front/welcome", {
+        title: "Welcome",
+        user: req.user,
+    })
 })
 
 router.get('/message/:type/:message', function(req, res, next) {

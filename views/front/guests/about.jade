@@ -1,0 +1,51 @@
+extends layout
+
+append javascripts
+    script(src="/javascripts/jquery.singlePageNav.min.js")
+    script.
+        $(function(){
+            $('.ui.sticky').sticky({
+                context: '#about',
+                offset: 80
+            })
+            $('#pointingMenu').singlePageNav({
+                offset:80,
+                currentClass: 'active'
+            });
+
+        })
+
+append content
+
+    .ui.text.container
+
+        .ui.basic.segment
+            .ui.right.rail
+                .ui.sticky
+                    .ui.basic.segment
+                        #pointingMenu.ui.vertical.following.fluid.text.menu
+                            a.item(href='#top') Introduction
+                            a.item(href='#activities') Activities
+                            a.item(href='#cost') Cost
+                            a.item(href='#funds') Funds
+                            a.item(href='#tickets') Raffle Tickets
+                            a.item(href='#vendors') Vendors
+                            a.item(href='#rules') Rules
+                            a.item(href='#parking') Parking
+
+
+                    .ui.basic.segment.grey
+                        .ui.vertical.fluid.text.menu
+                            a.item Location: Doe Lake Group Site, Umatilla, FL
+                            //http://www.recreation.gov/camping/do...O&parkId=75493
+                            //http://www.fs.usda.gov/photogallery/...position=Promo
+
+                            a.item Site Info & Directions
+                            //http://www.fs.usda.gov/recarea/ocala...a/?recid=40231
+
+                            a.item Hikin', Bikin', Yakin' & Trailin' Maps
+                            //http://www.fs.usda.gov/detail/ocala/...telprdb5192635
+
+
+            #about
+                include ../parts/about

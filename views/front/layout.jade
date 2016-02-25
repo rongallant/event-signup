@@ -2,38 +2,7 @@ extends ../layout
 
 append stylesheets
 
-    // Uses a transparent header that draws on top of the layout's background
-    style.
-        .front-layout-transparent {
-            background: url('/images/main-bg.jpg') center / cover;
-        }
-        .front-layout-transparent .mdl-layout__header,
-        .front-layout-transparent .mdl-layout__drawer-button {
-            // color: white;
-        }
+append javascripts
 
 append content
-
-    .front-layout-transparent.mdl-layout.mdl-js-layout
-      header.mdl-layout__header.mdl-layout__header--transparent
-        .mdl-layout__header-row
-          // Title
-          span.mdl-layout-title Title
-          // Add spacer, to align navigation to the right
-          .mdl-layout-spacer
-          // Navigation
-          nav.mdl-navigation
-            a.mdl-navigation__link(href='') Link
-            a.mdl-navigation__link(href='') Link
-            a.mdl-navigation__link(href='') Link
-            a.mdl-navigation__link(href='') Link
-      .mdl-layout__drawer
-        span.mdl-layout-title Title
-        nav.mdl-navigation
-          a.mdl-navigation__link(href='') Link
-          a.mdl-navigation__link(href='') Link
-          a.mdl-navigation__link(href='') Link
-          a.mdl-navigation__link(href='') Link
-      main.mdl-layout__content
-
-        block appContent
+    block frontContent

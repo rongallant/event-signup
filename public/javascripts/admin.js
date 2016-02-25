@@ -22,7 +22,8 @@ $(function(){
     var $toolbar = $('#toolbar')
 
     $toolbar.visibility({
-        type: 'fixed'
+        type: 'fixed',
+        continuous: true
     })
     $toolbar.find('.primary.submit').click(function(){
         $('[name=mainForm]').submit()
