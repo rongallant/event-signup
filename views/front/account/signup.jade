@@ -1,0 +1,60 @@
+extends ../layout
+
+append stylesheets
+    style.
+        #signup .ui.segment {
+            width: 600px;
+        }
+        #signup {
+            // background-color: rgba(165, 42, 42, 1);
+        }
+
+append frontContent
+
+    .ui.text.container
+
+        .ui.segment
+
+            h2.ui.center.aligned.header Sign Up
+
+            form.ui.form
+
+                .ui.very.relaxed.stackable.grid
+
+                    .eight.wide.column
+                        .field
+                            label Username
+                            .ui.left.icon.input
+                                input(type='text')
+                                i.user.icon
+
+                        .field
+                            label Password
+
+                            .ui.left.icon.input
+                                input(type='text')
+                                i.lock.icon
+                        .field
+                            label Email
+                            .ui.left.icon.input
+                                input(type='text')
+                                i.mail.icon
+                        .field
+                            a.ui.button(href=pageAccountComplete)
+                              | Create Account
+
+                    .ui.vertical.divider
+                        | Or
+
+                    .eight.wide.column
+                        .field
+                            label &nbsp;
+                            a.fluid.ui.facebook.button(href=pageAccountComplete)
+                              i.facebook.icon
+                              | Signup with Facebook
+
+                        .field
+                            label &nbsp;
+                            a.fluid.ui.google.plus.button(href=pageAccountComplete)
+                              i.google.plus.icon
+                              | Signup with Google Plus

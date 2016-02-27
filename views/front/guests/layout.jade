@@ -17,15 +17,14 @@ append frontContent
 
     .ui.primary.pointing.menu.fixed
         .header.item
-            a(href='/')
+            a(href=pageHome)
                 img.ui.small.image(src="/images/hangcon-h-logo.png", height="60", alt='HANGCON Homepage')
 
         .right.menu
-            a.item(href='/guest/about') About
-            a.item(href='/admin') Admin
-            a.item Help
-            a.item Log Out
+            a.item(href=pageAbout) About
+            a.item(href=pageAdmin) Admin
+            a.item(href=pageAccountLogout) Log Out
 
     .ui.container
 
-        block signupContent
+        block guestContent

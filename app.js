@@ -19,29 +19,22 @@ var express = require('express'),
   mongoosePages = require('mongoose-paginate')
 
 /************************************************************
- * Models
- ***********************************************************/
-
-var Account = require('./models/account')
-
-/************************************************************
  * Routes
  ***********************************************************/
 
 var index = require('./routes/index'),
+  account = require('./routes/account'),
+  events = require('./routes/events'),
+  guests = require('./routes/guests'),
 
-  login = require('./routes/login'),
-  signup = require('./routes/front/guests/signup'),
-  guests = require('./routes/front/guests/guest'),
-
-  admin = require('./routes/admin'),
-  events = require('./routes/admin/events'),
-  persons = require('./routes/admin/persons'),
-  addresses = require('./routes/admin/addresses'),
-  scheduleDates = require('./routes/admin/scheduleDates'),
-  activities = require('./routes/admin/activities'),
-  tasks = require('./routes/admin/tasks'),
-  meals = require('./routes/admin/meals')
+  admin = require('./routes/admin/index'),
+  adminEvents = require('./routes/admin/events'),
+  adminPersons = require('./routes/admin/persons'),
+  adminAddresses = require('./routes/admin/addresses'),
+  adminScheduleDates = require('./routes/admin/scheduleDates'),
+  adminActivities = require('./routes/admin/activities'),
+  adminTasks = require('./routes/admin/tasks'),
+  adminMeals = require('./routes/admin/meals')
 
 /************************************************************
  * Rest API
@@ -116,13 +109,36 @@ app.all('/express-flash', function( req, res ) {
 });
 
 app.use(flash());
+
 app.use(function(req, res, next){
-    // Flash Messaging - Returns messages to users.
-    res.locals.info = req.flash('info')
-    res.locals.success = req.flash('success')
-    res.locals.error = req.flash('error')
-    // res.locals.moment = require('moment') // Date formatter
-    next()
+
+  res.locals.pageHome = '/' // index page
+  res.locals.pageAbout = '/about'
+
+  res.locals.pageAccountHome = '/account'
+  res.locals.pageAccountSignup = '/account/signup'
+  res.locals.pageAccountComplete = '/account/complete'
+  res.locals.pageAccountLogin = '/account/login'
+  res.locals.pageAccountLogout = '/account/logout'
+
+  res.locals.pageEvent = '/events'
+  res.locals.pageEventSignup = '/events/signup'
+
+  res.locals.pageAdmin = '/admin'
+  res.locals.pageAdminEvents = '/admin/events'
+  res.locals.pageAdminPersons = '/admin/persons'
+  res.locals.pageAdminAddresses = '/admin/addresses'
+  res.locals.pageAdminScheduleDates = '/admin/scheduleDates'
+  res.locals.pageAdminActivities = '/admin/activities'
+  res.locals.pageAdminTasks = '/admin/tasks'
+  res.locals.pageAdminMeals = '/admin/tasks/meals'
+
+  // Flash Messaging - Returns messages to users.
+  res.locals.info = req.flash('info')
+  res.locals.success = req.flash('success')
+  res.locals.error = req.flash('error')
+  // res.locals.moment = require('moment') // Date formatter
+  next()
 })
 
 /************************************************************
@@ -138,39 +154,40 @@ app.use('/javascripts', express.static(path.join(__dirname, 'semantic', 'dist'))
 app.use('/pickadate', express.static(path.join(__dirname, 'node_modules', 'pickadate', 'lib', 'compressed')))
 app.use('/moment', express.static(path.join(__dirname, 'node_modules', 'moment', 'min')))
 
-// Guest Section
-app.use('/signup', signup)
+// Unauthorized Areas
+app.use('/', index)
+app.use('/account', account)
 app.use('/guest', guests)
+app.use('/events', events)
 
 // Admin Section
-app.use('/', index)
 app.use('/admin', admin)
 
-app.use('/admin/events', events)
+app.use('/admin/events', adminEvents)
 app.use('/api/event', apiEvent)
 app.use('/api/events', apiEvents)
 
-app.use('/admin/persons', persons)
+app.use('/admin/persons', adminPersons)
 app.use('/api/person', apiPerson)
 app.use('/api/persons', apiPersons)
 
-app.use('/admin/addresses', addresses)
+app.use('/admin/addresses', adminAddresses)
 app.use('/api/address', apiAddress)
 app.use('/api/addresses', apiAddresses)
 
-app.use('/admin/scheduleDates', scheduleDates)
+app.use('/admin/scheduleDates', adminScheduleDates)
 app.use('/api/scheduleDate', apiScheduleDate)
 app.use('/api/scheduleDates', apiScheduleDates)
 
-app.use('/admin/activities', activities)
+app.use('/admin/activities', adminActivities)
 app.use('/api/activity', apiActivity)
 app.use('/api/activities', apiActivities)
 
-app.use('/admin/tasks', tasks)
+app.use('/admin/tasks', adminTasks)
 app.use('/api/task', apiTask)
 app.use('/api/tasks', apiTasks)
 
-app.use('/admin/meals', meals)
+app.use('/admin/meals', adminMeals)
 app.use('/api/meal', apiMeal)
 app.use('/api/meals', apiMeals)
 

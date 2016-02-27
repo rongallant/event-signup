@@ -1,0 +1,43 @@
+extends ../layout
+
+append stylesheets
+    style.
+        #signup .ui.segment {
+            width: 600px;
+        }
+        #signup {
+            // background-color: rgba(165, 42, 42, 1);
+        }
+
+append frontContent
+
+    .ui.text.container
+
+        h5.ui.heading Contact Details
+
+        .ui.basic.green.segment
+
+            form.ui.form
+
+                .field
+                    label(for='nickName') Username
+                    input(type='text', id='nickName', name='nickName',value='loginName', readonly)
+
+                .two.fields.required
+                    .field
+                        label(for='firstName') First Name
+                        input(type='text', id='firstName', name='firstName')
+
+                    .field
+                        label(for='lastName') Last Name
+                        input(type='text', id='lastName', name='lastName')
+
+                .field.required
+                    label(for='') Email Address
+                    input(type='text', id='', name='')
+
+                .field
+                    label(for='phone') Phone Number
+                    input(type='text', id='phone', name='phone')
+
+                a.ui.primary.button(href=pageEventSignup) Update Profile

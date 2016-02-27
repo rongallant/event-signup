@@ -11,6 +11,13 @@ router.get('/', function(req, res, next) {
     })
 })
 
+router.get('/about', function(req, res, next) {
+    res.render("front/about", {
+        title: "About",
+        user: req.user,
+    })
+})
+
 router.get('/message/:type/:message', function(req, res, next) {
     req.flash(req.params.type, req.params.message)
     res.status(200)

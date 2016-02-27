@@ -1,8 +1,27 @@
 extends ../layout
 
 append stylesheets
+    style.
+        body {
+            margin-top:100px
+        }
+        @media only screen and (min-width: 1200px) {
+            .ui.container {
+                width: 951px;
+            }
+        }
 
 append javascripts
 
 append content
+
+    .ui.primary.pointing.menu.fixed
+        .header.item
+            a(href=pageHome)
+                img.ui.small.image(src="/images/hangcon-h-logo.png", height="60", alt='HANGCON Homepage')
+
+        .right.menu
+            a.item(href=pageAbout) About
+            a.item(href=pageAccountLogin) Log in
+
     block frontContent
