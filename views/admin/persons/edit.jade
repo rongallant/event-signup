@@ -14,7 +14,7 @@ append javascripts
         $(function(){
             // Validation Rules
             var validationRules = {
-                nickName: {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
+                username: {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
                 firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
                 lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'},{type:'doesntContain[a-zA-Z]'}]},
                 email: {rules:[{type:'empty'}, {type:'maxLength[254]'},{type:'email'}]},
@@ -123,8 +123,8 @@ append appContent
                 +formSegmentIntro
 
                 .field.required
-                    label(for='nickName') Nickname
-                    input(type="text", name='nickName', id='nickName', value=data.nickName)
+                    label(for='username') Username/Nickname
+                    input(type="text", name='username', id='username', value=data.username)
 
                 .two.fields
 

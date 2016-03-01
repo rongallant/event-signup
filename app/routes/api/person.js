@@ -9,7 +9,7 @@ var URL_BASE = "/admin/persons"
 /* CREATE New item created. */
 router.post('/', function(req, res, next) {
     var data = new Person({
-        nickName: req.body.nickName,
+        username: req.body.username,
         lastName: req.body.lastName,
         firstName: req.body.firstName,
         email: req.body.email,
@@ -37,7 +37,8 @@ router.get('/:id', function(req, res, next) {
         .populate('_emergencyContact')
         .exec(function(err, data) {
         if (err) {
-            res.status(400).json({ "status" : "error", err })
+            console.error(err)
+            res.status(400).json({ "error" : err.message })
         } else {""
             res.status(200).json({ "status" : "success", data })
         }
@@ -49,18 +50,19 @@ router.put('/', function(req, res, next) {
     Person.findByIdAndUpdate(req.body.id, { $set:req.body, upsert: true }, function (err, data) {
         if (err) {
             console.error(err)
-            res.status(500).json({ "status" : "error", err })
+            res.status(500).json({ "error" : err.message })
         } else {
             res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
         }
-  })
+    }
+  )
 })
 
 /* DELETE Deletes an item. */
 router.delete('/:id', function(req, res, next) {
     Person.findOneAndRemove(req.params.id, function (err) {
         if (err) {
-            res.status(500).json({ "status" : "error", err })
+            res.status(500).json({ "error" : err.message })
         } else {
             res.status(204).json({ "status" : "success" })
         }

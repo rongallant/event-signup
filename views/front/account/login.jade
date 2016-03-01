@@ -1,3 +1,5 @@
+include ../parts/formElements
+
 extends ../layout
 
 append stylesheets
@@ -5,38 +7,77 @@ append stylesheets
         #signup .ui.segment {
             width: 600px;
         }
-        #signup {
-            // background-color: rgba(165, 42, 42, 1);
-        }
+
+append javascripts
+    script.
+        $(function(){
+            var validationRules = {
+                username: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
+                password: {rules:[{type:'empty'}, {type:'maxLength[35]'}]}
+            }
+
+            var $form =  $('form[name=mainForm]')
+
+            // CREATE / SAVE
+            $form.form({
+                fields: validationRules,
+                inline : false,
+                onSuccess: function(event, fields){
+                    $.ajax({
+                        type: '#{formMethod}',
+                        data: fields,
+                        url: '#{formAction}',
+                        dataType: 'JSON',
+                        statusCode: {
+                            200: function(data, textStatus, jqXHR) {
+                                console.log(textStatus)
+                                console.log(data)
+                                console.log('200 Success')
+                                $.get('/message/success/Saved successfully')
+                            }
+                        }
+                    })
+                    .error(function(response) {
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
+                    })
+                    .done(function(response) {
+                        location.replace('#{formSuccess}')
+                    })
+                    return false
+                }
+            })
+        })
 
 append frontContent
 
     .ui.text.container
 
-        .ui.segment
+        form.ui.form(name='mainForm')
 
-            h2.ui.center.aligned.header Login
+            .ui.segment
 
-            form.ui.form
+                h2.ui.center.aligned.header Login
+
+                div(style='display: none;')
+                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
                 .ui.very.relaxed.stackable.grid
 
                     .eight.wide.column
                         .field
-                            label Username
+                            label(for='username') Username
                             .ui.left.icon.input
-                                input(type='text')
+                                input(type='text', name="username", id="username")
                                 i.user.icon
 
                         .field
-                            label Password
-
+                            label(for='password') Password
                             .ui.left.icon.input
-                                input(type='text')
+                                input(type='password', name="password", id="password")
                                 i.lock.icon
 
                         .field
-                            a.ui.button(href=pageAccountHome)
+                            .ui.submit.button
                               | Log In
 
                     .ui.vertical.divider
@@ -54,3 +95,6 @@ append frontContent
                             a.fluid.ui.google.plus.button(href=pageAccountHome)
                               i.google.plus.icon
                               | Login with Google Plus
+
+
+            +messageContainer

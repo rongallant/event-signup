@@ -1,6 +1,9 @@
-extends layout
+extends front/layout
 
-block content
-    h1= message
-    h2= error.status
-    pre #{error.stack}
+block frontContent
+
+    .ui.text.container
+
+        h1.ui.header= message
+        .sub.header= error.status
+        pre #{error.stack}

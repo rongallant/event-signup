@@ -20,10 +20,9 @@ router.get('/:currPage?', function(req, res, next) {
             $or: [
                 { "firstName": regex },
                 { "lastName": regex },
-                { "nickName": regex },
+                { "username": regex },
                 { "email": regex },
                 { "fullName": regex },
-                { "nickName": regex },
                 { "endTime": regex }
             ]
         }

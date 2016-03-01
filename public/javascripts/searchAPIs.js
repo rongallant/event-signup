@@ -102,7 +102,7 @@ var localPersonSearch = {
                 if (index >= maxResults) return false
                 var v = value
                 var desc = ''
-                desc = ( u(v.nickName) ? v.nickName + '<br>' : '') + ( u(v.email) ? v.email : '')
+                desc = ( u(v.username) ? v.username + '<br>' : '') + ( u(v.email) ? v.email : '')
                 response.results.push({
                     title: v.fullName,
                     description: desc,

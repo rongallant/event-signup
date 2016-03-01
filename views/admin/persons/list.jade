@@ -11,7 +11,7 @@ block appContent
 
         thead
             tr
-                th Nickname
+                th Username
                 th Name
                 th
                 th.right.aligned Attributes
@@ -27,9 +27,9 @@ block appContent
             else
                 each row in data.docs
                     tr
-                        td(data-label="Nickname")
+                        td(data-label="Username")
                             a#row1Link(href=editAction + row.id)
-                                = row.nickName
+                                = row.username
 
                         td(data-label="Name")
                             = row.fullName

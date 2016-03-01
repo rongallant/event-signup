@@ -1,3 +1,5 @@
+include ../parts/formElements
+
 extends ../layout
 
 append stylesheets
@@ -5,43 +7,89 @@ append stylesheets
         #signup .ui.segment {
             width: 600px;
         }
-        #signup {
-            // background-color: rgba(165, 42, 42, 1);
-        }
+
+append javascripts
+    script.
+        $(function(){
+            var validationRules = {
+                username: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
+                password: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
+                email: {
+                    rules:[
+                        { type: 'empty' },
+                        { type: 'email' },
+                        { type: 'maxLength[254]' }
+                    ]
+                }
+            }
+
+            var $form =  $('form[name=mainForm]')
+
+            // CREATE / SAVE
+            $form.form({
+                fields: validationRules,
+                inline : false,
+                onSuccess: function(event, fields){
+                    $.ajax({
+                        type: '#{formMethod}',
+                        data: fields,
+                        url: '#{formAction}',
+                        dataType: 'JSON',
+                        statusCode: {
+                            201: function(data, textStatus, jqXHR) {
+                                console.log(textStatus)
+                                console.log(data)
+                                console.log('201 Success')
+                                $.get('/message/success/Saved successfully')
+                            }
+                        }
+                    })
+                    .error(function(response) {
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
+                    })
+                    .done(function(response) {
+                        location.replace('#{pageAccountLogin}')
+                    })
+                    return false
+                }
+            })
+        })
 
 append frontContent
 
     .ui.text.container
 
-        .ui.segment
+        form.ui.form(name='mainForm')
 
-            h2.ui.center.aligned.header Sign Up
+            .ui.segment
 
-            form.ui.form
+                h2.ui.center.aligned.header Sign Up
+
+                div(style='display: none;')
+                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
                 .ui.very.relaxed.stackable.grid
 
                     .eight.wide.column
                         .field
-                            label Username
+                            label(for='username') Username
                             .ui.left.icon.input
-                                input(type='text')
+                                input(type='text', name='username', id='username')
                                 i.user.icon
-
                         .field
-                            label Password
-
+                            label(for='password') Password
                             .ui.left.icon.input
-                                input(type='text')
+                                input(type='password', name='password', id='password')
                                 i.lock.icon
                         .field
-                            label Email
+                            label(for='email') Email
                             .ui.left.icon.input
-                                input(type='text')
+                                input(type='text', name='email', id='email')
                                 i.mail.icon
                         .field
-                            a.ui.button(href=pageAccountComplete)
+                            .ui.submit.button
                               | Create Account
+
 
                     .ui.vertical.divider
                         | Or
@@ -58,3 +106,6 @@ append frontContent
                             a.fluid.ui.google.plus.button(href=pageAccountComplete)
                               i.google.plus.icon
                               | Signup with Google Plus
+
+
+            +messageContainer

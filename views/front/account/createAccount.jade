@@ -5,9 +5,52 @@ append stylesheets
         #signup .ui.segment {
             width: 600px;
         }
-        #signup {
-            // background-color: rgba(165, 42, 42, 1);
-        }
+
+append javascripts
+    script.
+        $(function(){
+            var validationRules = {
+                firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
+                lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
+                phone: {
+                    rules:[
+                        { type: 'empty' },
+                        { type: 'phone' },
+                        { type: 'maxLength[14]' }
+                    ]
+                }
+            }
+
+            var $form =  $('form[name=mainForm]')
+
+            // CREATE / SAVE
+            $form.form({
+                fields: validationRules,
+                inline : false,
+                onSuccess: function(event, fields){
+                    $.ajax({
+                        type: '#{formMethod}',
+                        data: fields,
+                        url: '#{apiItem}',
+                        dataType: 'JSON',
+                        statusCode: {
+                            201: function(data, textStatus, jqXHR) {
+                                console.log('201 Error')
+                                $.get('/message/success/Saved successfully')
+                            }
+                        }
+                    })
+                    .error(function(response) {
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
+                        location.replace('/account/login/')
+                    })
+                    .done(function(response) {
+                        location.replace('#{pageAccountHome}/')
+                    })
+                    return false
+                }
+            })
+        })
 
 append frontContent
 
@@ -19,9 +62,17 @@ append frontContent
 
             form.ui.form
 
+                div(style='display: none;')
+                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                    input(type="hidden", name="id", value=data.id)
+
                 .field
-                    label(for='nickName') Username
-                    input(type='text', id='nickName', name='nickName',value='loginName', readonly)
+                    label(for='username') Username
+                    div= data.username
+
+                .field
+                    label(for='email') Email Address
+                    div= data.email
 
                 .two.fields.required
                     .field
@@ -31,10 +82,6 @@ append frontContent
                     .field
                         label(for='lastName') Last Name
                         input(type='text', id='lastName', name='lastName')
-
-                .field.required
-                    label(for='') Email Address
-                    input(type='text', id='', name='')
 
                 .field
                     label(for='phone') Phone Number

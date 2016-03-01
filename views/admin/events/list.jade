@@ -61,7 +61,7 @@ block appContent
                                 .ui.flowing.popup.left.transition
                                     .ui.left.aligned
                                         .column
-                                            h4.ui.header #{row._contact.nickName} (#{row._contact.fullName})
+                                            h4.ui.header #{row._contact.username} (#{row._contact.fullName})
 
                                         if row._contact.email
                                             a.ui.button.basic(href='mailto:'  + row._contact.email)
