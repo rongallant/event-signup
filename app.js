@@ -11,8 +11,9 @@ var express = require('express'),
     mongoose = require('mongoose'),
     passport = require('passport'),
     flash = require('connect-flash'),
-    consoletable = require('console.table'),
     methodOverride = require('method-override')
+
+require('console.table')
 
 /************************************************************
  * App Config
@@ -104,8 +105,8 @@ app.all(["/admin*", "/guest*"], function(req, res, next) {
         next(err)
     }
 })
-app.all("/api*", function(req, res, next) {
 
+app.all("/api*", function(req, res, next) {
 
     console.log('req.session.passport.user')
     console.log(req.session.passport.user)
@@ -135,6 +136,7 @@ require('./app/routes.js')(app, passport) // load our routes and pass in our app
 
 // catch 401 and forward to error handler
 app.use(function(err, req, res, next) {
+    console.error('401 : ' + err.message)
     var err = new Error('Not Authorized')
     err.status = 401
     res.redirect('/account/login')
@@ -142,6 +144,7 @@ app.use(function(err, req, res, next) {
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+    console.error(404)
     var err = new Error('Page Not Found')
     err.status = 404
     next(err)
@@ -163,6 +166,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     res.status(err.status || 500)
+    console.error(err.status + ' : ' + err.message)
     res.render('error', {
         message: err.message,
         error: {}

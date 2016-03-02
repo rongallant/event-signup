@@ -37,9 +37,7 @@ append javascripts
                         dataType: 'JSON',
                         statusCode: {
                             201: function(data, textStatus, jqXHR) {
-                                console.log(textStatus)
                                 console.log(data)
-                                console.log('201 Success')
                                 $.get('/message/success/Saved successfully')
                             }
                         }
@@ -60,52 +58,55 @@ append frontContent
     .ui.text.container
 
         form.ui.form(name='mainForm')
+            .ui.segments
+                .ui.segment
+                    h2.ui.center.aligned.header Sign Up
 
-            .ui.segment
+                .ui.segment
 
-                h2.ui.center.aligned.header Sign Up
+                    div(style='display: none;')
+                        input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
-                div(style='display: none;')
-                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                    .ui.very.relaxed.stackable.grid
 
-                .ui.very.relaxed.stackable.grid
+                        .eight.wide.column
+                            .field
+                                label(for='username') Username
+                                .ui.left.icon.input
+                                    input(type='text', name='username', id='username')
+                                    i.user.icon
+                            .field
+                                label(for='password') Password
+                                .ui.left.icon.input
+                                    input(type='password', name='password', id='password')
+                                    i.lock.icon
+                            .field
+                                label(for='email') Email
+                                .ui.left.icon.input
+                                    input(type='text', name='email', id='email')
+                                    i.mail.icon
+                            .field
+                                .ui.submit.button
+                                  | Create Account
 
-                    .eight.wide.column
-                        .field
-                            label(for='username') Username
-                            .ui.left.icon.input
-                                input(type='text', name='username', id='username')
-                                i.user.icon
-                        .field
-                            label(for='password') Password
-                            .ui.left.icon.input
-                                input(type='password', name='password', id='password')
-                                i.lock.icon
-                        .field
-                            label(for='email') Email
-                            .ui.left.icon.input
-                                input(type='text', name='email', id='email')
-                                i.mail.icon
-                        .field
-                            .ui.submit.button
-                              | Create Account
+                                a.ui.right.floated.basic.button(href='/account/login')
+                                  | Log In
 
+                        .ui.vertical.divider
+                            | Or
 
-                    .ui.vertical.divider
-                        | Or
+                        .eight.wide.column
+                            .field
+                                label &nbsp;
+                                a.fluid.ui.facebook.button(href=pageAccountComplete)
+                                  i.facebook.icon
+                                  | Signup with Facebook
 
-                    .eight.wide.column
-                        .field
-                            label &nbsp;
-                            a.fluid.ui.facebook.button(href=pageAccountComplete)
-                              i.facebook.icon
-                              | Signup with Facebook
-
-                        .field
-                            label &nbsp;
-                            a.fluid.ui.google.plus.button(href=pageAccountComplete)
-                              i.google.plus.icon
-                              | Signup with Google Plus
+                            .field
+                                label &nbsp;
+                                a.fluid.ui.google.plus.button(href=pageAccountComplete)
+                                  i.google.plus.icon
+                                  | Signup with Google Plus
 
 
             +messageContainer

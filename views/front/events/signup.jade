@@ -1,3 +1,5 @@
+include parts/guestSelelect
+
 extends ../layout
 
 append stylesheets
@@ -5,13 +7,67 @@ append stylesheets
 append javascripts
     script.
         $(function(){
-            $('.tabular.menu .item').tab();
+            $('.tabular.menu .item').tab()
+
+            $('#guests .addGuest.button').click(function(){
+                $('#guestsModal.ui.modal').modal('show')
+            })
+
+            var personSelectFormRules = {
+                firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
+                lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]}
+            }
+
+            var $guestForm =  $('form[name=personSelectForm]')
+            // $.fn.form.settings.templates.error =
+            // function(errors)
+            // {
+            //   var html = '<div class="ui header">Error Detected:</div>'
+            //   html += '<ul class="list">';
+            //   $.each(errors, function(index, value) {
+            //     html += '<li>THIS' + value + '</li>';
+            //   });
+            //   html += '</ul>';
+            //   return $(html);
+            // }
+            // CREATE / SAVE
+            $guestForm.form({
+                fields: personSelectFormRules,
+                inline : true,
+                onSuccess: function(event, fields){
+                    console.log('Attemping to log into #{formAction} via #{formMethod}' )
+                    $.ajax({
+                        type: '#{formMethod}',
+                        data: fields,
+                        url: '#{formAction}',
+                        dataType: 'JSON',
+                        statusCode: {
+                            200: function(data, textStatus, jqXHR) {
+                                console.log(data)
+                                $.get('/message/success/Welcome')
+                            }
+                        }
+                    })
+                    .error(function(response) {
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
+                    })
+                    .done(function(response) {
+                        location.replace('#{formSuccess}')
+                    })
+                    return false
+                }
+            }, {
+                templates: {
+                    prompt: function(errors) {
+                        return $('<div class="ui header">Error Header</div>...')
+                    }
+                }
+            })
         })
 
 append frontContent
 
     .ui.text.container
-
 
         h1.ui.header Signup for Hangcon 2017
 
@@ -25,15 +81,11 @@ append frontContent
 
                 .eight.wide.column
 
-                    h5.ui.header Your Guests
-                    .ui.basic.blue.segment
-                        a.basic.ui.button
-                            i.add.icon
-                            | Add Guest
+                    +guestSelectPanel('guests', data.guests)
 
                     h5.ui.header Your Pets
                     .ui.basic.brown.segment
-                        a.basic.ui.button
+                        .basic.ui.button
                             i.add.icon
                             | Add Pet
 
@@ -78,9 +130,6 @@ append frontContent
                     .ui.checkbox
                         input(type='checkbox', name='allTasks', id='allTasks')
                         label(for='allTasks') I want to help
-
-
-
 
             #schedule.ui.secondary.menu
 
@@ -178,8 +227,6 @@ append frontContent
                                         .extra
                                             span.ui.left.floated Hosted By Rictaflora
 
-
-
                             .item
                                 .ui.image
                                     i.grey.food.icon.big
@@ -199,7 +246,6 @@ append frontContent
                                             .ui.right.floated
                                                 i.green.checkmark.icon
                                                 | Attending
-
 
                             .item
                                 .ui.image
@@ -225,3 +271,4 @@ append frontContent
 append footer
     p &nbsp;
     p &nbsp;
+    +guestSelectModal('guestsModal')

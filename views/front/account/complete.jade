@@ -1,3 +1,5 @@
+include ../parts/formElements
+
 extends ../layout
 
 append stylesheets
@@ -10,12 +12,21 @@ append javascripts
     script.
         $(function(){
             var validationRules = {
-                firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
-                lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
+                firstName: {
+                    rules:[
+                        { type: 'empty' },
+                        { type: 'maxLength[35]' }
+                    ]
+                },
+                lastName: {
+                    rules:[
+                        { type: 'empty' },
+                        { type: 'maxLength[35]' }
+                    ]
+                },
                 phone: {
                     rules:[
                         { type: 'empty' },
-                        { type: 'phone' },
                         { type: 'maxLength[14]' }
                     ]
                 }
@@ -28,6 +39,7 @@ append javascripts
                 fields: validationRules,
                 inline : false,
                 onSuccess: function(event, fields){
+                    console.log('Attemping to save into #{formAction} via #{formMethod}' )
                     $.ajax({
                         type: '#{formMethod}',
                         data: fields,
@@ -35,7 +47,7 @@ append javascripts
                         dataType: 'JSON',
                         statusCode: {
                             201: function(data, textStatus, jqXHR) {
-                                console.log('201 Error')
+                                console.log(data)
                                 $.get('/message/success/Saved successfully')
                             }
                         }
@@ -45,7 +57,7 @@ append javascripts
                         location.replace('/account/login/')
                     })
                     .done(function(response) {
-                        location.replace('#{pageAccountHome}/')
+                        location.replace('#{formComplete}')
                     })
                     return false
                 }
@@ -60,7 +72,7 @@ append frontContent
 
         .ui.basic.green.segment
 
-            form.ui.form
+            form.ui.form(name='mainForm')
 
                 div(style='display: none;')
                     input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
@@ -87,4 +99,6 @@ append frontContent
                     label(for='phone') Phone Number
                     input(type='text', id='phone', name='phone')
 
-                a.ui.primary.button(href=pageEventSignup) Update Profile
+                .ui.primary.submit.button Update Profile
+
+                +messageContainer

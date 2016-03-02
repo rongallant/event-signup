@@ -11,6 +11,7 @@ var index = require('./routes/index'),
     adminEvents = require('./routes/admin/events'),
     adminPersons = require('./routes/admin/persons'),
     adminAddresses = require('./routes/admin/addresses'),
+
     adminScheduleDates = require('./routes/admin/scheduleDates'),
     adminActivities = require('./routes/admin/activities'),
     adminTasks = require('./routes/admin/tasks'),
@@ -21,8 +22,6 @@ var index = require('./routes/index'),
  ***********************************************************/
 
 var
-    apiAccount = require('./routes/api/account'),
-    apiAccounts = require('./routes/api/accounts'),
     apiAccountPublic = require('./routes/public_api/account'),
 
     apiActivity = require('./routes/api/activity'),
@@ -52,7 +51,8 @@ module.exports = function(app, passport) {
         res.locals.pageHome = '/' // index page
         res.locals.pageAbout = '/about'
 
-        res.locals.pageAccountHome = '/account'
+        // res.locals.pageAccountHome = '/account'
+        res.locals.pageAccountHome = '/guest'
         res.locals.pageAccountSignup = '/account/signup'
         res.locals.pageAccountComplete = '/account/complete'
         res.locals.pageAccountLogin = '/account/login'
@@ -74,7 +74,6 @@ module.exports = function(app, passport) {
         res.locals.info = req.flash('info')
         res.locals.success = req.flash('success')
         res.locals.error = req.flash('error')
-        // res.locals.moment = require('moment') // Date formatter
         next()
     })
 
@@ -92,9 +91,6 @@ module.exports = function(app, passport) {
     // Admin Section
 
     app.use('/admin', admin)
-
-    app.use('/api/account', apiAccount)
-    app.use('/api/accounts', apiAccounts)
 
     app.use('/admin/events', adminEvents)
     app.use('/api/event', apiEvent)
@@ -123,5 +119,4 @@ module.exports = function(app, passport) {
     app.use('/admin/meals', adminMeals)
     app.use('/api/meal', apiMeal)
     app.use('/api/meals', apiMeals)
-
 }

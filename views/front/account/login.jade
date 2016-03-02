@@ -11,18 +11,18 @@ append stylesheets
 append javascripts
     script.
         $(function(){
+            var $form =  $('form[name=mainForm]')
             var validationRules = {
                 username: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
                 password: {rules:[{type:'empty'}, {type:'maxLength[35]'}]}
             }
 
-            var $form =  $('form[name=mainForm]')
-
-            // CREATE / SAVE
+            // LOGIN
             $form.form({
                 fields: validationRules,
                 inline : false,
                 onSuccess: function(event, fields){
+                    console.log('Attemping to log into #{formAction} via #{formMethod}' )
                     $.ajax({
                         type: '#{formMethod}',
                         data: fields,
@@ -30,10 +30,7 @@ append javascripts
                         dataType: 'JSON',
                         statusCode: {
                             200: function(data, textStatus, jqXHR) {
-                                console.log(textStatus)
-                                console.log(data)
-                                console.log('200 Success')
-                                $.get('/message/success/Saved successfully')
+                                $.get('/message/success/Welcome')
                             }
                         }
                     })
@@ -41,7 +38,7 @@ append javascripts
                         toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
                     })
                     .done(function(response) {
-                        location.replace('#{formSuccess}')
+                        location.replace('#{pageAccountHome}')
                     })
                     return false
                 }
@@ -53,48 +50,51 @@ append frontContent
     .ui.text.container
 
         form.ui.form(name='mainForm')
+            .ui.segments
+                .ui.segment
+                    h2.ui.center.aligned.header Log In
 
-            .ui.segment
+                .ui.segment
 
-                h2.ui.center.aligned.header Login
+                    div(style='display: none;')
+                        input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
 
-                div(style='display: none;')
-                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                    .ui.very.relaxed.stackable.grid
 
-                .ui.very.relaxed.stackable.grid
+                        .eight.wide.column
+                            .field
+                                label(for='username') Username
+                                .ui.left.icon.input
+                                    input(type='text', name="username", id="username")
+                                    i.user.icon
 
-                    .eight.wide.column
-                        .field
-                            label(for='username') Username
-                            .ui.left.icon.input
-                                input(type='text', name="username", id="username")
-                                i.user.icon
+                            .field
+                                label(for='password') Password
+                                .ui.left.icon.input
+                                    input(type='password', name="password", id="password")
+                                    i.lock.icon
 
-                        .field
-                            label(for='password') Password
-                            .ui.left.icon.input
-                                input(type='password', name="password", id="password")
-                                i.lock.icon
+                            .field
+                                .ui.submit.button
+                                  | Log In
 
-                        .field
-                            .ui.submit.button
-                              | Log In
+                                a.ui.right.floated.basic.button(href='#{pageAccountSignup}')
+                                  | Sign Up
 
-                    .ui.vertical.divider
-                        | Or
+                        .ui.vertical.divider
+                            | Or
 
-                    .eight.wide.column
-                        .field
-                            label &nbsp;
-                            a.fluid.ui.facebook.button(href=pageAccountHome)
-                              i.facebook.icon
-                              | Login with Facebook
+                        .eight.wide.column
+                            .field
+                                label &nbsp;
+                                a.fluid.ui.facebook.button(href=pageAccountHome)
+                                  i.facebook.icon
+                                  | Login with Facebook
 
-                        .field
-                            label &nbsp;
-                            a.fluid.ui.google.plus.button(href=pageAccountHome)
-                              i.google.plus.icon
-                              | Login with Google Plus
-
+                            .field
+                                label &nbsp;
+                                a.fluid.ui.google.plus.button(href=pageAccountHome)
+                                  i.google.plus.icon
+                                  | Login with Google Plus
 
             +messageContainer

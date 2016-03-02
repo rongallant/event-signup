@@ -9,6 +9,7 @@ var express = require('express'),
  ************************************************************/
 
 router.post('/login', function(req, res, next) {
+    console.log('Trying to logIn')
     passport.authenticate('local', function(err, user, info) {
         if (err) {
             res.status(500).json({ "status" : "error", "error" : err.message })
@@ -63,7 +64,7 @@ router.post('/', function(req, res, next) {
 /* GET Returns single item. */
 router.get('/:id', function(req, res, next) {
     Person.findById(req.params.id)
-        .populate('_contact')
+        .select('username email')
         .exec(function(err, data) {
             if (err) {
                 res.status(404).json({ "status" : "error", "error" : err.message })

@@ -1,9 +1,8 @@
 var express = require('express'),
     request = require('request'),
     passport = require('passport'),
-    path = require("path")
-
-var router = express.Router(),
+    path = require("path"),
+    router = express.Router(),
     Person = require("../models/person"),
     appSettings = require('./utils/appSettings')
 
@@ -14,6 +13,7 @@ appDesc['folder'] = '/accounts'
 appDesc['singularName'] = 'Account'
 appDesc['pluralName'] = 'Accounts'
 appDesc['newObject'] = new Person()
+
 router.use(function(req, res, next) {
     appSettings.appPaths(req, res, appDesc)
     next()
@@ -23,12 +23,16 @@ router.use(function(req, res, next) {
  * VIEWS
  ************************************************************/
 
+router.get('/', function(req, res, next) {
+   res.send('User Home should be guest landing')
+})
+
 router.get('/signup', function(req, res, next) {
     res.render("front/account/signup", {
         title: "Signup",
         data: appDesc['newObject'],
         formMethod: 'POST',
-        formAction: appDesc['apiSingle']
+        formAction: res.locals.fullUrl + appDesc['apiPublic']
     })
 })
 
@@ -37,28 +41,29 @@ router.get(['/login'], function(req, res, next) {
         title: "Login",
         user: req.user,
         formMethod: 'POST',
-        formAction: path.join(appDesc['apiPublic'], '/login'),
-        formSuccess: '/account/complete/'
+        formAction: res.locals.fullUrl + path.join(appDesc['apiPublic'], 'login')
     })
 })
 
 router.get('/complete', function(req, res, next) {
-    request(res.locals.apiItem + req.user.id, function (err, data){
+    var getUserUrl = res.locals.fullUrl + path.join(appDesc['apiPublic'], req.user.id)
+    request(getUserUrl, function (err, data){
         if (err) {
-            console.error(err)
+            console.error('REQUEST: ' + err)
             return next(err)
         }
         try {
-            res.render('front/account/createAccount', {
+            res.render('front/account/complete', {
                 title: "Complete Account",
                 user: req.user,
                 data: JSON.parse(data.body).data,
                 formMode: 'edit',
                 formMethod: 'PUT',
-                formAction: res.locals.apiItem + req.user.id
+                formAction: res.locals.apiItem,
+                formComplete: res.locals.pageEventSignup
             })
         } catch(err) {
-            console.error(err)
+            console.error('RENDER: ' + err)
             next(err)
         }
     })

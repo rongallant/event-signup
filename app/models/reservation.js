@@ -4,15 +4,17 @@ var mongoose = require('mongoose'),
 
 var ReservationSchema = new Schema({
     teamName: String,
+    arrivingDate: Date,
+    additionalInformation: String,
 
     _event: { type: Schema.Types.ObjectId, ref: 'Event' },
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' }, // maybe Person
-    _guests: { type: Schema.Types.ObjectId, ref: 'Guest' },
-    _pet: { type: Schema.Types.ObjectId, ref: 'Pet' },
 
-    arrivingDate: Date,
-    additionalInformation: String,
-    daysAttending: [{ type: Schema.Types.ObjectId, ref: 'ScheduleDate' }],
+    guests: [{ type: Schema.Types.ObjectId, ref: 'Person' }],
+    pets: [{ type: Schema.Types.ObjectId, ref: 'Pet' }],
+    events: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
+    activities: [{ type: Schema.Types.ObjectId, ref: 'Activity' }]
+
 }, {
     strict: true,
     timestamps: true,
