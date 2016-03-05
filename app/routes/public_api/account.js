@@ -9,30 +9,31 @@ var express = require('express'),
  ************************************************************/
 
 router.post('/login', function(req, res, next) {
-    console.log('Trying to logIn')
     passport.authenticate('local', function(err, user, info) {
         if (err) {
+            console.error('500: ', err.message)
             res.status(500).json({ "status" : "error", "error" : err.message })
         } else if (!user) {
+            console.error('404: User not found')
             res.status(404).json({ "status" : "error", "error" : "User not found" })
         } else {
             req.logIn(user, function(err) {
                 if (err) {
-                    console.error(err)
+                    console.error('500: ', err.message)
                     res.status(500).json({ "status" : "error", "error" : err.message })
                 } else {
-                    res.status(200).json({ "status" : "success" })
+                    res.status(200).json({ "status" : "success", "token" : user })
                 }
             })
         }
     })(req, res, next)
 })
 
+
 /* REGISTER NEW USER */
 router.post('/', function(req, res, next) {
     // See if username is available then register it.
     try {
-        console.log('Register New User')
         console.table(req.body)
         var data = new Person({
             username: req.body.username,

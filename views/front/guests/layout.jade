@@ -21,9 +21,12 @@ append frontContent
                 img.ui.small.image(src="/images/hangcon-h-logo.png", height="60", alt='HANGCON Homepage')
 
         .right.menu
+            a.item(href=pageEventSignup) Sign Up for Event
             a.item(href=pageAbout) About
-            a.item(href=pageAdmin) Admin
-            a.item(href=pageAccountLogout) Log Out
+            if user
+                a.item(href=pageAccountLogout) Log Out
+            else
+                a.item(href=pageAccountLogin) Log In
 
     .ui.container
 

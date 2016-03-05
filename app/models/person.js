@@ -7,6 +7,9 @@ var mongoose = require('mongoose'),
     Pet = require("./pet")
 
 var PersonSchema = new Schema({
+    token: {
+        type: String
+    },
     username: {
         type: String,
         required: true,

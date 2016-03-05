@@ -27,7 +27,7 @@ function hasVal(variable){
 }
 
 router.get('/edit/:id', function(req, res, next) {
-    request(res.locals.apiItem + req.params.id, function (err, data){
+    request({"uri":res.locals.apiItem + req.params.id}, function (err, data){
         if (err) { return next(err) }
         res.render(path.join(res.locals.editView), {
             title: "Editing " + appDesc['singularName'],
@@ -61,7 +61,7 @@ router.get('/:currPage?', function(req, res, next){
     if (hasVal(req.query.q))
         apiUri += '?q=' + req.query.q
     console.log('apiUri: ' + apiUri)
-    request(apiUri, function (err, data) {
+    request({"uri":apiUri}, function (err, data) {
         if (err) { return next(err) }
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],

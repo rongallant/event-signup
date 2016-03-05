@@ -1,0 +1,43 @@
+
+mixin selectorJs(selectorId, maxLength, formRules, rowItem, currentRows)
+    -console.log('formRules = ' + formRules)
+
+    if typeof(hash) == 'undefined'
+        script(src='/javascripts/selector.js')
+        -var hash = '#'
+    script.
+        $(function() {
+            var maxLength = #{maxLength?maxLength:'5'}
+            var formRules = !{formRules?formRules:'null'}
+            var currRows = !{currentRows?JSON.stringify(currentRows):'[]'}
+            var rowItem = !{rowItem?rowItem:'null'}
+            initSelector('#{hash+selectorId}', maxLength, rowItem, currRows, formRules)
+        })
+
+mixin selectorListPanel(selectorId, items, itemName, iconClass, segmentClass)
+    div(id=selectorId)
+        h5.ui.header
+            .addEntry.basic.ui.button.right.floated
+                i.add.icon
+                | Add #{itemName}
+            .content
+                i.icon(class=iconClass)
+                | Your #{itemName}s
+        .ui.basic.segment(class=segmentClass)
+            .listOut.ui.relaxed.ordered.list
+                // for item in items
+                //     .item= item.fullName
+                //         .right.floated.content
+                //             i.trash.icon.link
+            .ui.hidden.divider
+
+mixin selectorModal(selectorId, itemName)
+    .ui.modal(id='#{selectorId}Modal')
+        .header Add #{itemName}
+        .content
+            form.ui.form(name='#{selectorId}SelectForm', id='#{selectorId}SelectForm')
+                block
+                .ui.error.message
+        .actions
+          .ui.cancel.button Cancel
+          input.ui.submit.primary.button(type='submit', form='#{selectorId}SelectForm', value='Add #{itemName}')

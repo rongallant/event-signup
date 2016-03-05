@@ -20,6 +20,7 @@ require('console.table')
  ***********************************************************/
 
 var app = express()
+var configAuth = require('./config/auth.js')
 
 // Global variables
 app.locals.apptitle = 'HANGCON'
@@ -34,6 +35,8 @@ global.viewPatternTime = "h:mm A"
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
 app.set('view options', { layout: false })
+
+// Loggers
 app.use(logger('dev'))
 
 app.use(bodyParser.json()) // to support JSON-encoded bodies
@@ -46,7 +49,7 @@ app.use(methodOverride(function(req, res){
         return method
     }
 }))
-app.use(cookieParser('This is a crazy secret, Shjahsk'))
+app.use(cookieParser(configAuth.secret))
 
 // Session
 app.use(expressSession({
@@ -54,21 +57,15 @@ app.use(expressSession({
     store: new expressSession.MemoryStore,
     saveUninitialized: true,
     resave: true,
-    secret: 'This is a crazy secret, Shjahsk'
+    secret: configAuth.secret
 }))
 
-// Route that creates a flash message using the express-flash module
-app.all('/express-flash', function( req, res ) {
-    req.flash('success', 'This is a flash message using the express-flash module.')
-    res.redirect(301, '/')
-})
 app.use(flash())
 
 /************************************************************
  * Resource Paths
  ***********************************************************/
 
-// app.use(favicon(path.join(__dirname, 'public/favicon.ico')))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/themes', express.static(path.join(__dirname, 'node_modules', 'semantic-ui-less', 'themes')))
 app.use('/javascripts', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
@@ -93,34 +90,25 @@ mongoose.set('debug', true)
 
 require('./config/passport')(app, passport); // pass passport for configuration
 
+
+
 app.all(["/admin*", "/guest*"], function(req, res, next) {
-    console.log('admin passed')
     if (req.isAuthenticated()) {
-        console.info('Checking auth: PASS')
+        console.info("200 : Authorized to access " + req.path)
         next()
     } else {
-        console.info('Checking auth: FAIL')
-        var err = new Error('Not Authorized')
+        var err = new Error('Not Authorized to access ' + req.path)
         err.status = 401
         next(err)
     }
 })
 
-app.all("/api*", function(req, res, next) {
-
-    console.log('req.session.passport.user')
-    console.log(req.session.passport.user)
-    console.log('req.user')
-    console.log(req.user)
-    console.log('req.isAuthenticated() = ' + req.isAuthenticated())
-
+app.all(["/api*"], function(req, res, next) {
+    console.log('req.user = ', req.user)
     if (req.isAuthenticated()) {
-        next()
+        res.status(200).json({ "status" : "success" })
     } else {
-        res.status(401).json({
-            "status": "error",
-            "error": "Not Authorized"
-        })
+        res.status(401).json({ "status" : "error", "message" : "Not Authorized to access " + req.path })
     }
 })
 

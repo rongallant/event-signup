@@ -47,7 +47,7 @@ router.get(['/login'], function(req, res, next) {
 
 router.get('/complete', function(req, res, next) {
     var getUserUrl = res.locals.fullUrl + path.join(appDesc['apiPublic'], req.user.id)
-    request(getUserUrl, function (err, data){
+    request({ "uri" : getUserUrl }, function (err, req, res, data){
         if (err) {
             console.error('REQUEST: ' + err)
             return next(err)

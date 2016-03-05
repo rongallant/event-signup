@@ -44,9 +44,22 @@ router.get('/:id', function(req, res, next) {
     )
 })
 
+/* GET Latest Event. */
+router.get('/current', function(req, res, next) {
+    Event.findOne({}, {}, { sort: { 'createdAt' : -1 } }, function(err, data) {
+            if (err) {
+                res.status(404).json({ "status" : "error", "error" : err })
+            } else {
+                res.status(200).json({ "status" : "success", data })
+            }
+        }
+    )
+})
+
 function dateTimeToDate(strDate, strTime) {
-    return moment(strDate + ' ' + strTime, global.viewPatternDate +' '+global.viewPatternTime).format()
+    return moment(strDate + ' ' + strTime, global.viewPatternDate + ' '+ global.viewPatternTime).format()
 }
+
 // set dateTime
 router.put('/', function(req, res, next) {
      req.body.startDateTime = dateTimeToDate(req.body.startDate, req.body.startTime)

@@ -22,6 +22,9 @@ append content
 
         .right.menu
             a.item(href=pageAbout) About
-            a.item(href=pageAccountLogin) Log in
+            if user
+                a.item(href=pageAccountLogout) Log Out
+            else
+                a.item(href=pageAccountLogin) Log In
 
     block frontContent

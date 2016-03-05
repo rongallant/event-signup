@@ -45,9 +45,13 @@ var
     apiTask = require('./routes/api/task'),
     apiTasks = require('./routes/api/tasks')
 
+
 module.exports = function(app, passport) {
 
     app.use(function(req, res, next){
+
+        res.locals.fullUrl = 'https://' + req.get('host')
+
         res.locals.pageHome = '/' // index page
         res.locals.pageAbout = '/about'
 
@@ -69,6 +73,36 @@ module.exports = function(app, passport) {
         res.locals.pageAdminActivities = '/admin/activities'
         res.locals.pageAdminTasks = '/admin/tasks'
         res.locals.pageAdminMeals = '/admin/tasks/meals'
+
+        // API
+        res.locals.apiUri = {
+            "public": {
+                account : res.locals.fullUrl + '/public_api/account/'
+            },
+            "secure": {
+                activity : res.locals.fullUrl + '/api/activity/',
+                activities : res.locals.fullUrl + '/api/activities/',
+                address : res.locals.fullUrl + '/api/address/',
+                addresses : res.locals.fullUrl + '/api/addresses/',
+                event : {
+                    base : res.locals.fullUrl + '/api/event/',
+                    latest : res.locals.fullUrl + '/api/event/latest/'
+                },
+                events : res.locals.fullUrl + '/api/events/',
+                meal : res.locals.fullUrl + '/api/meal/',
+                meals : res.locals.fullUrl + '/api/meals/',
+                person : {
+                    base : res.locals.fullUrl + '/api/person/',
+                    byUsername : res.locals.fullUrl + '/api/person/username/',
+                    saveToken : res.locals.fullUrl + '/api/person/token/'
+                },
+                persons : res.locals.fullUrl + '/api/persons/',
+                scheduleDate : res.locals.fullUrl + '/api/scheduleDate/',
+                scheduleDates : res.locals.fullUrl + '/api/scheduleDates/',
+                task : res.locals.fullUrl + '/api/task/',
+                tasks : res.locals.fullUrl + '/api/tasks/'
+            }
+        }
 
         // Flash Messaging - Returns messages to users.
         res.locals.info = req.flash('info')

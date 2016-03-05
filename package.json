@@ -20,6 +20,8 @@
     "fullcalendar": "^2.6.1",
     "jade": "~1.11.0",
     "jquery": "^2.2.0",
+    "jsonwebtoken": "^5.7.0",
+    "jwt-simple": "^0.4.1",
     "kerberos": "0.0.18",
     "latest": "^0.2.0",
     "less-middleware": "^2.0.1",

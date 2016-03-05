@@ -7,12 +7,12 @@ var ReservationSchema = new Schema({
     arrivingDate: Date,
     additionalInformation: String,
 
-    _event: { type: Schema.Types.ObjectId, ref: 'Event' },
-    _contact: { type: Schema.Types.ObjectId, ref: 'Person' }, // maybe Person
+    _event: { type: Schema.Types.ObjectId, ref: 'Event', required: true },
+    _contact: { type: Schema.Types.ObjectId, ref: 'Person', required: true },
 
     guests: [{ type: Schema.Types.ObjectId, ref: 'Person' }],
     pets: [{ type: Schema.Types.ObjectId, ref: 'Pet' }],
-    events: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
+    tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }],
     activities: [{ type: Schema.Types.ObjectId, ref: 'Activity' }]
 
 }, {

@@ -39,7 +39,22 @@ router.get('/:id', function(req, res, next) {
         if (err) {
             console.error(err)
             res.status(400).json({ "error" : err.message })
-        } else {""
+        } else {
+            res.status(200).json({ "status" : "success", data })
+        }
+    })
+})
+
+/* by username Returns single person. */
+router.get('/username/:username', function(req, res, next) {
+    Person.findOne({ 'username' : req.params.username })
+        // .populate('_address')
+        // .populate('_emergencyContact')
+        .exec(function(err, data) {
+        if (err) {
+            console.error(err)
+            res.status(400).json({ "error" : err.message })
+        } else {
             res.status(200).json({ "status" : "success", data })
         }
     })
@@ -53,6 +68,19 @@ router.put('/', function(req, res, next) {
             res.status(500).json({ "error" : err.message })
         } else {
             res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
+        }
+    }
+  )
+})
+
+/* UPDATE Token */
+router.put('/token', function(req, res, next) {
+    Person.findByIdAndUpdate(req.body.id, { token:req.body.token, upsert: true }, function (err, data) {
+        if (err) {
+            console.error(err)
+            res.status(500).json({ "error" : err.message })
+        } else {
+            res.status(201).json({ "status" : "success", "message" : "Token updated" })
         }
     }
   )

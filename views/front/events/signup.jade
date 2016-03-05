@@ -1,75 +1,24 @@
-include parts/guestSelelect
+include parts/selector
 
 extends ../layout
 
-append stylesheets
-
 append javascripts
+    -var guestFormRules = "{firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]}}"
+    -var guestRowItem = "function(fields) {return '<div class=\"item\">' + fields.firstName + ' ' + fields.lastName + '<div class=\"right floated content\"><i class=\"trash icon link\"></i></div></div>'}"
+    -var petFormRules = "{name: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},weight: {rules:[{type:'empty'}, {type:'maxLength[3]'}]}}"
+    -var petRowItem = "function(fields){return '<div class=\"item\">' + fields.name + ' (' + fields.weight + ')<div class=\"right floated content\"><i class=\"trash icon link\"></i></div></div>'}"
     script.
         $(function(){
             $('.tabular.menu .item').tab()
-
-            $('#guests .addGuest.button').click(function(){
-                $('#guestsModal.ui.modal').modal('show')
-            })
-
-            var personSelectFormRules = {
-                firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
-                lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]}
-            }
-
-            var $guestForm =  $('form[name=personSelectForm]')
-            // $.fn.form.settings.templates.error =
-            // function(errors)
-            // {
-            //   var html = '<div class="ui header">Error Detected:</div>'
-            //   html += '<ul class="list">';
-            //   $.each(errors, function(index, value) {
-            //     html += '<li>THIS' + value + '</li>';
-            //   });
-            //   html += '</ul>';
-            //   return $(html);
-            // }
-            // CREATE / SAVE
-            $guestForm.form({
-                fields: personSelectFormRules,
-                inline : true,
-                onSuccess: function(event, fields){
-                    console.log('Attemping to log into #{formAction} via #{formMethod}' )
-                    $.ajax({
-                        type: '#{formMethod}',
-                        data: fields,
-                        url: '#{formAction}',
-                        dataType: 'JSON',
-                        statusCode: {
-                            200: function(data, textStatus, jqXHR) {
-                                console.log(data)
-                                $.get('/message/success/Welcome')
-                            }
-                        }
-                    })
-                    .error(function(response) {
-                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
-                    })
-                    .done(function(response) {
-                        location.replace('#{formSuccess}')
-                    })
-                    return false
-                }
-            }, {
-                templates: {
-                    prompt: function(errors) {
-                        return $('<div class="ui header">Error Header</div>...')
-                    }
-                }
-            })
         })
+    +selectorJs('guests', 5, guestFormRules, guestRowItem, data.guests)
+    +selectorJs('pets', 2, petFormRules, petRowItem, data.pets)
 
 append frontContent
 
     .ui.text.container
 
-        h1.ui.header Signup for Hangcon 2017
+        h1.ui.header Signup for #{data._event.name}
 
         .ui.hidden.divider
 
@@ -81,13 +30,9 @@ append frontContent
 
                 .eight.wide.column
 
-                    +guestSelectPanel('guests', data.guests)
+                    +selectorListPanel('guests', data.guests, 'Guest', 'blue user', 'blue')
 
-                    h5.ui.header Your Pets
-                    .ui.basic.brown.segment
-                        .basic.ui.button
-                            i.add.icon
-                            | Add Pet
+                    +selectorListPanel('pets', data.pets, 'Pet', 'brown paw', 'brown')
 
                 .eight.wide.column
 
@@ -95,16 +40,19 @@ append frontContent
                     .ui.basic.red.segment
 
                         .field.required
-                            label(for='') Full Name
-                            input(type='text', id='', name='')
+                            label(for='emergencyContact.fullName') Full Name
+                            input(type='text', id='emergencyContact.fullName', name='_contact[_contact][_emergencyContact][fullName]',
+                                value=data._contact._emergencyContact?data._contact._emergencyContact.fullName:'')
 
                         .field.required
-                            label(for='') Phone Number
-                            input(type='text', id='', name='')
+                            label(for='emergencyContact.phone') Phone Number
+                            input(type='text', id='emergencyContact.phone', name='_contact[_contact][_emergencyContact][phone]',
+                                value=data._contact._emergencyContact?data._contact._emergencyContact.phone:'')
 
                         .field.required
-                            label(for='') Email Address
-                            input(type='text', id='', name='')
+                            label(for='emergencyContact.email') Email Address
+                            input(type='text', id='emergencyContact.email', name='_contact[_contact][_emergencyContact][email]',
+                                value=data._contact._emergencyContact?data._contact._emergencyContact.email:'')
 
             h3.ui.dividing.header Tell us what you would like to attend
 
@@ -160,9 +108,7 @@ append frontContent
 
             each i in [12,13,14,15,16,17]
                 .ui.tab.segment(data-tab='tab_#{i}', class=i==12 ? 'active' : '')
-
                     .ui.relaxed.divided.items
-
                             .item
                                 .ui.image
                                     i.grey.food.icon.big
@@ -193,7 +139,6 @@ append frontContent
                                             .ui.right.floated
                                                 i.green.checkmark.icon
                                                 | Attending
-
 
                             .item
                                 .ui.image
@@ -271,4 +216,30 @@ append frontContent
 append footer
     p &nbsp;
     p &nbsp;
-    +guestSelectModal('guestsModal')
+    +selectorModal('guests', 'Guest')
+        .two.fields
+            .field
+                label(for='firstName') First Name
+                input(type='text', name='firstName', id='firstName')
+            .field
+                label(for='lastName') Last Name
+                input(type='text', name='lastName', id='lastName')
+        .field
+            label(for='isChild') Is Child
+            input(type='checkbox', name='isChild', id='isChild')
+
+    +selectorModal('pets', 'Pets')
+        .two.fields
+            .field
+                label(for='kind') Kind
+                select.ui.dropdown(type='text', name='kind', id='kind')
+                    option Dog
+                    option Cat
+                    option Other
+            .field
+                label(for='name') Name
+                input(type='text', name='name', id='name')
+
+            .field
+                label(for='weight') Weight
+                input(type='text', name='weight', id='weight')

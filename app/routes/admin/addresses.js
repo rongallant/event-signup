@@ -29,7 +29,7 @@ function hasVal(variable){
 }
 
 router.get('/edit/:id', function(req, res, next) {
-    request(res.locals.apiItem + req.params.id, function (err, data){
+    request({"uri":res.locals.apiItem + req.params.id}, function (err, data){
         if (err) { return next(err) }
         res.locals.countries = countries
         res.render(path.join(res.locals.editView), {
@@ -63,7 +63,7 @@ router.get('/:currPage?', function(req, res, next){
         apiUri += 1
     if (hasVal(req.query.q))
         apiUri += '?q=' + req.query.q
-    request(apiUri, function (err, data) {
+    request({"uri":apiUri}, function (err, data) {
         if (err) { return next(err) }
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],

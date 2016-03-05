@@ -4,7 +4,6 @@ var router = express.Router()
 // Domain Root
 
 router.get('/', function(req, res, next) {
-    console.log('Welcome')
     res.render("front/welcome", {
         title: "Welcome",
         user: req.user,

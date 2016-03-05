@@ -1,0 +1,80 @@
+
+
+mixin petsSelectJs(panelId, modalId)
+    script.
+        $(function(){
+
+            /* ******************************************************************
+             * Pet List
+             * ******************************************************************/
+
+            var $guests = $('#{panelId}')
+            var $guestsModal = $('#{modalId}').modal()
+
+            $guests.find('.addEntry.button').click(function(){
+                $guestsModal
+                    .modal('setting', 'transition', 'vertical flip')
+                    .modal('show')
+            })
+
+            var personSelectFormRules = {
+                firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
+                lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]}
+            }
+            var $guestForm =  $('form[name=personSelectForm]')
+
+            $guestForm.form({
+                fields: personSelectFormRules,
+                inline : true,
+                onSuccess: function(event, fields) {
+                    $guests.find('.listOut').append('<li>'+ fields.firstName + ' ' + fields.lastName +'</li>')
+                    $(this).form('clear')
+                    $guestsModal.modal('hide')
+                    return false
+                }
+            }, {
+                templates: {
+                    prompt: function(errors) {
+                        return $('<div class="ui header">Error Header</div>...')
+                    }
+                }
+            })
+        })
+
+mixin petSelectPanel(id, pets)
+    div(id=id)
+        h5.ui.header Your Pets
+        .ui.basic.blue.segment
+            ul
+                for pet in pets
+                    li.
+                        = pet.name (#{pet.kind})
+                        a.delete.icon(href='pet.id')
+            .addEntry.basic.ui.button
+                i.add.icon
+                | Add Pet
+
+mixin petSelectModal(id)
+    .ui.modal(id=id)
+        .header Add Pet
+        .content
+            form.ui.form(name='petSelectForm', id='petSelectForm', action='#')
+                .two.fields
+                    .field
+                        label(for='kind') Kind
+                        select.ui.dropdown(type='text', name='kind', id='kind')
+                            option Dog
+                            option Cat
+                            option Other
+                    .field
+                        label(for='name') Name
+                        input(type='text', name='name', id='name')
+
+                    .field
+                        label(for='weight') Weight
+                        input(type='text', name='weight', id='weight')
+
+                .ui.error.message
+        .actions
+          .ui.cancel.button Cancel
+          input.ui.submit.primary.button(type='submit', form='petSelectForm', value='Add Pet')
