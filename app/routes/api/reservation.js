@@ -10,9 +10,6 @@ var express = require('express'),
 
 // Get contact and update  their emergency contact
 router.post('/', function(req, res, next) {
-    console.log('Saving Emergency Contact')
-    console.log(req.body._emergencyContact)
-    console.log(req.body._emergencyContact.fullName)
     var fullName = req.body._emergencyContact.fullName.split(' '),
         firstName = fullName[0],
         lastName = fullName[fullName.length - 1]
@@ -26,8 +23,6 @@ router.post('/', function(req, res, next) {
         if (err) {
            console.error(err)
         }
-        console.log('emergencyContact')
-        console.log(data)
         req.emergencyContact = data
         return next()
     })
@@ -35,8 +30,6 @@ router.post('/', function(req, res, next) {
 
 // Save Contact
 router.post('/', function(req, res, next) {
-    console.log('Updating Contact')
-    console.log(req.emergencyContact)
     Person.findById(req.body._contact)
         .update({ _emergencyContact: mongoose.Types.ObjectId(req.emergencyContact.id) }, function(err, data) {
         if (err) {
@@ -63,8 +56,7 @@ router.post('/', function(req, res, next) {
         activities: [ mongoose.Types.ObjectId(req.body.activities) ],
     }).save(function(err, data) {
         if (err) {
-            console.error('Error saving Reservation')
-            console.error(err)
+            console.error('501: Error saving Reservation : ' + err.message)
             res.status(501).json({ "status" : "Error Saving Reservation", "error" : err.message })
         } else {
             res.status(201).json({ "status" : "success", data })

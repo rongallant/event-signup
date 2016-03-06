@@ -4,25 +4,28 @@ extends ../layout
 
 append javascripts
     -var guestFormRules = "{firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]}}"
-    -var guestRowItem = "function(fields) {return '<div class=\"item\">' + fields.firstName + ' ' + fields.lastName + '<div class=\"right floated content\"><i class=\"trash icon link\"></i></div></div>'}"
+    -var guestRowItem = "function(i, fields) {return '<div class=\"item\">' + fields.firstName + ' ' + fields.lastName + '<div class=\"right floated content\"><i class=\"trash icon link\"></i></div></div>'}"
     -var petFormRules = "{name: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},weight: {rules:[{type:'empty'}, {type:'maxLength[3]'}]}}"
-    -var petRowItem = "function(fields){return '<div class=\"item\">' + fields.name + ' (' + fields.weight + ')<div class=\"right floated content\"><i class=\"trash icon link\"></i></div></div>'}"
+
+
+
+    -var petRowItem = "function(i, fields){return '<div class=\"item\">' + fields.name + ' (' + fields.weight + ')<div class=\"right floated content\"><i class=\"trash icon link\"></i></div></div>'}"
+
+    //<input type=\"hidden\" name=\"pets\" value={name:' + fields.name + ',weight:' + fields.weight + '}/>
+
     +selectorJs('guests', 5, guestFormRules, guestRowItem, data.guests)
     +selectorJs('pets', 2, petFormRules, petRowItem, data.pets)
     script.
         $(function(){
             $('.tabular.menu .item').tab()
         })
-
         $(function(){
             var validationRules = {
                 emergencyContact_fullName : {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
                 emergencyContact_phone : {rules:[{type:'empty'}, {type:'maxLength[14]'}]},
                 emergencyContact_email : {rules:[{type:'maxLength[254]'}, {type:'email'}]}
             }
-
             var $form =  $('form[name=mainForm]')
-
             // CREATE / SAVE
             $form.form({
                 fields: validationRules,
@@ -43,7 +46,7 @@ append javascripts
                         }
                     })
                     .error(function(response) {
-                        // toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
                         console.error('ERROR')
                         console.error(response)
                         location.replace('/account/login/')
@@ -57,18 +60,11 @@ append javascripts
             })
         })
 
-
-
 append frontContent
-
     .ui.text.container
-
         h1.ui.header Signup for #{data._event.name}
-
         .ui.hidden.divider
-
         .ui.hidden.divider
-
         form.ui.form(name='mainForm')
 
             input(type='hidden', name='_event', value=data._event.id)

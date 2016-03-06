@@ -8,7 +8,6 @@ function initAddButton(selectorId, maxLength, callback) {
             $(selectorId + 'Modal')
                 .modal('setting', 'transition', 'vertical flip')
                 .modal('show')
-
             if (typeof(callback) !== 'undefined') {
                 callback(selectorId + 'Modal')
             }
@@ -31,17 +30,19 @@ function initSelector(selectorId, maxListLength, rowItem, currentRows, formRules
     var $itemsModal = $(selectorId + 'Modal').modal() // init modal
     initAddButton(selectorId, maxListLength)
     initTrash(selectorId, maxListLength)
-    $selector.find('.listOut').empty();
+    $selector.find('.listOut').empty()
     if (rowItem && currentRows) {
         $.each(currentRows, function(i, fields) {
-            $selector.find('.listOut').append(rowItem(fields))
+            if (typeof i == 'undefined') i = 0
+            $selector.find('.listOut').append(rowItem(i, fields))
         })
     }
     $itemsModal.find('form').form({
         fields: formRules,
         inline : true,
         onSuccess: function(event, fields) {
-            $selector.find('.listOut').append(rowItem(fields))
+            var length = $selector.find('.listOut .item').length
+            $selector.find('.listOut').append(rowItem(length+1, fields))
             initAddButton(selectorId, maxListLength)
             initTrash(selectorId, maxListLength)
             $(this).form('reset')
