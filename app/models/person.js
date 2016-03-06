@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
     passportLocalMongoose = require('passport-local-mongoose'),
     bcrypt = require('bcrypt-nodejs'),
+    uuid = require('node-uuid'),
     mongoosePaginate = require('mongoose-paginate'),
     Schema = mongoose.Schema,
     Vendor = require("./vendor"),
@@ -12,10 +13,11 @@ var PersonSchema = new Schema({
     },
     username: {
         type: String,
-        required: true,
+        required: false,
         index: {
             unique: true
-        }
+        },
+        default: uuid.v1()
     },
     password: String,
     facebook: {
@@ -45,17 +47,17 @@ var PersonSchema = new Schema({
     email: {
         type: String,
         maxlength: 254,
-        required: true
-    },
-    lastName: {
-        type: String,
-        maxlength: 35,
         required: false
     },
     firstName: {
         type: String,
         maxlength: 35,
-        required: false
+        required: true
+    },
+    lastName: {
+        type: String,
+        maxlength: 35,
+        required: true
     },
     phone: { type: String, maxlength: 18 },
     gender: { type: String },

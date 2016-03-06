@@ -1,5 +1,5 @@
 
-function initAddButton(selectorId, maxLength) {
+function initAddButton(selectorId, maxLength, callback) {
     if ($(selectorId).find('.listOut .item').length >= maxLength) {
         $(selectorId).find('.addEntry').hide()
     } else {
@@ -8,14 +8,21 @@ function initAddButton(selectorId, maxLength) {
             $(selectorId + 'Modal')
                 .modal('setting', 'transition', 'vertical flip')
                 .modal('show')
+
+            if (typeof(callback) !== 'undefined') {
+                callback(selectorId + 'Modal')
+            }
         })
     }
 }
 
-function initTrash(selectorId, maxLength) {
+function initTrash(selectorId, maxLength, callback) {
     $(selectorId).find('.listOut .item .trash').click(function() {
         $(this).closest('.item').remove()
         initAddButton(selectorId, maxLength)
+        if (typeof(callback) !== 'undefined') {
+            callback()
+        }
     })
 }
 

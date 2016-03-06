@@ -104,9 +104,10 @@ app.all(["/admin*", "/guest*"], function(req, res, next) {
 })
 
 app.all(["/api*"], function(req, res, next) {
-    console.log('req.user = ', req.user)
     if (req.isAuthenticated()) {
-        res.status(200).json({ "status" : "success" })
+        console.info("200 : Authorized to access " + req.path)
+        // res.status(200).json({ "status" : "Authorized to access " + req.path })
+        next()
     } else {
         res.status(401).json({ "status" : "error", "message" : "Not Authorized to access " + req.path })
     }
@@ -132,7 +133,7 @@ app.use(function(err, req, res, next) {
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    console.error(404)
+    console.error('404 : Page Not Found')
     var err = new Error('Page Not Found')
     err.status = 404
     next(err)
@@ -142,6 +143,7 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
+    console.error('500 : ' + err.message)
         res.status(err.status || 500)
         res.render('error', {
             message: err.message,
@@ -154,7 +156,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     res.status(err.status || 500)
-    console.error(err.status + ' : ' + err.message)
+    console.error('500 : ' + err.message)
     res.render('error', {
         message: err.message,
         error: {}

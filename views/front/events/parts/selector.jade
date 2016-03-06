@@ -1,7 +1,5 @@
 
 mixin selectorJs(selectorId, maxLength, formRules, rowItem, currentRows)
-    -console.log('formRules = ' + formRules)
-
     if typeof(hash) == 'undefined'
         script(src='/javascripts/selector.js')
         -var hash = '#'
@@ -25,10 +23,6 @@ mixin selectorListPanel(selectorId, items, itemName, iconClass, segmentClass)
                 | Your #{itemName}s
         .ui.basic.segment(class=segmentClass)
             .listOut.ui.relaxed.ordered.list
-                // for item in items
-                //     .item= item.fullName
-                //         .right.floated.content
-                //             i.trash.icon.link
             .ui.hidden.divider
 
 mixin selectorModal(selectorId, itemName)

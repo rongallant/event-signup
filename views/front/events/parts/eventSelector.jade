@@ -1,0 +1,150 @@
+
+h3.ui.dividing.header Tell us what you would like to attend
+
+.inline.stackable.fields
+
+    label Attend
+    .field
+        .ui.checkbox
+            input(type='checkbox', name='allDays', id='allDays')
+            label(for='allDays') All Days
+
+    .field
+        .ui.checkbox
+            input(type='checkbox', name='allMeals', id='allMeals')
+            label(for='allMeals') All Meals
+
+    .field
+        .ui.checkbox
+            input(type='checkbox', name='allActivities', id='allActivities')
+            label(for='allActivities') All Activities
+
+    .field
+        .ui.checkbox
+            input(type='checkbox', name='allTasks', id='allTasks')
+            label(for='allTasks') I want to help
+
+#schedule.ui.secondary.menu
+
+    a.active.item(data-tab='tab_12', class='12')
+        .ui.mini.statistic
+            .value= 12
+            .label Thu
+    a.item(data-tab='tab_13', class='13')
+        .ui.mini.statistic
+            .value= 13
+            .label Fri
+    a.item(data-tab='tab_14', class='14')
+        .ui.mini.statistic
+            .value= 14
+            .label Sat
+    a.item(data-tab='tab_15', class='15')
+        .ui.mini.statistic
+            .value= 15
+            .label Sun
+    a.item(data-tab='tab_16', class='16')
+        .ui.mini.statistic
+            .value= 16
+            .label Mon
+    a.item(data-tab='tab_17', class='17')
+        .ui.mini.statistic
+            .value= 17
+            .label Tue
+
+each i in [12,13,14,15,16,17]
+    .ui.tab.segment(data-tab='tab_#{i}', class=i==12 ? 'active' : '')
+        .ui.relaxed.divided.items
+                .item
+                    .ui.image
+                        i.grey.food.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 8:00 am - 9:30 am
+                        .header Breakfast
+                        .content
+                            p this is the description
+                            .extra
+                                i.warning.sign.icon
+                                .ui.celled.horizontal.list
+                                  .item Soy
+                                  .item Milk
+                                  .item Gluten
+
+                .item
+                    .ui.image
+                        i.grey.rocket.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 11:00 am - 1:00 pm
+                        .header Make Paracord Bracelets
+                        .content
+                            p this is the description
+                            .extra
+                                span.ui.left.floated Hosted By Old Dog
+                                .ui.right.floated
+                                    i.green.checkmark.icon
+                                    | Attending
+
+                .item
+                    .ui.image
+                        i.grey.food.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 1:00 pm - 3:00 pm
+                        .header Lunch
+                        .content
+                            p this is the description
+                            .extra
+                                i.warning.sign.icon
+                                .ui.celled.horizontal.list
+                                  .item Gluten
+                                  .item Peanuts
+                                  .item Soy
+
+                                .ui.right.floated
+                                    i.green.checkmark.icon
+                                    | Attending
+
+                .item
+                    .ui.image
+                        i.grey.rocket.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 3:00 pm - 5:30 pm
+                        .header Make Leather Bracelets
+                        .content
+                            p this is the description
+                            .extra
+                                span.ui.left.floated Hosted By Rictaflora
+
+                .item
+                    .ui.image
+                        i.grey.food.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 7:00 pm - 9:00 pm
+                        .header Dinner
+                        .content
+                            p this is the description
+                            .extra
+                                i.warning.sign.icon
+                                .ui.celled.horizontal.list
+                                  .item Gluten
+                                  .item Peanuts
+                                  .item Soy
+
+                                .ui.right.floated
+                                    i.green.checkmark.icon
+                                    | Attending
+
+                .item
+                    .ui.image
+                        i.grey.fire.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 10:30 pm - 12:00 am
+                        .header Hanging Out Around the Fire
+                        .content
+                            p this is the description
+                            .extra
+                                span Open to All

@@ -51,7 +51,10 @@ router.get('/signup', function(req, res, next) {
     res.render("front/events/signup", {
         title: "Event Signup",
         user: req.user,
-        data: newReservation
+        data: newReservation,
+        formMethod: 'POST',
+        formAction: res.locals.apiUri.secure.reservation.base,
+        formComplete: res.locals.pageAccountHome
     })
 })
 

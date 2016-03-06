@@ -39,12 +39,13 @@ var
     apiPerson = require('./routes/api/person'),
     apiPersons = require('./routes/api/persons'),
 
+    apiReservation = require('./routes/api/reservation'),
+
     apiScheduleDate = require('./routes/api/scheduleDate'),
     apiScheduleDates = require('./routes/api/scheduleDates'),
 
     apiTask = require('./routes/api/task'),
     apiTasks = require('./routes/api/tasks')
-
 
 module.exports = function(app, passport) {
 
@@ -97,6 +98,9 @@ module.exports = function(app, passport) {
                     saveToken : res.locals.fullUrl + '/api/person/token/'
                 },
                 persons : res.locals.fullUrl + '/api/persons/',
+                reservation : {
+                    base: res.locals.fullUrl + '/api/reservation/'
+                },
                 scheduleDate : res.locals.fullUrl + '/api/scheduleDate/',
                 scheduleDates : res.locals.fullUrl + '/api/scheduleDates/',
                 task : res.locals.fullUrl + '/api/task/',
@@ -119,6 +123,7 @@ module.exports = function(app, passport) {
     app.use('/public_api/account', apiAccountPublic)
 
     app.use('/guest', guests)
+    app.use('/api/reservation', apiReservation)
 
     app.use('/events', events)
 
