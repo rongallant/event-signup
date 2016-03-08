@@ -10,30 +10,25 @@ var express = require('express'),
 
 // Get contact and update  their emergency contact
 router.post('/', function(req, res, next) {
-    var fullName = req.body._emergencyContact.fullName.split(' '),
+    var fullName = req.body.emergencyContact.fullName.split(' '),
         firstName = fullName[0],
         lastName = fullName[fullName.length - 1]
-    Person({
-        username: req.body._emergencyContact.email,
+    req.emergencyContact = new Person({
+        username: req.body.emergencyContact.email,
         firstName: firstName,
         lastName: lastName,
-        phone: req.body._emergencyContact.phone,
-        email: req.body._emergencyContact.email
-    }).save(function(err, data) {
-        if (err) {
-           console.error(err)
-        }
-        req.emergencyContact = data
-        return next()
+        phone: req.body.emergencyContact.phone,
+        email: req.body.emergencyContact.email
     })
+    return next()
 })
 
 // Save Contact
 router.post('/', function(req, res, next) {
     Person.findById(req.body._contact)
-        .update({ _emergencyContact: mongoose.Types.ObjectId(req.emergencyContact.id) }, function(err, data) {
+        .update({ emergencyContact: req.emergencyContact }, function(err, data) {
         if (err) {
-           console.error(err)
+            return next(err)
         }
         return next()
     })
@@ -41,27 +36,26 @@ router.post('/', function(req, res, next) {
 
 // Save Reservation
 router.post('/', function(req, res, next) {
-
-    console.log('Reservation req.body = ' + JSON.stringify(req.body._contact))
-
-    Reservation({
-        _contact: mongoose.Types.ObjectId(req.body._contact),
-        _event: mongoose.Types.ObjectId(req.body._event),
-        teamName: req.teamName,
-        arrivingDate: req.body.arrivingDate,
-        additionalInformation: req.body.additionalInformation,
-        guests: [ mongoose.Types.ObjectId(req.body.guests) ],
-        pets: [ mongoose.Types.ObjectId(req.body.pets) ],
-        tasks: [ mongoose.Types.ObjectId(req.body.tasks) ],
-        activities: [ mongoose.Types.ObjectId(req.body.activities) ],
-    }).save(function(err, data) {
-        if (err) {
-            console.error('501: Error saving Reservation : ' + err.message)
-            res.status(501).json({ "status" : "Error Saving Reservation", "error" : err.message })
-        } else {
-            res.status(201).json({ "status" : "success", data })
-        }
-    })
+    try {
+        Reservation({
+            _contact: mongoose.Types.ObjectId(req.body._contact),
+            _event: mongoose.Types.ObjectId(req.body._event),
+            teamName: req.teamName,
+            arrivingDate: req.body.arrivingDate,
+            additionalInformation: req.body.additionalInformation,
+            guests: [ mongoose.Types.ObjectId(req.body.guests) ],
+            pets: [ req.body.pets ],
+            tasks: [ req.body.tasks ],
+            activities: [ mongoose.Types.ObjectId(req.body.activities) ],
+        }).save(function(err, data) {
+            if (err) {
+                return res.status(500).json({ "status" : 500, "message" : err.message })
+            }
+            return res.status(201).json({ "status" : "success" })
+        })
+    } catch(err) {
+        return res.status(500).json({ "status" : 500, "message" : err.message })
+    }
 })
 
 /* GET Returns single item. */
@@ -71,10 +65,9 @@ router.get('/:id', function(req, res, next) {
         .exec(function(err, data) {
             if (err) {
                 console.error(err)
-                res.status(404).json({ "status" : "error", "error" : err.message })
-            } else {
-                res.status(200).json({ "status" : "success", data })
+                return res.status(404).json({ "status" : 404, "message" : err.message })
             }
+            return res.status(200).json({ "status" : 200, "data" : data })
         }
     )
 })
@@ -84,10 +77,9 @@ router.put('/', function(req, res, next) {
     Reservation.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
         if (err) {
             console.error(err)
-            res.status(501).json({ "status" : "error", "error" : err.message })
-        } else {
-            res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
+            return res.status(500).json({ "status" : 500, "message" : err.message })
         }
+        res.status(201).json({ "status" : 201, "data" : {"id" : req.body.id} })
     })
 })
 
@@ -95,11 +87,9 @@ router.put('/', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
     Reservation.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
-            console.error(err)
-            res.status(501).json({ "status" : "error", "error" : err.message })
-        } else {
-            res.status(204).json({ "status" : "success" })
+            return res.status(500).json({ "status" : 500, "message" : err.message })
         }
+        return res.status(204).json({ "status" : 204, "message" : "Successfully Deleted" })
     })
 })
 

@@ -18,7 +18,7 @@ block appContent
                 // Allergins with icons
 
         tbody
-            if !data.docs.length
+            if !data.length
                 tr: td.center.aligned(colspan='4')
                     .ui.basic.icon.button
                         a(href=createAction)
@@ -26,7 +26,7 @@ block appContent
                             | Add First Meal
 
             else
-                each row in data.docs
+                each row in data
                     tr
                         td(data-label="Name")
                             a#row1Link(href=editAction + row.id)

@@ -17,15 +17,15 @@ router.post('/', function(req, res, next) {
         isChild: req.body.isChild,
         childAge: req.body.childAge,
         gearList: req.body.gearList,
-        _address: mongoose.Types.ObjectId(req.body._address),
-        _emergencyContact: mongoose.Types.ObjectId(req.body._emergencyContact),
-        _pet: mongoose.Types.ObjectId(req.body._pet)
+        address: req.body.address,
+        emergencyContact: req.body.emergencyContact,
+        pet: req.body.pet
     })
     data.save(function(err, data) {
         if (err) {
-            res.status(500).json({ "status" : "error", err })
+            res.status(500).json({ "status" : 500, "message" : err.message })
         } else {
-            res.status(201).json({ "status" : "success", data })
+            res.status(201).json({ "status" : 201, "data" : data })
         }
     })
 })
@@ -33,14 +33,14 @@ router.post('/', function(req, res, next) {
 /* EDIT Returns single item. */
 router.get('/:id', function(req, res, next) {
     Person.findById(req.params.id)
-        .populate('_address')
-        .populate('_emergencyContact')
+        .populate('address')
+        .populate('emergencyContact')
         .exec(function(err, data) {
         if (err) {
             console.error(err)
-            res.status(400).json({ "error" : err.message })
+            res.status(400).json({ "status" : 400, "message" : err.message })
         } else {
-            res.status(200).json({ "status" : "success", data })
+            res.status(200).json({ "status" : 200, "data" : data })
         }
     })
 })
@@ -48,14 +48,12 @@ router.get('/:id', function(req, res, next) {
 /* by username Returns single person. */
 router.get('/username/:username', function(req, res, next) {
     Person.findOne({ 'username' : req.params.username })
-        // .populate('_address')
-        // .populate('_emergencyContact')
         .exec(function(err, data) {
         if (err) {
             console.error(err)
-            res.status(400).json({ "error" : err.message })
+            res.status(400).json({ "status" : 400, "message" : err.message })
         } else {
-            res.status(200).json({ "status" : "success", data })
+            res.status(200).json({ "status" : 200, "data" : data })
         }
     })
 })
@@ -65,22 +63,9 @@ router.put('/', function(req, res, next) {
     Person.findByIdAndUpdate(req.body.id, { $set:req.body, upsert: true }, function (err, data) {
         if (err) {
             console.error(err)
-            res.status(500).json({ "error" : err.message })
+            res.status(500).json({ "status" : 500, "message" : err.message })
         } else {
-            res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
-        }
-    }
-  )
-})
-
-/* UPDATE Token */
-router.put('/token', function(req, res, next) {
-    Person.findByIdAndUpdate(req.body.id, { token:req.body.token, upsert: true }, function (err, data) {
-        if (err) {
-            console.error(err)
-            res.status(500).json({ "error" : err.message })
-        } else {
-            res.status(201).json({ "status" : "success", "message" : "Token updated" })
+            res.status(201).json({ "status" : 201, "data" : {"id" : req.body.id} })
         }
     }
   )
@@ -90,9 +75,9 @@ router.put('/token', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
     Person.findOneAndRemove(req.params.id, function (err) {
         if (err) {
-            res.status(500).json({ "error" : err.message })
+            res.status(500).json({ "status" : 500, "message" : err.message })
         } else {
-            res.status(204).json({ "status" : "success" })
+            res.status(204).json({ "status" : 204, "message" : "Successfully Deleted" })
         }
     })
 })

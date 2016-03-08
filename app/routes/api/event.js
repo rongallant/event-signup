@@ -11,35 +11,32 @@ var Event = require("../../models/event")
 
 /* POST New item created. */
 router.post('/', function(req, res, next) {
-    var data = new Event({
+    new Event({
         name: req.body.name,
         description: req.body.description,
         startDate: req.body.startDate,
         startTime: req.body.startTime,
         endDate: req.body.endDate,
         endTime: req.body.endTime,
-        _address: mongoose.Types.ObjectId(req.body._address),
+        address: mongoose.Types.ObjectId(req.body.address),
         _contact: mongoose.Types.ObjectId(req.body._contact)
-    })
-    data.save(function(err, data) {
+    }).save(function(err, data) {
         if (err) {
-            res.status(501).json({ "status" : "error", "error" : err })
-        } else {
-            res.status(201).json({ "status" : "success", data })
+            return res.status(500).json({ "status" : 500, "message" : err.message, "error" : err })
         }
+        return res.status(201).json({ "status" : 201, data })
     })
 })
 
 /* GET Returns single item. */
 router.get('/:id', function(req, res, next) {
     Event.findById(req.params.id)
-        .populate('_contact _address')
+        .populate('_contact address')
         .exec(function(err, data) {
             if (err) {
-                res.status(404).json({ "status" : "error", "error" : err })
-            } else {
-                res.status(200).json({ "status" : "success", data })
+                return res.status(404).json({ "status" : 404, "message" : err.message, "error" : err })
             }
+            return res.status(200).json({ "status" : 200, data })
         }
     )
 })
@@ -48,10 +45,9 @@ router.get('/:id', function(req, res, next) {
 router.get('/current', function(req, res, next) {
     Event.findOne({}, {}, { sort: { 'createdAt' : -1 } }, function(err, data) {
             if (err) {
-                res.status(404).json({ "status" : "error", "error" : err })
-            } else {
-                res.status(200).json({ "status" : "success", data })
+                return res.status(404).json({ "status" : 404, "message" : err.message, "error" : err })
             }
+            return res.status(200).json({ "status" : 200, data })
         }
     )
 })
@@ -71,10 +67,9 @@ router.put('/', function(req, res, next) {
 router.put('/', function(req, res, next) {
     Event.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
         if (err) {
-            res.status(501).json({ "status" : "error", "error" : err })
-        } else {
-            res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
+            return res.status(500).json({ "status" : 500, "message" : err.message, "error" : err })
         }
+        return res.status(201).json({ "status" : 201, "data" : {"id" : req.body.id} })
     })
 })
 
@@ -82,10 +77,9 @@ router.put('/', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
     Event.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
-            res.status(501).json({ "status" : "error", "error" : err })
-        } else {
-            res.status(204).json({ "status" : "success" })
+            return res.status(500).json({ "status" : 500, "message" : err.message, "error" : err })
         }
+        return res.status(204).json({ "status" : 204 })
     })
 })
 

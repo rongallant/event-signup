@@ -67,7 +67,7 @@ router.get('/:currPage?', function(req, res, next){
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
             user: req.user,
-            data: JSON.parse(data.body)
+            data: JSON.parse(data.body).data
         })
     })
 })

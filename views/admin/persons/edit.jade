@@ -57,7 +57,7 @@ append javascripts
                         }
                     })
                     .error(function(response) {
-                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).message)
                     })
                     .done(function(response) {
                         location.replace('#{editAction}' + response.data.id)
@@ -155,13 +155,13 @@ append appContent
                         input(type='number', name='childAge', id='childAge', max='17', maxlength='2', placeholder='Childs age...', value=data.childAge)
 
                 .field
-                    label(for='_address') Address
-                    +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
+                    label(for='address') Address
+                    +addressSelector('address', data.address?data.address.shortAddress:'', data.address?data.address.id:'')
 
 
                 .field
-                    label(for='_emergencyContact') Emergency Contact
-                    +personSelector('_emergencyContact', '_emergencyContact', data._emergencyContact?data._emergencyContact.id:'', data._emergencyContact?data._emergencyContact.fullName:'')
+                    label(for='emergencyContact') Emergency Contact
+                    +personSelector('emergencyContact', 'emergencyContact', data.emergencyContact?data.emergencyContact.id:'', data.emergencyContact?data.emergencyContact.fullName:'')
 
             +formSegment
 
@@ -174,26 +174,6 @@ append appContent
                     label(for='gearList') Hammock Setup
                     +textarea('gearList', 'gearList', '2000')
                         = data.gearList
-
-            +formSegment
-
-                +formSegmentHeader('Do you have a pet?')
-
-                +formSegmentIntro
-
-                .ui.three.fields
-
-                    .field
-                        label(for='petName') Pet's Name
-                        input(type="text", name='_pet.petName', id='petName', value=data._pet?data._pet.petName:'')
-
-                    .field
-                        label(for='petWeight') Pet's Weight (LBS)
-                        input(type="number", name='_pet.petWeight', id='petWeight', value=data._pet?data._pet.petWeight:'')
-
-                    .field
-                        label(for='petType') Pet's Type
-                        input(type="text", name='_pet.petType', id='petType', value=data._pet?data._pet.petType:'')
 
             +formSegment
 

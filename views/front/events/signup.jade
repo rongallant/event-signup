@@ -3,36 +3,56 @@ include parts/selector
 extends ../layout
 
 append javascripts
-    -var guestFormRules = "{firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]}}"
-    -var guestRowItem = "function(i, fields) {return '<div class=\"item\">' + fields.firstName + ' ' + fields.lastName + '<div class=\"right floated content\"><i class=\"trash icon link\"></i></div></div>'}"
-    -var petFormRules = "{name: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},weight: {rules:[{type:'empty'}, {type:'maxLength[3]'}]}}"
-
-
-
-    -var petRowItem = "function(i, fields){return '<div class=\"item\">' + fields.name + ' (' + fields.weight + ')<div class=\"right floated content\"><i class=\"trash icon link\"></i></div></div>'}"
-
-    //<input type=\"hidden\" name=\"pets\" value={name:' + fields.name + ',weight:' + fields.weight + '}/>
-
-    +selectorJs('guests', 5, guestFormRules, guestRowItem, data.guests)
-    +selectorJs('pets', 2, petFormRules, petRowItem, data.pets)
     script.
+        // var guestListContainer = [{firstName:'John',lastName:'Rambo', phone:'904-555-0123', email:'rambo@gmail.com' }]
+        // var petListContainer = [{kind:'dog',name:'Frodo',weight:11},{kind:'dog',name:'Boomer',weight:86},{kind:'cat',name:'Angel',weight:7}]
+
+        var guestListContainer = !{data.guests.length ? data.guests : '[]'}
+        var petListContainer = #{ data.pets.length ? data.pets : '[]'}
+
+        function customValidators($form, fields, guests, pets, formErrors) {
+            if (typeof formErrors == 'undefined') {
+                formErrors = []
+            }
+            if (fields['guests'].length > 5) {
+                formErrors.push('No more than 5 guests')
+            }
+            if (fields['pets'].length > 2) {
+                formErrors.push('No more than 2 pets')
+            }
+            console.log(formErrors)
+            if (formErrors.length > 0) {
+                $form.form('add errors', formErrors)
+            }
+            return (formErrors.length > 0)
+        }
+
         $(function(){
+            var $form =  $('form[name=mainForm]')
             $('.tabular.menu .item').tab()
-        })
-        $(function(){
+
             var validationRules = {
                 emergencyContact_fullName : {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
-                emergencyContact_phone : {rules:[{type:'empty'}, {type:'maxLength[14]'}]},
+                emergencyContact_phone : {rules:[{type:'empty'}, {type:'maxLength[15]'}]},
                 emergencyContact_email : {rules:[{type:'maxLength[254]'}, {type:'email'}]}
             }
-            var $form =  $('form[name=mainForm]')
+
             // CREATE / SAVE
             $form.form({
+                debug: false,
                 fields: validationRules,
-                inline : false,
-                onSuccess: function(event, fields){
-                    console.log('fields')
-                    console.table(fields)
+                onFailure: function(formErrors, fields) {
+                    fields['guests'] = guestListContainer
+                    fields['pets'] = petListContainer
+                    customValidators($form, fields, formErrors)
+                    return false
+                },
+                onSuccess: function(event, fields) {
+                    fields['guests'] = guestListContainer
+                    fields['pets'] = petListContainer
+                    if (customValidators($form, fields)) { // has errors
+                        return false
+                    }
                     console.log('Attemping to save into #{formAction} via #{formMethod}' )
                     $.ajax({
                         type: '#{formMethod}',
@@ -46,10 +66,10 @@ append javascripts
                         }
                     })
                     .error(function(response) {
-                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
                         console.error('ERROR')
                         console.error(response)
-                        location.replace('/account/login/')
+                        toaster('error', JSON.parse(response.responseText).message)
+                        return false
                     })
                     .done(function(response) {
                         console.log('SUCCESS')
@@ -57,8 +77,18 @@ append javascripts
                     })
                     return false
                 }
+            }, {
+                selector : { field : 'input, textarea, select, div' }
             })
         })
+
+    -var guestFormRules = "{firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]}}"
+    -var guestRowItem = "fields.firstName + ' ' + fields.lastName"
+    +selectorJs('guests', 5, guestFormRules, guestRowItem, 'guestListContainer')
+
+    -var petFormRules = "{name:{rules:[{type:'empty'}, {type:'maxLength[35]'}]},weight: {rules:[{type:'empty'}, {type:'maxLength[3]'}]}}"
+    -var petRowItem = "fields.name + ' - ' + fields.weight + ' lb'"
+    +selectorJs('pets', 2, petFormRules, petRowItem, 'petListContainer')
 
 append frontContent
     .ui.text.container
@@ -85,18 +115,18 @@ append frontContent
 
                         .field.required
                             label(for='emergencyContact_fullName') Full Name
-                            input(type='text', id='emergencyContact_fullName', name='_emergencyContact[fullName]',
-                                value=data._contact._emergencyContact?data._contact._emergencyContact.fullName:'')
+                            input(type='text', id='emergencyContact_fullName', name='emergencyContact[fullName]',
+                                value=data._contact.emergencyContact?data._contact.emergencyContact.fullName:'')
 
                         .field.required
                             label(for='emergencyContact_phone') Phone Number
-                            input(type='text', id='emergencyContact_phone', name='_emergencyContact[phone]',
-                                value=data._contact._emergencyContact?data._contact._emergencyContact.phone:'')
+                            input(type='text', id='emergencyContact_phone', name='emergencyContact[phone]',
+                                value=data._contact.emergencyContact?data._contact.emergencyContact.phone:'')
 
                         .field.required
                             label(for='emergencyContact_email') Email Address
-                            input(type='text', id='emergencyContact_email', name='_emergencyContact[email]',
-                                value=data._contact._emergencyContact?data._contact._emergencyContact.email:'')
+                            input(type='text', id='emergencyContact_email', name='emergencyContact[email]',
+                                value=data._contact.emergencyContact?data._contact.emergencyContact.email:'')
 
             // include parts/eventSelector
 
@@ -113,30 +143,42 @@ append frontContent
 append footer
     p &nbsp;
     p &nbsp;
-    +selectorModal('guests', 'Guest')
-        .two.fields
+    +selectorModal('guests', 'Guest', 'user blue', 'blue')
+        .two.fields.required
             .field
                 label(for='firstName') First Name
-                input(type='text', name='firstName', id='firstName')
+                input(type='text', name='firstName', id='firstName', maxlength='3')
             .field
                 label(for='lastName') Last Name
-                input(type='text', name='lastName', id='lastName')
-        .field
-            label(for='isChild') Is Child
-            input(type='checkbox', name='isChild', id='isChild')
+                input(type='text', name='lastName', id='lastName', maxlength='3')
+        .two.fields
+            .field.required
+                label(for='phone') Phone
+                .ui.left.icon.input
+                    input(type='text', name='phone', id='phone', maxlength='15')
+                    i.phone.icon
+            .field
+                label(for='email') Email
+                .ui.left.icon.input
+                    input(type='text', name='email', id='email', maxlength='255')
+                    i.mail.icon
 
-    +selectorModal('pets', 'Pets')
+    +selectorModal('pets', 'Pet', 'paw brown', 'brown')
         .two.fields
             .field
                 label(for='kind') Kind
-                select.ui.dropdown(type='text', name='kind', id='kind')
-                    option Dog
-                    option Cat
-                    option Other
-            .field
-                label(for='name') Name
-                input(type='text', name='name', id='name')
+                    select.ui.dropdown(type='text', name='kind', id='kind')
+                        option Dog
+                        option Cat
+                        option Other
 
             .field
-                label(for='weight') Weight
-                input(type='text', name='weight', id='weight')
+                label(for='name') Pets Name
+                input(type='text', name='name', id='name', maxlength='35')
+
+            .field
+                label(for='weight') Pets Weight
+                .ui.right.labeled.input
+                    input(type='number', name='weight', id='weight', maxlength='3')
+                    .ui.basic.label
+                        | lb

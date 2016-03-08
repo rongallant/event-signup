@@ -38,13 +38,13 @@ router.get('/:currPage?', function(req, res, next) {
         }
         Meal.paginate(query, options, function(err, data) {
             if (err) {
-                res.status(500).json({ "status" : "error", "error" : "Database: " + err.message })
+                res.status(500).json({ "status" : 500, "message" : err.message })
             } else {
-                res.status(200).json(data)
+                res.status(200).json({ "status" : 200, "data" : data })
             }
         })
     } catch(err) {
-        res.status(500).json({ "status" : "error", "error" : "Database: " + err.message })
+        res.status(500).json({ "status" : 500, "message" : err.message })
     }
 })
 

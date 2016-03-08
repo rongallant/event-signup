@@ -1,19 +1,31 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
+    Person = require("./person"),
+    Pet = require('./pet'),
     mongoosePaginate = require('mongoose-paginate')
 
 var ReservationSchema = new Schema({
+    _contact: {
+        type: Schema.Types.ObjectId,
+        ref: 'Person',
+        required: true
+
+    },
+    _event: {
+        type: Schema.Types.ObjectId,
+        ref: 'Event',
+        required: true
+    },
+
     teamName: String,
     arrivingDate: Date,
     additionalInformation: String,
 
-    _event: { type: Schema.Types.ObjectId, ref: 'Event', required: true },
-    _contact: { type: Schema.Types.ObjectId, ref: 'Person', required: true },
+    guests: [ Person.schema ],
+    pets: [ Pet.schema ],
 
-    guests: [{ type: Schema.Types.ObjectId, ref: 'Person' }],
-    pets: [{ type: Schema.Types.ObjectId, ref: 'Pet' }],
-    tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }],
-    activities: [{ type: Schema.Types.ObjectId, ref: 'Activity' }]
+    tasks: [{ type: Schema.Types.ObjectId, ref: 'Task', limit: 10 }],
+    activities: [{ type: Schema.Types.ObjectId, ref: 'Activity', limit: 10 }]
 
 }, {
     strict: true,

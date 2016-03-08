@@ -12,7 +12,7 @@ var index = require('./routes/index'),
     adminPersons = require('./routes/admin/persons'),
     adminAddresses = require('./routes/admin/addresses'),
 
-    adminScheduleDates = require('./routes/admin/scheduleDates'),
+    // adminScheduleDates = require('./routes/admin/scheduleDates'),
     adminActivities = require('./routes/admin/activities'),
     adminTasks = require('./routes/admin/tasks'),
     adminMeals = require('./routes/admin/meals')
@@ -41,8 +41,8 @@ var
 
     apiReservation = require('./routes/api/reservation'),
 
-    apiScheduleDate = require('./routes/api/scheduleDate'),
-    apiScheduleDates = require('./routes/api/scheduleDates'),
+    // apiScheduleDate = require('./routes/api/scheduleDate'),
+    // apiScheduleDates = require('./routes/api/scheduleDates'),
 
     apiTask = require('./routes/api/task'),
     apiTasks = require('./routes/api/tasks')
@@ -111,6 +111,8 @@ module.exports = function(app, passport) {
         // Flash Messaging - Returns messages to users.
         res.locals.info = req.flash('info')
         res.locals.success = req.flash('success')
+        res.locals.warning = req.flash('warning')
+        res.locals.alert = req.flash('alert')
         res.locals.error = req.flash('error')
         next()
     })
@@ -143,9 +145,9 @@ module.exports = function(app, passport) {
     app.use('/api/address', apiAddress)
     app.use('/api/addresses', apiAddresses)
 
-    app.use('/admin/scheduleDates', adminScheduleDates)
-    app.use('/api/scheduleDate', apiScheduleDate)
-    app.use('/api/scheduleDates', apiScheduleDates)
+    // app.use('/admin/scheduleDates', adminScheduleDates)
+    // app.use('/api/scheduleDate', apiScheduleDate)
+    // app.use('/api/scheduleDates', apiScheduleDates)
 
     app.use('/admin/activities', adminActivities)
     app.use('/api/activity', apiActivity)

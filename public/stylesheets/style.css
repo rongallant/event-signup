@@ -21,3 +21,6 @@
     white-space: pre;
 }
 
+#noty_topRight_layout_container {
+    top: 100px !important;
+}

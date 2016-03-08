@@ -30,8 +30,8 @@ router.get('/signup', function(req, res, next) {
 // Get Person
 router.get('/signup', function(req, res, next) {
      Person.findOne({ 'username' : req.user.username })
-        .populate('_address')
-        .populate('_emergencyContact')
+        .populate('address')
+        .populate('emergencyContact')
         .exec(function(err, rows) {
             if (err) { console.log(err) }
             req.person = rows

@@ -1,16 +1,18 @@
 function toaster(type, text) {
+    /* global noty */
     return noty({
-        layout: 'bottomLeft',
         type: type,
-        theme: 'relax',
         text: text,
+        layout: 'topRight',
+        theme: 'relax',
         dismissQueue: true,
+        maxVisible: 5,
         animation: {
             open: {height: 'toggle'},
             close: {height: 'toggle'},
             easing: 'swing',
             speed: 500
-            },
+        },
         timeout: 3000
     })
 }
@@ -22,7 +24,7 @@ function ajaxRequest(fieldData, formMethod, apiUri, successMsg, successRelocate)
         url: apiUri,
         dataType: 'JSON'
     }).done(function(response) {
-    console.log('RESPONSE')
+        console.log('RESPONSE')
         $.get( "/message/success/" + successMsg)
         location.replace(successRelocate)
     })

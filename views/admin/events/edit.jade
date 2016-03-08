@@ -50,7 +50,7 @@ append javascripts
                         }
                     })
                     .error(function(response) {
-                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
+                        toaster('error', 'Error: ' + JSON.parse(response.responseText).message)
                     })
                     .done(function(response) {
                         location.replace('#{editAction}' + response.data.id)
@@ -121,8 +121,8 @@ append appContent
                 .fields
 
                     .field.ten.wide.required
-                        label(for="_address") Location
-                        +addressSelector('_address', data._address?data._address.shortAddress:'', data._address?data._address.id:'')
+                        label(for="address") Location
+                        +addressSelector('address', data.address?data.address.shortAddress:'', data.address?data.address.id:'')
 
                 .fields
 

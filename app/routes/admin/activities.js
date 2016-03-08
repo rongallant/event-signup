@@ -27,8 +27,14 @@ function hasVal(variable){
 }
 
 router.get('/edit/:id', function(req, res, next) {
+        console.log('Activity')
     request({"uri":res.locals.apiItem + req.params.id}, function (err, data){
-        if (err) { return next(err) }
+        if (err) {
+            console.error(err)
+            return next(err) }
+        console.log('Activity data')
+        console.log(JSON.parse(data.body).data)
+
         res.render(path.join(res.locals.editView), {
             title: "Editing " + appDesc['singularName'],
             user: req.user,
@@ -52,22 +58,26 @@ router.get('/create', function(req, res) {
     })
 })
 
-router.get('/:currPage?', function(req, res, next){
-    var apiUri = res.locals.apiCollection
-    if (hasVal(req.params.currPage))
-        apiUri += req.params.currPage
-    else
-        apiUri += 1
-    if (hasVal(req.query.q))
-        apiUri += '?q=' + req.query.q
-    request({"uri":apiUri}, function (err, data) {
-        if (err) { return next(err) }
-        res.render(res.locals.listView, {
-            title: appDesc['pluralName'],
-            user: req.user,
-            data: JSON.parse(data.body)
+router.get('/:currPage?', function(req, res, next) {
+    try {
+        var apiUri = res.locals.apiCollection
+        if (hasVal(req.params.currPage))
+            apiUri += req.params.currPage
+        else
+            apiUri += 1
+        if (hasVal(req.query.q))
+            apiUri += '?q=' + req.query.q
+        request({"uri":apiUri}, function (err, data) {
+            if (err) { return next(err) }
+            res.render(res.locals.listView, {
+                title: appDesc['pluralName'],
+                user: req.user,
+                data: JSON.parse(data.body).data
+            })
         })
-    })
+    } catch(err) {
+        return next(err)
+    }
 })
 
 module.exports = router

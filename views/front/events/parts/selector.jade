@@ -1,19 +1,33 @@
-
-mixin selectorJs(selectorId, maxLength, formRules, rowItem, currentRows)
-    if typeof(hash) == 'undefined'
+//-
+   /*
+    * Initilize Selector JS.
+    *
+    * selectorId - String id that will be used to make this selector unique.
+    * maxLength - Max length list can take.
+    * formRules - Form field rules for Semantic UI form validator.
+    * rowItem - function(index, fields) { return item } representing each row
+    *           outputed. "fields" vars based on what is passed into rowItem.
+    *           rowsGlobalVariableName - Global variable name representing the
+    *           JSON array of objects that from database.
+    */
+mixin selectorJs(selectorId, maxLength, formRules, displayValue, rowsGlobalVariableName)
+    if typeof hash == 'undefined'
         script(src='/javascripts/selector.js')
-        -var hash = '#'
+        - hash = '#' // global
+    | <!-- #{selectorId} scripts -->
     script.
+        // Global List Object
+        var #{selectorId}SelectorItemArray = []
         $(function() {
+            #{selectorId}SelectorItemArray = !{currentRows?JSON.stringify(currentRows):'[]'} // Items Global Variable Name
             var maxLength = #{maxLength?maxLength:'5'}
             var formRules = !{formRules?formRules:'null'}
-            var currRows = !{currentRows?JSON.stringify(currentRows):'[]'}
-            var rowItem = !{rowItem?rowItem:'null'}
-            initSelector('#{hash+selectorId}', maxLength, rowItem, currRows, formRules)
+            var displayValue = function(i,fields){ return '<div class="item">' + #{displayValue} + '<div class="right floated content"><i class="trash icon link"></i></div></div>' }
+            initSelector('#{hash+selectorId}', maxLength, displayValue, #{rowsGlobalVariableName}, formRules)
         })
 
 mixin selectorListPanel(selectorId, items, itemName, iconClass, segmentClass)
-    div(id=selectorId)
+    .field: div(id=selectorId)
         h5.ui.header
             .addEntry.basic.ui.button.right.floated
                 i.add.icon
@@ -21,14 +35,17 @@ mixin selectorListPanel(selectorId, items, itemName, iconClass, segmentClass)
             .content
                 i.icon(class=iconClass)
                 | Your #{itemName}s
+                span.ui.tiny.label.selectorCount
         .ui.basic.segment(class=segmentClass)
             .listOut.ui.relaxed.ordered.list
             .ui.hidden.divider
 
-mixin selectorModal(selectorId, itemName)
-    .ui.modal(id='#{selectorId}Modal')
-        .header Add #{itemName}
-        .content
+mixin selectorModal(selectorId, itemName, iconClass, segmentClass)
+    .ui.small.modal(id='#{selectorId}Modal')
+        .header
+            i.icon(class=iconClass)
+            | Add #{itemName}
+        .content(class=segmentClass)
             form.ui.form(name='#{selectorId}SelectForm', id='#{selectorId}SelectForm')
                 block
                 .ui.error.message

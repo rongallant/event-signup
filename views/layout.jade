@@ -43,6 +43,8 @@ html
         //- Message Handling
         if error && error.length > 0
             script $(function(){toaster('error', '#{error}')})
+        if warning && warning.length > 0
+            script $(function(){toaster('warning', '#{warning}')})
         if success && success.length > 0
             script $(function(){toaster('success', '#{success}')})
         if info && info.length > 0

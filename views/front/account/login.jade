@@ -30,12 +30,19 @@ append javascripts
                         dataType: 'JSON',
                         statusCode: {
                             200: function(data, textStatus, jqXHR) {
-                                $.get('/message/success/Welcome')
+                                if(typeof(Storage) !== "undefined") {
+                                    localStorage.setItem("token", data.token)
+                                    $.get('/message/success/Welcome')
+                                } else {
+                                    toaster("Error", "Sorry! No Web Storage support.")
+                                    return false;
+                                }
                             }
                         }
                     })
                     .error(function(response) {
-                        toaster('error', 'Error: ' + JSON.parse(response.responseText).error)
+                        toaster('error', JSON.parse(response.responseText).message)
+                        return false
                     })
                     .done(function(response) {
                         location.replace('#{pageAccountHome}')

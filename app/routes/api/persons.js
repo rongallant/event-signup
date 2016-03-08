@@ -29,25 +29,18 @@ router.get('/:currPage?', function(req, res, next) {
     }
     var options = {
         sort: { updatedAt: -1 },
-        populate: '_address _emergencyContact',
+        populate: 'address emergencyContact',
         lean: false, // False enables virtual params
         page: req.params.currPage,
         limit: req.app.locals.resultsPerPage
     }
     Person.paginate(query, options, function(err, data) {
         if (err) {
-            res.status(500).json({ "status": "error", "error": err })
+            res.status(500).json({ "status": 500, "message" : err.message })
         } else {
-            res.status(200).json({ "status": "success", data })
+            res.status(200).json({ "status": 200, "data" : data })
         }
     })
 })
 
 module.exports = router
-//  "status": "error",
-//   "error": {
-//     "name": "MongoError",
-//     "message": "Can't canonicalize query: BadValue bad skip value in query",
-//     "$err": "Can't canonicalize query: BadValue bad skip value in query",
-//     "code": 17287
-//   }

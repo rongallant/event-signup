@@ -5,12 +5,9 @@ var mongoose = require('mongoose'),
     mongoosePaginate = require('mongoose-paginate'),
     Schema = mongoose.Schema,
     Vendor = require("./vendor"),
-    Pet = require("./pet")
+    Address = require("./address")
 
 var PersonSchema = new Schema({
-    token: {
-        type: String
-    },
     username: {
         type: String,
         required: false,
@@ -20,30 +17,10 @@ var PersonSchema = new Schema({
         default: uuid.v1()
     },
     password: String,
-    facebook: {
-        id: String,
-        token: String,
-        email: String,
-        name: String
-    },
-    twitter: {
-        id: String,
-        token: String,
-        displayName: String,
-        username: String
-    },
-    google: {
-        id: String,
-        token: String,
-        email: String,
-        name: String
-    },
-
     roles: [{
         type: String,
         enum: ['user', 'admin', 'manager']
     }],
-
     email: {
         type: String,
         maxlength: 254,
@@ -64,12 +41,13 @@ var PersonSchema = new Schema({
     isChild: { type: Boolean },
     childAge: { type: Number, min: 0, max: 17 },
     gearList: { type: String, maxlength: 2000 },
+
+    emergencyContact: { type: Schema.Types.ObjectId, ref: 'Person'  },
+    address: { type: Address.schema  },
+
+    _vendor: { type: Schema.Types.ObjectId, ref: 'Vendor'  },
     cr_id: {},
     lu_id: {},
-    _address: { type: Schema.Types.ObjectId, ref: 'Address'  },
-    _emergencyContact: { type: Schema.Types.ObjectId, ref: 'Person'  },
-    _vendor: { type: Vendor.schema  },
-    _pet: { type: Pet.schema  }
 }, {
     strict: true,
     timestamps: true,

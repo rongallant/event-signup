@@ -1,10 +1,13 @@
+
 var express = require('express'),
     request = require('request'),
-    path = require("path")
+    path = require("path"),
+    appDir = path.dirname('app')
 
 var router = express.Router(),
     Person = require('../../models/person'),
-    appSettings = require('../utils/appSettings')
+    appSettings = require('../utils/appSettings'),
+    authorization = require(path.resolve(appDir +'/app/helpers/authorization.js'))
 
 var appDesc = []
 appDesc['apiSingle'] = '/person'
@@ -53,22 +56,36 @@ router.get('/create', function(req, res) {
 })
 
 router.get('/:currPage?', function(req, res, next){
-    var apiUri = res.locals.apiCollection
-    if (hasVal(req.params.currPage))
-        apiUri += req.params.currPage
-    else
-        apiUri += 1
-    if (hasVal(req.query.q))
-        apiUri += '?q=' + req.query.q
-    console.log('apiUri: ' + apiUri)
-    request({"uri":apiUri}, function (err, data) {
-        if (err) { return next(err) }
-        res.render(res.locals.listView, {
-            title: appDesc['pluralName'],
-            user: req.user,
-            data: JSON.parse(data.body).data
+    try {
+        var apiUri = res.locals.apiCollection
+        if (hasVal(req.params.currPage))
+            apiUri += req.params.currPage
+        else
+            apiUri += 1
+        if (hasVal(req.query.q))
+            apiUri += '?q=' + req.query.q
+
+        
+
+        request({"uri":apiUri}, function (err, data) {
+            if (err) {
+                console.log('ERR request({"uri":apiUri}' + err)
+                console.log(data.body)
+                return next(err)
+
+            }
+
+            authorization.apiRequestErrorHandler(req, res, data, next)
+
+            res.render(res.locals.listView, {
+                title: appDesc['pluralName'],
+                user: req.user,
+                data: JSON.parse(data.body).data
+            })
         })
-    })
+    } catch(err) {
+        return next(err)
+    }
 })
 
 module.exports = router

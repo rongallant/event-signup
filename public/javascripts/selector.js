@@ -1,5 +1,5 @@
 
-function initAddButton(selectorId, maxLength, callback) {
+function initSelectorModalButton(selectorId, maxLength, callback) {
     if ($(selectorId).find('.listOut .item').length >= maxLength) {
         $(selectorId).find('.addEntry').hide()
     } else {
@@ -15,38 +15,54 @@ function initAddButton(selectorId, maxLength, callback) {
     }
 }
 
-function initTrash(selectorId, maxLength, callback) {
-    $(selectorId).find('.listOut .item .trash').click(function() {
-        $(this).closest('.item').remove()
-        initAddButton(selectorId, maxLength)
+function initTrash(selectorId, maxListLength, rowItem, currentRows, callback) {
+    var $listItems = $(selectorId).find('.listOut .item .trash')
+    $listItems.click(function(index, value) {
+        currentRows.splice($listItems.index(this), 1) // Delete from array
+        selectorPopulateRows(selectorId, maxListLength, rowItem, currentRows)
         if (typeof(callback) !== 'undefined') {
             callback()
         }
     })
 }
 
-function initSelector(selectorId, maxListLength, rowItem, currentRows, formRules) {
+function selectorPopulateRows(selectorId, maxListLength, rowItem, currentRows)
+{
+    // Pre populate list
     var $selector = $(selectorId)
-    var $itemsModal = $(selectorId + 'Modal').modal() // init modal
-    initAddButton(selectorId, maxListLength)
-    initTrash(selectorId, maxListLength)
-    $selector.find('.listOut').empty()
-    if (rowItem && currentRows) {
-        $.each(currentRows, function(i, fields) {
-            if (typeof i == 'undefined') i = 0
-            $selector.find('.listOut').append(rowItem(i, fields))
-        })
-    }
+    $selector.find('.listOut').empty() // Empty list
+    $.each(currentRows, function(index, value) {
+        if (typeof value != 'undefined') {
+            if (typeof index == 'undefined') index = 0
+            $selector.find('.listOut').append(rowItem(index, value))
+        }
+    })
+    $selector.find('.selectorCount').html((currentRows.length+1) + ' of ' + maxListLength)
+    initTrash(selectorId, maxListLength, rowItem, currentRows)
+    initSelectorModalButton(selectorId, maxListLength)
+
+}
+
+function initSelector(selectorId, maxListLength, rowItem, currentRows, formRules) {
+    var $itemsModal = $(selectorId + 'Modal').modal()
+    initSelectorModalButton(selectorId, maxListLength)
+    selectorPopulateRows(selectorId, maxListLength, rowItem, currentRows)
     $itemsModal.find('form').form({
         fields: formRules,
         inline : true,
-        onSuccess: function(event, fields) {
-            var length = $selector.find('.listOut .item').length
-            $selector.find('.listOut').append(rowItem(length+1, fields))
-            initAddButton(selectorId, maxListLength)
-            initTrash(selectorId, maxListLength)
-            $(this).form('reset')
-            $itemsModal.modal('hide')
+        onSuccess: function(event, fields)
+        {
+            if (currentRows.length < maxListLength) {
+                currentRows.push(fields) // Add to array
+                selectorPopulateRows(selectorId, maxListLength, rowItem, currentRows)
+                initSelectorModalButton(selectorId, maxListLength)
+                $(this).form('reset')
+                $itemsModal.modal('hide')
+            } else {
+                console.error('\nFailed adding row')
+                console.error('currentRow = ' + JSON.stringify(currentRows))
+                console.error(selectorId + ' results = ' + currentRows.length + ' of ' + maxListLength)
+            }
             return false
         }
     })
