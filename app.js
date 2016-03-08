@@ -81,7 +81,6 @@ app.use('/moment', express.static(path.join(__dirname, 'node_modules', 'moment',
  * Database
  ***********************************************************/
 
-
 // MongooseJS / MongoDB
 mongoose.connect(configDB.url)
 mongoose.set('debug', true)
@@ -97,21 +96,7 @@ require('./config/passport')(app, passport); // pass passport for configuration
  * Routes
  ***********************************************************/
 
-app.use(function(req, res, next) {
-    console.log('\nSTART add token to header')
-    console.log('x-access-token = ' + req.headers['x-access-token'])
-    console.log('req.session.authToken = ' + req.session.authToken)
-    if (req.session.authToken) {
-        console.log('Setting header token = ' + req.session.authToken)
-        res.setHeader("x-access-token", req.session.authToken)
-        console.log('x-access-token = ' + req.headers['x-access-token'])
-    }
-    console.log('START add token to header\n')
-    next()
-})
-
-// app.all(["/admin*", "/guest*"], function(req, res, next) {
-app.all(function(req, res, next) {
+app.all(["/admin*", "/guest*"], function(req, res, next) {
     authorization.pageIsAuthenticated(req, res, next)
 })
 
@@ -120,9 +105,11 @@ app.all(["/api*"], function(req, res, next) {
     authorization.apiIsAuthenticated(req, res, next)
 })
 
-require('./app/routes/apiRoutes')(app) // load our routes and pass in our app and fully configured passport
-require('./app/routes/siteRoutes')(app) // load our routes and pass in our app and fully configured passport
-require('./app/routes/adminRoutes')(app) // load our routes and pass in our app and fully configured passport
+// LOAD SITE ROUTES
+require('./app/routes/appUrls')(app)
+require('./app/routes/apiRoutes')(app)
+require('./app/routes/siteRoutes')(app)
+require('./app/routes/adminRoutes')(app)
 
 /************************************************************
  * Error Handling
@@ -139,82 +126,42 @@ function isNull(varName) {
     return typeof varName == 'undefined'
 }
 
-// app.use(function(req, res, next) {
-
-//     console.log('\nSTART app.user api validation')
-//     console.log('x-access-token = ' + req.headers['x-access-token'])
-//     console.log('Verify Token')
-
-//     var token = req.body.token || req.query.token || req.headers['x-access-token']
-//     console.log('NEEDED userToken = ' + token)
-//     console.log('END* app.user api validation \n')
-
-//     if (token) {
-//         console.log("authToken = " + app.get('authToken'))
-//         jwt.verify(token, app.get('authToken'), function(err, decoded) {
-//             if (err) {
-//                 console.log(err)
-//                 return res.status(401).json({ "status": 401, "message": "Failed to authenticate token.", "error" : err })
-//             } else {
-//                 req.decoded = decoded
-//                 console.log('Successfully Authenticated Token')
-//                 return next()
-//             }
-//         })
-//     } else {
-//         console.error('403: No token provided.')
-//         return res.status(403).json({ "status": "403", "message": "No token provided." })
-//     }
-// })
-
-// Non Errors
-app.use(function (req, res, next) {
-    console.log('\nNon Errors')
-    console.log('res.url = ' + res.url)
-    console.log('res.statusCode = ' + res.statusCode)
-    console.log('res.statusMessage = ' + res.statusMessage)
-    console.log('res.headersSent: ' + res.headersSent)
-    console.log('req.session.authToken = ' + req.session.authToken)
-    console.log('x-access-token = ' + req.headers['x-access-token'])
-    console.log('Ajax Request: ' + req.xhr)
-    console.log('\n')
-    next()
-})
+if (app.get('env') === 'development') {
+    // Non Errors
+    app.use(function (req, res, next) {
+        console.log('\nNon Errors')
+        console.log('res.url = ' + res.url)
+        console.log('res.statusCode = ' + res.statusCode)
+        console.log('res.statusMessage = ' + res.statusMessage)
+        console.log('res.headersSent: ' + res.headersSent)
+        console.log('req.session.authToken = ' + req.session.authToken)
+        console.log('x-access-token = ' + req.headers['x-access-token'])
+        console.log('Ajax Request: ' + req.xhr)
+        console.log('\n')
+        next()
+    })
+}
 
 // NotAuthorized
-// app.use(function (err, req, res, next) {
-//     if (isNull(req.user) || err.status == 401) {
-//         console.error('Not Authorized : ' + err.message)
-//         err = new Error('Not Authorized')
-//         err.status = 401
-//         req.flash('warning', "You have been logged out")
-//         return res.redirect('/account/login')
-//     }
-//     next(err)
-// })
-
+app.use(function (err, req, res, next) {
+    if (isNull(req.user) || err.status == 401) {
+        console.error('Not Authorized : ' + err.message)
+        err = new Error('Not Authorized')
+        err.status = 401
+        req.flash('warning', "You have been logged out")
+        return res.redirect('/account/login')
+    }
+    next(err)
+})
 app.use(function (err, req, res, next) {
     if (isNull(res.statusCode) && isNull(res.status)) {
-        console.log('Had No Error Code')
-        console.log('res.body = ' + res.body)
         res.status(500)
         res.statusCode = 500
     }
     if (isNull(res.statusMessage)) {
         res.statusMessage = err.getMessage
     }
-    console.log('\nDebug errors')
-    console.log('res.url = ' + res.url)
-    console.log('res.statusCode = ' + res.statusCode)
-    console.log('res.statusMessage = ' + res.statusMessage)
-    console.log('res.headersSent: ' + res.headersSent)
-    console.log('req.session.authToken = ' + req.session.authToken)
-    console.log('x-access-token = ' + req.headers['x-access-token'])
-    console.log('Ajax Request: ' + req.xhr)
-    console.log('\n')
     if (req.xhr) {
-        console.log('XHR Error')
-        console.log(err)
         return res.status(500).json({'status' : 500, 'message' : 'There was an error processing your request'})
     }
     next(err)
@@ -226,8 +173,8 @@ app.use(function (err, req, res, next) {
     if (res.statusCode >= 500) {
         res.status(err.status || 500)
         return res.render('error', {
-            message: err.message,
-            error: err
+            message: res.statusCode + ' : Error',
+            error:  res.statusMessage
         })
     }
     next(err)
@@ -238,8 +185,8 @@ app.use(function(err, req, res, next) {
     if (res.statusCode >= 400 && res.statusCode < 500) {
         // res.status(err.status || 400)
         return res.render('error', {
-            message: err.message,
-            error: err
+            message: res.statusCode + ' : Error',
+            error: res.statusMessage
         })
     }
     next(err)
@@ -252,11 +199,10 @@ app.use(function (err, req, res, next) {
     }
     res.status(500)
     res.render('error', {
-        message: err.message,
-        error: err
+        message: '500 : System Error',
+        error: err.message
     })
 })
-
 
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {

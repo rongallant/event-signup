@@ -11,20 +11,42 @@ append stylesheets
             }
         }
 
-append javascripts
+mixin menuHeaderItem
+    .header.item
+        a(href=pageHome)
+            img.ui.small.image(src="/images/hangcon-h-logo.png", height="60", alt='HANGCON Homepage')
 
-append content
+mixin menuItems
+    if user
+        a.item(href=pageEventSignup) Signup for Event
+        a.item(href=pageAdmin) Admin
+        a.item(href=pageAbout) About
+        a.item(href=pageAccountLogout) Log Out
+    else
+        a.item(href=pageAbout) About
+        a.item(href=pageAccountLogin) Log In
 
-    .ui.primary.pointing.menu.fixed
-        .header.item
-            a(href=pageHome)
-                img.ui.small.image(src="/images/hangcon-h-logo.png", height="60", alt='HANGCON Homepage')
+block header
 
-        .right.menu
-            a.item(href=pageAbout) About
-            if user
-                a.item(href=pageAccountLogout) Log Out
-            else
-                a.item(href=pageAccountLogin) Log In
+    .ui.grid
+        .mobile.tablet.only.row
+
+            .ui.primary.pointing.menu.fixed
+                .ui.container
+                    +menuHeaderItem
+                    .ui.simple.dropdown.right.item
+                        i.ellipsis.vertical.icon
+                        .right.menu
+                            +menuItems
+
+        .computer.only.row
+
+            .ui.primary.pointing.menu.fixed
+                .ui.container
+                    +menuHeaderItem
+                    .right.menu
+                        +menuItems
+
+block content
 
     block frontContent

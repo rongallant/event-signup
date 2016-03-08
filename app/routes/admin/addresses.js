@@ -1,13 +1,13 @@
 var express = require('express'),
     request = require('request'),
-    path = require("path")
-
-var router = express.Router(),
+    path = require("path"),
+    authorization = require('../..//helpers/authorization.js'),
+    router = express.Router(),
     Address = require('../../models/address'),
     appSettings = require('../utils/appSettings'),
-    countries = require("i18n-iso-countries")
+    countries = require("i18n-iso-countries"),
+    appDesc = []
 
-var appDesc = []
 appDesc['apiSingle'] = '/address'
 appDesc['apiCollection'] = '/addresses'
 appDesc['folder'] = '/addresses'
@@ -32,6 +32,7 @@ router.get('/edit/:id', function(req, res, next) {
     try {
         request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
             if (err) { return next(err) }
+            authorization.apiRequestErrorHandler(req, res, data, next)
             res.locals.countries = countries
             res.render(path.join(res.locals.editView), {
                 title: "Editing " + appDesc['singularName'],
@@ -68,8 +69,9 @@ router.get('/:currPage?', function(req, res, next){
             apiUri += 1
         if (hasVal(req.query.q))
             apiUri += '?q=' + req.query.q
-        request({"uri":apiUri}, function (err, data) {
+        request({"uri":apiUri, "headers":{'x-access-token':req.session.authToken}}, function (err, data) {
             if (err) { throw new Error(err) }
+            authorization.apiRequestErrorHandler(req, res, data, next)
             res.render(res.locals.listView, {
                 title: appDesc['pluralName'],
                 user: req.user,

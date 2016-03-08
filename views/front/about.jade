@@ -12,17 +12,20 @@ append javascripts
                 offset:80,
                 currentClass: 'active'
             });
-
         })
 
-append frontContent
+block content
 
     .ui.text.container
 
         .ui.basic.segment
+
             .ui.right.rail
+
                 .ui.sticky
+
                     .ui.basic.segment
+
                         #pointingMenu.ui.vertical.following.fluid.text.menu
                             a.item(href='#top') Introduction
                             a.item(href='#activities') Activities
@@ -33,19 +36,17 @@ append frontContent
                             a.item(href='#rules') Rules
                             a.item(href='#parking') Parking
 
-
                     .ui.basic.segment.grey
                         .ui.vertical.fluid.text.menu
-                            a.item Location: Doe Lake Group Site, Umatilla, FL
-                            //http://www.recreation.gov/camping/do...O&parkId=75493
-                            //http://www.fs.usda.gov/photogallery/...position=Promo
-
-                            a.item Site Info & Directions
-                            //http://www.fs.usda.gov/recarea/ocala...a/?recid=40231
-
-                            a.item Hikin', Bikin', Yakin' & Trailin' Maps
-                            //http://www.fs.usda.gov/detail/ocala/...telprdb5192635
-
+                            h5.ui.item
+                                | More Information
+                            a.item(href='http://www.recreation.gov/camping/doe-lake-group-site/r/campgroundDetails.do?contractCode=NRSO&parkId=75493', target='_blank')
+                                | Doe Lake Group Site
+                            a.item(href='http://www.fs.usda.gov/recarea/ocala/recarea/?recid=40231', target='_blank')
+                                | Site Info & Directions
+                            a.item(href='http://www.fs.usda.gov/main/ocala/maps-pubs', target='_blank')
+                                | Trail Maps
 
             #about
+
                 include parts/about

@@ -11,22 +11,7 @@ append stylesheets
             }
         }
 
-append javascripts
-
 append frontContent
-
-    .ui.primary.pointing.menu.fixed
-        .header.item
-            a(href=pageHome)
-                img.ui.small.image(src="/images/hangcon-h-logo.png", height="60", alt='HANGCON Homepage')
-
-        .right.menu
-            a.item(href=pageEventSignup) Sign Up for Event
-            a.item(href=pageAbout) About
-            if user
-                a.item(href=pageAccountLogout) Log Out
-            else
-                a.item(href=pageAccountLogin) Log In
 
     .ui.container
 

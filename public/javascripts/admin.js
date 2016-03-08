@@ -10,7 +10,7 @@ $(function(){
 
     $leftMenu.sidebar('setting', 'transition', 'overlay')
 
-    $('.launch.icon').click(function(){
+    $('a.launch').click(function(){
         $leftMenu.sidebar('toggle')
     })
 

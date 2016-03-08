@@ -1,4 +1,3 @@
-
 html.ios {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -10,9 +9,11 @@ html.ios body {
 body.pushable>.pusher{
     background-color: rgba(255,255,255,.9);
 }
+
 #mainContent {
     padding-top: 10px;
 }
+
 #mainMenuTop {
     margin: 0;
 }
@@ -46,7 +47,7 @@ body.pushable>.pusher{
         display: none !important;
     }
     .show-mobile {
-        display: inline-block !important;
+        display: inherit;
     }
 }
 @media only screen and (min-width: 768px) {
@@ -59,6 +60,5 @@ body.pushable>.pusher{
         -ms-flex: 1 1 auto;
         flex: 1 1 auto;
         min-width: 0px;
-        /*padding-left: 275px;*/
     }
 }

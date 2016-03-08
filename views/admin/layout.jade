@@ -5,8 +5,9 @@ append stylesheets
     link(rel="stylesheet", type="text/css", href="/stylesheets/admin.css")
     style.
         body {
-            margin-top: 64px
+            margin-top: 70px
         }
+
 append javascripts
     script(src="/jquery_timepicker/jquery.timepicker.js")
     script(src="/javascripts/moment.min.js")
@@ -18,20 +19,14 @@ append javascripts
     script(src="/javascripts/admin.js")
 
 block content
-    body.pushable
-
-    // Top Menu
-    // #mainMenuTop.ui.inverted.top.main.menu
-
+    body.admin.pushable
 
     #mainMenuTop.ui.primary.pointing.menu.fixed
 
-        a.item.launch.icon.show-mobile
+        a.item.launch.show-mobile
             i.content.icon
 
-        .header.item
-            a(href='/')
-                img.ui.small.image(src="/images/hangcon-h-logo.png", height="60", alt='HANGCON Homepage')
+        +menuHeaderItem
 
         .right.menu.hide-mobile
 
@@ -39,47 +34,67 @@ block content
                 | Guest View
 
             .ui.right.dropdown.item
-                | Members
+                | Admin Menu
                 i.dropdown.icon
                 .menu
-                    a.item(href='/admin/addresses/') Addresses
-                    a.item(href='/admin/persons/') People
+                    .header
+                        i.newspaper.icon
+                        | Site Management
                     a.item(href='#') Reservations
-
-            .ui.right.dropdown.item
-                | Events
-                i.dropdown.icon
-                .menu
-                    a.item(href='/admin/activities/')  Activities
+                    a.item(href='/admin/persons/') People
+                    a.item(href='/admin/addresses/') Addresses
+                    .divider
+                    .header
+                        i.edit.icon
+                        | Content Management
                     a.item(href='/admin/events/') Events
+                    a.item(href='/admin/activities/')  Activities
                     a.item(href='/admin/meals/') Meals
-                    a.item(href='/admin/scheduleDates/') Schedule Dates
                     a.item(href='/admin/tasks/') Tasks
 
+            .ui.right.dropdown.item
+                i.ellipsis.vertical.icon
+                .menu
+                    if user
+                        a.item(href=pageAbout) About
+                        a.item(href=pageAccountLogout) Log Out
+                    else
+                        a.item(href=pageAbout) About
+                        a.item(href=pageAccountLogin) Log In
+
     // Side menu
-    #mainMenuLeft.ui.inverted.left.vertical.sidebar.menu.thin
+    #mainMenuLeft.ui.left.vertical.sidebar.menu
 
-        a.item.launch.icon.show-mobile
-            i.content.icon
+        .item.header
+            i.newspaper.icon
+            | Site Management
+        .menu
+            a.item(href='#') Reservations
+            a.item(href='/admin/persons/') People
+            a.item(href='/admin/addresses/') Addresses
 
-        a.item(href='/guest')
-            | Guest View
+        .item.header
+            i.edit.icon
+            | Content Management
+        .menu
+            a.item(href='/admin/activities/')  Activities
+            a.item(href='/admin/events/') Events
+            a.item(href='/admin/meals/') Meals
+            a.item(href='/admin/scheduleDates/') Schedule Dates
+            a.item(href='/admin/tasks/') Tasks
 
-        a.item.header(href='/') Home
-        .item
-            .header Members
-            .menu
-                a.item(href='/admin/addresses/') Addresses
-                a.item(href='/admin/persons/') People
-                a.item(href='#') Reservations
-        .item
-            .header Events
-            .menu
-                a.item(href='/admin/activities/')  Activities
-                a.item(href='/admin/events/') Events
-                a.item(href='/admin/meals/') Meals
-                a.item(href='/admin/scheduleDates/') Schedule Dates
-                a.item(href='/admin/tasks/') Tasks
+        a.item.header(href='/')
+            i.home.icon
+            | Home
+        .menu
+            a.item(href='/guest')
+                | Guest View
+            if user
+                a.item(href=pageAbout) About
+                a.item(href=pageAccountLogout) Log Out
+            else
+                a.item(href=pageAbout) About
+                a.item(href=pageAccountLogin) Log In
 
     #mainContent.pusher
 
