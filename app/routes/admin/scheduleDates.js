@@ -60,7 +60,7 @@ router.get('/:currPage?', function(req, res, next){
         apiUri += 1
     if (hasVal(req.query.q))
         apiUri += '?q=' + req.query.q
-    request({"uri":apiUri}, function (err, data) {
+    request({"uri":apiUri, "headers":{"x-access-token":req.session.authToken}}, function (err, data) {
         if (err) { return next(err) }
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],

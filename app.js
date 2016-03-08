@@ -21,7 +21,9 @@ require('console.table')
  ***********************************************************/
 
 var app = express()
+var configDB = require('./config/database.js')
 var configAuth = require('./config/auth.js')
+var authorization = require('./app/helpers/authorization.js')
 
 // Global variables
 app.locals.apptitle = 'HANGCON'
@@ -79,7 +81,6 @@ app.use('/moment', express.static(path.join(__dirname, 'node_modules', 'moment',
  * Database
  ***********************************************************/
 
-var configDB = require('./config/database.js')
 
 // MongooseJS / MongoDB
 mongoose.connect(configDB.url)
@@ -91,7 +92,6 @@ app.set('authToken', configDB.secret); // secret variable
  ***********************************************************/
 
 require('./config/passport')(app, passport); // pass passport for configuration
-var authorization = require('./app/helpers/authorization.js')
 
 /************************************************************
  * Routes
@@ -99,10 +99,12 @@ var authorization = require('./app/helpers/authorization.js')
 
 app.use(function(req, res, next) {
     console.log('\nSTART add token to header')
+    console.log('x-access-token = ' + req.headers['x-access-token'])
     console.log('req.session.authToken = ' + req.session.authToken)
     if (req.session.authToken) {
         console.log('Setting header token = ' + req.session.authToken)
         res.setHeader("x-access-token", req.session.authToken)
+        console.log('x-access-token = ' + req.headers['x-access-token'])
     }
     console.log('START add token to header\n')
     next()
@@ -118,7 +120,9 @@ app.all(["/api*"], function(req, res, next) {
     authorization.apiIsAuthenticated(req, res, next)
 })
 
-require('./app/routes.js')(app, passport) // load our routes and pass in our app and fully configured passport
+require('./app/routes/apiRoutes')(app) // load our routes and pass in our app and fully configured passport
+require('./app/routes/siteRoutes')(app) // load our routes and pass in our app and fully configured passport
+require('./app/routes/adminRoutes')(app) // load our routes and pass in our app and fully configured passport
 
 /************************************************************
  * Error Handling
@@ -135,26 +139,33 @@ function isNull(varName) {
     return typeof varName == 'undefined'
 }
 
-app.use(function(req, res, next) {
-    console.log('Verify Token')
-    var token = req.body.token || req.query.token || req.headers['x-access-token']
-    if (token) {
-        console.log('userToken = ' + token)
-        console.log("authToken = " + app.get('authToken'))
-        jwt.verify(token, app.get('authToken'), function(err, decoded) {
-            if (err) {
-                console.log(err)
-                return res.status(401).json({ "status": 401, "message": "Failed to authenticate token.", "error" : err })
-            } else {
-                req.decoded = decoded
-                console.log('Successfully Authenticated Token')
-                return next()
-            }
-        })
-    } else {
-        return res.status(403).json({ "status": 403, "message": "No token provided." })
-    }
-})
+// app.use(function(req, res, next) {
+
+//     console.log('\nSTART app.user api validation')
+//     console.log('x-access-token = ' + req.headers['x-access-token'])
+//     console.log('Verify Token')
+
+//     var token = req.body.token || req.query.token || req.headers['x-access-token']
+//     console.log('NEEDED userToken = ' + token)
+//     console.log('END* app.user api validation \n')
+
+//     if (token) {
+//         console.log("authToken = " + app.get('authToken'))
+//         jwt.verify(token, app.get('authToken'), function(err, decoded) {
+//             if (err) {
+//                 console.log(err)
+//                 return res.status(401).json({ "status": 401, "message": "Failed to authenticate token.", "error" : err })
+//             } else {
+//                 req.decoded = decoded
+//                 console.log('Successfully Authenticated Token')
+//                 return next()
+//             }
+//         })
+//     } else {
+//         console.error('403: No token provided.')
+//         return res.status(403).json({ "status": "403", "message": "No token provided." })
+//     }
+// })
 
 // Non Errors
 app.use(function (req, res, next) {
@@ -163,6 +174,8 @@ app.use(function (req, res, next) {
     console.log('res.statusCode = ' + res.statusCode)
     console.log('res.statusMessage = ' + res.statusMessage)
     console.log('res.headersSent: ' + res.headersSent)
+    console.log('req.session.authToken = ' + req.session.authToken)
+    console.log('x-access-token = ' + req.headers['x-access-token'])
     console.log('Ajax Request: ' + req.xhr)
     console.log('\n')
     next()
@@ -192,10 +205,11 @@ app.use(function (err, req, res, next) {
     }
     console.log('\nDebug errors')
     console.log('res.url = ' + res.url)
-    console.log('req.session.authToken = ' + req.session.authToken)
     console.log('res.statusCode = ' + res.statusCode)
     console.log('res.statusMessage = ' + res.statusMessage)
     console.log('res.headersSent: ' + res.headersSent)
+    console.log('req.session.authToken = ' + req.session.authToken)
+    console.log('x-access-token = ' + req.headers['x-access-token'])
     console.log('Ajax Request: ' + req.xhr)
     console.log('\n')
     if (req.xhr) {

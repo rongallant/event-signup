@@ -3,8 +3,8 @@ var express = require('express'),
     passport = require('passport'),
     path = require("path"),
     router = express.Router(),
-    Person = require("../models/person"),
-    appSettings = require('./utils/appSettings')
+    Person = require("../../models/person"),
+    appSettings = require('../utils/appSettings')
 
 var appDesc = []
 appDesc['apiPublic'] = '/public_api/account/'

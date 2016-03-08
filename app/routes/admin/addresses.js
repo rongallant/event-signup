@@ -30,7 +30,7 @@ function hasVal(variable){
 
 router.get('/edit/:id', function(req, res, next) {
     try {
-        request({"uri":res.locals.apiItem + req.params.id}, function (err, data){
+        request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
             if (err) { return next(err) }
             res.locals.countries = countries
             res.render(path.join(res.locals.editView), {

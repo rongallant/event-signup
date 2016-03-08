@@ -1,10 +1,10 @@
 var express = require('express'),
     request = require('request'),
     router = express.Router(),
-    Event = require("../models/event"),
-    Person = require("../models/person"),
-    Reservation = require("../models/reservation"),
-    appSettings = require('./utils/appSettings')
+    Event = require("../../models/event"),
+    Person = require("../../models/person"),
+    Reservation = require("../../models/reservation"),
+    appSettings = require('../utils/appSettings')
 
 var appDesc = []
 appDesc['apiSingle'] = '/reservation'
@@ -38,6 +38,7 @@ router.get('/signup', function(req, res, next) {
             return next()
     })
 })
+
 // Show Event Page
 router.get('/signup', function(req, res, next) {
     var newReservation = new Reservation({

@@ -2,20 +2,19 @@
 var express = require('express'),
     request = require('request'),
     path = require("path"),
-    appDir = path.dirname('app')
-
-var router = express.Router(),
+    router = express.Router(),
     Person = require('../../models/person'),
     appSettings = require('../utils/appSettings'),
-    authorization = require(path.resolve(appDir +'/app/helpers/authorization.js'))
+    authorization = require('../..//helpers/authorization.js'),
+    appDesc = []
 
-var appDesc = []
 appDesc['apiSingle'] = '/person'
 appDesc['apiCollection'] = '/persons'
 appDesc['folder'] = '/persons'
 appDesc['singularName'] = "Person"
 appDesc['pluralName'] = "Persons"
 appDesc['newObject'] = new Person()
+
 router.use(function(req, res, next) {
     appSettings.appPaths(req, res, appDesc)
     next()
@@ -30,7 +29,7 @@ function hasVal(variable){
 }
 
 router.get('/edit/:id', function(req, res, next) {
-    request({"uri":res.locals.apiItem + req.params.id}, function (err, data){
+    request({"uri":res.locals.apiItem + req.params.id, "headers":{'x-access-token':req.session.authToken}}, function (err, data){
         if (err) { return next(err) }
         res.render(path.join(res.locals.editView), {
             title: "Editing " + appDesc['singularName'],
@@ -65,16 +64,15 @@ router.get('/:currPage?', function(req, res, next){
         if (hasVal(req.query.q))
             apiUri += '?q=' + req.query.q
 
-        
+        console.log('\nSTART requesting persons')
 
-        request({"uri":apiUri}, function (err, data) {
+        request({"uri":apiUri, "headers":{"x-access-token":req.session.authToken}}, function (err, data) {
             if (err) {
                 console.log('ERR request({"uri":apiUri}' + err)
                 console.log(data.body)
                 return next(err)
 
             }
-
             authorization.apiRequestErrorHandler(req, res, data, next)
 
             res.render(res.locals.listView, {
@@ -83,6 +81,10 @@ router.get('/:currPage?', function(req, res, next){
                 data: JSON.parse(data.body).data
             })
         })
+
+        console.log('\nEND requesting persons')
+
+
     } catch(err) {
         return next(err)
     }
