@@ -37,10 +37,9 @@ function selectorPopulateRows(selectorId, maxListLength, rowItem, currentRows)
             $selector.find('.listOut').append(rowItem(index, value))
         }
     })
-    $selector.find('.selectorCount').html((currentRows.length+1) + ' of ' + maxListLength)
+    $selector.find('.selectorCount').html((currentRows.length) + ' of ' + maxListLength)
     initTrash(selectorId, maxListLength, rowItem, currentRows)
     initSelectorModalButton(selectorId, maxListLength)
-
 }
 
 function initSelector(selectorId, maxListLength, rowItem, currentRows, formRules) {

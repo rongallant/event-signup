@@ -23,7 +23,7 @@ router.post('/', function(req, res, next) {
     })
     data.save(function(err, data) {
         if (err) {
-            res.status(501).json({ "status" : "error", "error" : err })
+            res.status(501).json({ "status" : "error", "error" : JSON.stringify(err) })
         } else {
             res.status(201).json({ "status" : "success", data })
         }
@@ -39,7 +39,7 @@ router.get('/:id', function(req, res, next) {
             console.table(data)
 
             if (err) {
-                res.status(404).json({ "status" : "error", "error" : err })
+                res.status(404).json({ "status" : "error", "error" : JSON.stringify(err) })
             } else {
                 res.status(200).json({ "status" : "success", data })
             }
@@ -53,7 +53,7 @@ router.put('/', function(req, res, next) {
         .populate('_contact')
         .exec(function(err, data) {
             if (err) {
-                res.status(501).json({ "status" : "error", "error" : err })
+                res.status(501).json({ "status" : "error", "error" : JSON.stringify(err) })
             } else {
                 res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
             }
@@ -65,7 +65,7 @@ router.put('/', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
     Task.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
-            res.status(501).json({ "status" : "error", "error" : err })
+            res.status(501).json({ "status" : "error", "error" : JSON.stringify(err) })
         } else {
             res.status(204).json({ "status" : "success" })
         }

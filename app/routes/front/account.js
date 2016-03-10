@@ -8,7 +8,7 @@ var express = require('express'),
 
 var appDesc = []
 appDesc['apiPublic'] = '/public_api/account/'
-appDesc['apiSingle'] = '/person/'
+appDesc['apiSingle'] = '/account/'
 appDesc['folder'] = '/accounts'
 appDesc['singularName'] = 'Account'
 appDesc['pluralName'] = 'Accounts'

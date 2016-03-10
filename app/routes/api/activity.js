@@ -19,7 +19,7 @@ router.post('/', function(req, res, next) {
         endTime: req.body.endTime
     }).save(function(err, data) {
         if (err) {
-            return res.status(501).json({ "status" : 501, "message" : err.message, "error" : err })
+            return res.status(501).json({ "status" : 501, "message" : err.message, "error" : JSON.stringify(err) })
         }
         return res.status(201).json({ "status" : 200, "data" : data })
     })
@@ -31,7 +31,7 @@ router.get('/:id', function(req, res, next) {
         .populate('_contact')
         .exec(function(err, data) {
             if (err) {
-                return res.status(404).json({ "status" : 404, "error" : err.message, "error" : err })
+                return res.status(404).json({ "status" : 404, "error" : err.message, "error" : JSON.stringify(err) })
             }
             return res.status(200).json({ "status" : 200, "data" : data })
         }
@@ -42,7 +42,7 @@ router.get('/:id', function(req, res, next) {
 router.put('/', function(req, res, next) {
     Activity.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
         if (err) {
-            return res.status(501).json({ "status" : 501, "message" : err.message, "error" : err})
+            return res.status(501).json({ "status" : 501, "message" : err.message, "error" : JSON.stringify(err) })
         }
         res.status(201).json({ "status" : 201, "data" : {"id" : req.body.id} })
     })
@@ -52,7 +52,7 @@ router.put('/', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
     Activity.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
-            return res.status(501).json({ "status": 501, "message": err.message, "error" : err })
+            return res.status(501).json({ "status": 501, "message": err.message, "error" : JSON.stringify(err) })
         }
         return res.status(204).json({ "status" : 204 , "message" : "Successfully Deleted"})
     })

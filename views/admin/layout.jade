@@ -19,19 +19,18 @@ append javascripts
     script(src="/javascripts/admin.js")
 
 block content
-    body.admin.pushable
+    body.admin
+    //.pushable
 
     #mainMenuTop.ui.primary.pointing.menu.fixed
 
-        a.item.launch.show-mobile
-            i.content.icon
+        // a.item.launch.show-mobile
+        //     i.content.icon
 
         +menuHeaderItem
 
-        .right.menu.hide-mobile
-
-            a.item(href='/guest')
-                | Guest View
+        //.hide-mobile
+        .right.menu
 
             .ui.right.dropdown.item
                 | Admin Menu
@@ -43,7 +42,9 @@ block content
                     a.item(href='#') Reservations
                     a.item(href='/admin/persons/') People
                     a.item(href='/admin/addresses/') Addresses
+
                     .divider
+
                     .header
                         i.edit.icon
                         | Content Management
@@ -52,54 +53,58 @@ block content
                     a.item(href='/admin/meals/') Meals
                     a.item(href='/admin/tasks/') Tasks
 
-            .ui.right.dropdown.item
-                i.ellipsis.vertical.icon
-                .menu
+                    .divider
+
+                    a.item(href='/admin/')
+                        i.home.icon
+                        | Admin Home
+                    a.item(href='/guest')
+                        i.user.icon
+                        | Guest View
                     if user
-                        a.item(href=pageAbout) About
-                        a.item(href=pageAccountLogout) Log Out
-                    else
-                        a.item(href=pageAbout) About
-                        a.item(href=pageAccountLogin) Log In
+                        a.item(href=pageAccountLogout)
+                            i.sign.out.icon
+                            | Sign Out
+
 
     // Side menu
-    #mainMenuLeft.ui.left.vertical.sidebar.menu
+    // #mainMenuLeft.ui.left.vertical.sidebar.menu
 
-        .item.header
-            i.newspaper.icon
-            | Site Management
-        .menu
-            a.item(href='#') Reservations
-            a.item(href='/admin/persons/') People
-            a.item(href='/admin/addresses/') Addresses
+    //     .item.header
+    //         i.newspaper.icon
+    //         | Site Management
+    //     .menu
+    //         a.item(href='#') Reservations
+    //         a.item(href='/admin/persons/') People
+    //         a.item(href='/admin/addresses/') Addresses
 
-        .item.header
-            i.edit.icon
-            | Content Management
-        .menu
-            a.item(href='/admin/activities/')  Activities
-            a.item(href='/admin/events/') Events
-            a.item(href='/admin/meals/') Meals
-            a.item(href='/admin/scheduleDates/') Schedule Dates
-            a.item(href='/admin/tasks/') Tasks
+    //     .item.header
+    //         i.edit.icon
+    //         | Content Management
+    //     .menu
+    //         a.item(href='/admin/activities/')  Activities
+    //         a.item(href='/admin/events/') Events
+    //         a.item(href='/admin/meals/') Meals
+    //         a.item(href='/admin/scheduleDates/') Schedule Dates
+    //         a.item(href='/admin/tasks/') Tasks
 
-        a.item.header(href='/')
-            i.home.icon
-            | Home
-        .menu
-            a.item(href='/guest')
-                | Guest View
-            if user
-                a.item(href=pageAbout) About
-                a.item(href=pageAccountLogout) Log Out
-            else
-                a.item(href=pageAbout) About
-                a.item(href=pageAccountLogin) Log In
+    //     a.item.header(href='/')
+    //         i.home.icon
+    //         | Home
+    //     .menu
+    //         a.item(href='/guest')
+    //             | Guest View
+    //         if user
+    //             a.item(href=pageAbout) About
+    //             a.item(href=pageAccountLogout) Log Out
+    //         else
+    //             a.item(href=pageAbout) About
+    //             a.item(href=pageAccountLogin) Log In
 
-    #mainContent.pusher
+    // #mainContent.pusher
 
-        block toolbar
+    block toolbar
 
-        .ui.main.container
+    .ui.main.container
 
-            block appContent
+        block appContent

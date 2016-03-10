@@ -1,4 +1,4 @@
-extends ../layout
+extends ../baseLayout
 
 append javascripts
     script(src='/javascripts/jquery.slimscroll.min.js')
@@ -15,10 +15,6 @@ append javascripts
                 controlArrows: true,
                 autoScrolling: false
             })
-            $('#welcome .shape').shape()
-            $('#cta').click(function(){
-                $.fn.fullpage.moveTo(3)
-            })
             $('.ui.embed').embed();
             $('body').visibility({
                 once       : false,
@@ -28,7 +24,6 @@ append javascripts
                     $(this).css('background-color', newColor)
                 }
             })
-
         })
 
 append stylesheets

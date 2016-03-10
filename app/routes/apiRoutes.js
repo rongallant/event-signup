@@ -44,4 +44,6 @@ module.exports = function(app) {
 
     app.use('/api/meal', apiMeal)
     app.use('/api/meals', apiMeals)
+
+    app.use('/api/reservation', apiReservation)
 }

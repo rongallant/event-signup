@@ -1,19 +1,20 @@
 var express = require('express'),
     request = require('request'),
+    authorization = require('../..//helpers/authorization.js'),
     path = require("path"),
-    moment = require("moment")
-
-var router = express.Router(),
+    moment = require("moment"),
+    router = express.Router(),
     Event = require("../../models/event"),
-    appSettings = require('../utils/appSettings')
+    appSettings = require('../utils/appSettings'),
+    appDesc = []
 
-var appDesc = []
 appDesc['apiSingle'] = '/event'
 appDesc['apiCollection'] = '/events'
 appDesc['folder'] = '/events'
 appDesc['singularName'] = "Event"
 appDesc['pluralName'] = "Events"
 appDesc['newObject'] = new Event()
+
 router.use(function(req, res, next) {
     appSettings.appPaths(req, res, appDesc)
     next()
@@ -28,8 +29,9 @@ function hasVal(variable){
 }
 
 router.get('/edit/:id', function(req, res, next) {
-    request({"uri":res.locals.apiItem + req.params.id}, function (err, data){
+    request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
         if (err) { return next(err) }
+        authorization.apiRequestErrorHandler(req, res, data, next)
         res.render(path.join(res.locals.editView), {
             title: "Editing " + appDesc['singularName'],
             user: req.user,
@@ -64,6 +66,7 @@ router.get('/:currPage?', function(req, res, next){
         apiUri += '?q=' + req.query.q
     request({"uri":apiUri, "headers":{"x-access-token":req.session.authToken}}, function (err, data) {
         if (err) { return next(err) }
+        authorization.apiRequestErrorHandler(req, res, data, next)
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
             user: req.user,

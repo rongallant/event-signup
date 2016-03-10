@@ -7,40 +7,23 @@ var mongoose = require('mongoose'),
 var AccountSchema = new Schema({
     username: {
         type: String,
+        maxlength: 35,
         required: true,
         index: {
             unique: true
         }
     },
-    password: String,
-    facebook: {
-        id: String,
-        token: String,
-        email: String,
-        name: String
-    },
-    twitter: {
-        id: String,
-        token: String,
-        displayName: String,
-        username: String
-    },
-    google: {
-        id: String,
-        token: String,
-        email: String,
-        name: String
-    },
-
+    password: { type: String, maxlength: 35 },
     roles: [{
         type: String,
-        enum: ['user', 'admin', 'manager']
+        maxlength: 35,
+        enum: ['CONTACT', 'USER', 'ADMIN', 'MANAGER'],
+        default: 'CONTACT'
     }],
+    email: { type: String, maxlength: 254 },
 
-    _person: {
-        type: Schema.Types.ObjectId,
-        ref: 'Person'
-    },
+    _person: { type: Schema.Types.ObjectId, ref: 'Person' }
+
 }, {
     strict: true,
     timestamps: true,
@@ -55,6 +38,12 @@ var AccountSchema = new Schema({
 AccountSchema.plugin(passportLocalMongoose)
 
 AccountSchema.plugin(mongoosePaginate);
+
+// Save timestamp
+AccountSchema.pre('save', function(next) {
+    this.starttime = new Date()
+    next()
+})
 
 // methods ======================
 // generating a hash

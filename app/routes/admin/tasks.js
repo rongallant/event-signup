@@ -1,18 +1,19 @@
 var express = require('express'),
     request = require('request'),
-    path = require("path")
-
-var router = express.Router(),
+    authorization = require('../..//helpers/authorization.js'),
+    path = require("path"),
+    router = express.Router(),
     Task = require("../../models/task"),
-    appSettings = require('../utils/appSettings')
+    appSettings = require('../utils/appSettings'),
+    appDesc = []
 
-var appDesc = []
 appDesc['apiSingle'] = '/task'
 appDesc['apiCollection'] = '/tasks'
 appDesc['folder'] = '/tasks'
 appDesc['singularName'] = 'Task'
 appDesc['pluralName'] = 'Tasks'
 appDesc['newObject'] = new Task()
+
 router.use(function(req, res, next) {
     appSettings.appPaths(req, res, appDesc)
     next()
@@ -27,8 +28,9 @@ function hasVal(variable){
 }
 
 router.get('/edit/:id', function(req, res, next) {
-    request({"uri":res.locals.apiItem + req.params.id}, function (err, data){
+    request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
         if (err) { return next(err) }
+        authorization.apiRequestErrorHandler(req, res, data, next)
         res.render(path.join(res.locals.editView), {
             title: "Editing " + appDesc['singularName'],
             user: req.user,
@@ -62,6 +64,7 @@ router.get('/:currPage?', function(req, res, next){
         apiUri += '?q=' + req.query.q
     request({"uri":apiUri, "headers":{"x-access-token":req.session.authToken}}, function (err, data) {
         if (err) { return next(err) }
+        authorization.apiRequestErrorHandler(req, res, data, next)
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
             user: req.user,

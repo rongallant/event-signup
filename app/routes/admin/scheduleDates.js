@@ -1,18 +1,18 @@
 var express = require('express'),
     request = require('request'),
-    path = require("path")
-
-var router = express.Router(),
+    path = require("path"),
+    router = express.Router(),
     ScheduleDate = require("../../models/scheduleDate"),
-    appSettings = require('../utils/appSettings')
+    appSettings = require('../utils/appSettings'),
+    appDesc = []
 
-var appDesc = []
 appDesc['apiSingle'] = '/scheduleDate'
 appDesc['apiCollection'] = '/scheduleDates'
 appDesc['folder'] = '/scheduleDates'
 appDesc['singularName'] = "Schedule Date"
 appDesc['pluralName'] = "Schedule Dates",
 appDesc['newObject'] = new ScheduleDate()
+
 router.use(function(req, res, next) {
     appSettings.appPaths(req, res, appDesc)
     next()

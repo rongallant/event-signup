@@ -20,6 +20,10 @@ require('console.table')
  * App Config
  ***********************************************************/
 
+function isNull(varName) {
+    return typeof varName == 'undefined'
+}
+
 var app = express()
 var configDB = require('./config/database.js')
 var configAuth = require('./config/auth.js')
@@ -96,14 +100,43 @@ require('./config/passport')(app, passport); // pass passport for configuration
  * Routes
  ***********************************************************/
 
-app.all(["/admin*", "/guest*"], function(req, res, next) {
-    authorization.pageIsAuthenticated(req, res, next)
-})
+var apiPaths = ["/api*"]
+// var sitePaths = ["/admin*", "/guest*", "/public_api*"]
+var sitePaths = ["/admin*", "/guest*"]
 
-// May need to implement JSON Web Token
-app.all(["/api*"], function(req, res, next) {
-    authorization.apiIsAuthenticated(req, res, next)
-})
+// Set auth header
+// app.use(function(req, res, next) {
+//     console.log(1)
+//     console.log('req.session = ' + JSON.stringify(req.session))
+//     if (!isNull(req.session) && !isNull(req.session.authToken)) {
+//         res.locals.authToken = req.session.authToken
+//         res.setHeader("x-access-token", req.session.authToken)
+//         console.log('res.locals.authToken = ' + res.locals.authToken)
+//     }
+//     return next()
+// })
+
+// Set global headers
+
+// API Authorization
+// app.use(apiPaths, function(req, res, next) {
+//     console.log(2)
+//     console.log('res.url = ' + res.url)
+//     // authorization.apiIsAuthenticated(req, res, next)
+//     // if (req.session.authToken) {
+//     //     res.setHeader("x-access-token", req.session.authToken)
+//     // }
+//     // authorization.apiIsAuthenticated(req, res, next)
+//     return next()
+// })
+
+// SITE Authorization
+// app.use(sitePaths, function(req, res, next) {
+//     console.log(3)
+//     console.log('res.url = ' + res.url)
+//     authorization.pageIsAuthenticated(req, res, next)
+//     return next()
+// })
 
 // LOAD SITE ROUTES
 require('./app/routes/appUrls')(app)
@@ -122,133 +155,119 @@ require('./app/routes/adminRoutes')(app)
  * 5xx Server Error.
  ***********************************************************/
 
-function isNull(varName) {
-    return typeof varName == 'undefined'
-}
-
-if (app.get('env') === 'development') {
-    // Non Errors
-    app.use(function (req, res, next) {
-        console.log('\nNon Errors')
-        console.log('res.url = ' + res.url)
-        console.log('res.statusCode = ' + res.statusCode)
-        console.log('res.statusMessage = ' + res.statusMessage)
-        console.log('res.headersSent: ' + res.headersSent)
-        console.log('req.session.authToken = ' + req.session.authToken)
-        console.log('x-access-token = ' + req.headers['x-access-token'])
-        console.log('Ajax Request: ' + req.xhr)
-        console.log('\n')
-        next()
-    })
-}
-
-// NotAuthorized
-app.use(function (err, req, res, next) {
-    if (isNull(req.user) || err.status == 401) {
-        console.error('Not Authorized : ' + err.message)
-        err = new Error('Not Authorized')
-        err.status = 401
-        req.flash('warning', "You have been logged out")
-        return res.redirect('/account/login')
-    }
-    next(err)
-})
-app.use(function (err, req, res, next) {
-    if (isNull(res.statusCode) && isNull(res.status)) {
-        res.status(500)
-        res.statusCode = 500
-    }
-    if (isNull(res.statusMessage)) {
-        res.statusMessage = err.getMessage
-    }
-    if (req.xhr) {
-        return res.status(500).json({'status' : 500, 'message' : 'There was an error processing your request'})
-    }
-    next(err)
-})
-
-// 5xx Server Errors
-app.use(function (err, req, res, next) {
-    console.log('res.body = ' + res.body)
-    if (res.statusCode >= 500) {
-        res.status(err.status || 500)
-        return res.render('error', {
-            message: res.statusCode + ' : Error',
-            error:  res.statusMessage
-        })
-    }
-    next(err)
-})
-
-// 4xx Client Errors
-app.use(function(err, req, res, next) {
-    if (res.statusCode >= 400 && res.statusCode < 500) {
-        // res.status(err.status || 400)
-        return res.render('error', {
-            message: res.statusCode + ' : Error',
-            error: res.statusMessage
-        })
-    }
-    next(err)
-})
-
-// Ensure error reported
-app.use(function (err, req, res, next) {
-    if (res.headersSent) {
-        return next(err)
-    }
-    res.status(500)
-    res.render('error', {
-        message: '500 : System Error',
-        error: err.message
-    })
-})
-
-// catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-
-//     console.error('catch 404 : Page Not Found')
-//     var err = new Error('Page Not Found')
-//     err.status = 404
-//     next(err)
-// })
-
-// app.all(["/api*"], function(err, req, res, next) {
-//     console.error('try and catch api error')
-//     console.error(err)
-//     res.status(500).json({ "status" : "error", "message" : err.message })
-// })
-
-// catch all errors and forward to error handler
-// app.all(function(err, req, res, next) {
-
-//     console.error('catch err : ' + err)
-//     err = new Error('Not Authorized')
-//     err.status = 401
-//     res.redirect('/account/login')
-// })
-
-// development error handler
-// will print stacktrace
-// if (app.get('env') === 'development') {
-//     app.all(function(err, req, res, next) {
-//         console.error('500 : ' + err.message)
-//         res.status(err.status || 500)
-//         res.render('error', {
-//             message: err.message,
-//             error: err
-//         })
+// if (app.get('env') === 'STOPdevelopment') {
+//     // ALL - Non Errors
+//     app.use(function (req, res, next) {
+//         console.log(4)
+//         console.log('\nNON ERRORS')
+//         console.log('res.url = ' + res.url)
+//         console.log('res.statusCode = ' + res.statusCode)
+//         console.log('res.statusMessage = ' + res.statusMessage)
+//         console.log('res.headersSent: ' + res.headersSent)
+//         console.log('req.session.authToken = ' + req.session.authToken)
+//         console.log('x-access-token = ' + req.headers['x-access-token'])
+//         console.log('Ajax Request: ' + req.xhr)
+//         console.log('\n')
+//         next()
+//     })
+//     // ALL - Errors
+//     app.use(function (err, req, res, next) {
+//     console.log(5)
+//         if (err) {}
+//         console.log('\nERRORS')
+//         try {
+//             console.log('res.url = ' + res.url)
+//             console.log('x-access-token = ' + req.headers['x-access-token'])
+//             console.log('res.statusCode = ' + res.statusCode)
+//             console.log('res.statusMessage = ' + res.statusMessage)
+//             console.log('res.headersSent: ' + res.headersSent)
+//             console.log('Ajax Request: ' + req.xhr)
+//             console.log('\n')
+//         } catch(err) {
+//             console.error('Debug error...error: ' + err.message)
+//         }
+//         next(err)
 //     })
 // }
 
-// // production error handler
-// // no stacktraces leaked to user
-// app.all(function(err, req, res, next) {
-//     res.status(err.status || 500)
-//     console.error('500 : ' + err.message)
+// SITE - Not Authorized
+// app.use(sitePaths, function (err, req, res, next) {
+//     console.log(6)
+//     console.log('res.url = ' + res.url)
+//     if (err.statusCode == 401) {
+//         console.error('Not Authorized : ' + err.message)
+//         err = new Error('Not Authorized')
+//         err.status = 401
+//         req.flash('warning', "You have been logged out")
+//         return res.redirect('/account/login')
+//     }
+//     next(err)
+// })
+
+// API - Error Handler
+// app.use(apiPaths, function (err, req, res, next) {
+//     console.log(7)
+//     // if (isNull(res.statusCode) && isNull(res.status)) {
+//     //     res.status(500)
+//     //     res.statusCode = 500
+//     // }
+//     // if (isNull(res.statusMessage)) {
+//     //     res.statusMessage = err.getMessage
+//     // }
+//     if (req.xhr) {
+//         console.error('AJAX ERROR - ' + err.getMessage)
+//         console.log('res.url = ' + res.url)
+//         console.log('res.statusCode = ' + res.headers)
+//         console.log('res.statusMessage = ' + res.statusMessage)
+//         console.error('req.body = ' + JSON.stringify(req.body))
+//         console.error('res.body = ' + JSON.stringify(res.body))
+//         console.error('err = ' + err)
+//         return res.status(500).json({ 'status' : "500", 'message' : 'There was an error processing your request' })
+//     }
+//     next(err)
+// })
+
+// // SITE - 5xx Server Errors
+// app.use(sitePaths, function (err, req, res, next) {
+//     console.log(8)
+//     if (res.statusCode >= 500) {
+//         res.status(err.status || 500)
+//         return res.render('error', {
+//             title: res.statusCode + ' : Error',
+//             message: res.statusCode + ' : Error',
+//             error:  res.statusMessage
+//         })
+//     }
+//     next(err)
+// })
+
+// // SITE - 4xx Client Errors
+// app.use(sitePaths, function(err, req, res, next) {
+//     console.log(9)
+//     console.log('res.url = ' + res.url)
+//     if (res.statusCode >= 400 && res.statusCode < 500) {
+//         // res.status(err.status || 400)
+//         return res.render('error', {
+//             title: res.statusCode + ' : Error',
+//             message: res.statusCode + ' : Error',
+//             error: res.statusMessage
+//         })
+//     }
+//     next(err)
+// })
+
+// // SITE - Ensure error reported
+// app.use(sitePaths, function (err, req, res, next) {
+//     console.log(10)
+//     console.log('res.url = ' + res.url)
+//     if (res.headersSent) {
+//         return next(err)
+//     }
+//     res.status(500)
 //     res.render('error', {
-//         message: err.message,
-//         error: {}
+//         title: '500 : System Error',
+//         message: '500 : System Error',
+//         error: err.message
 //     })
 // })
 

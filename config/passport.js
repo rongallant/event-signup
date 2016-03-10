@@ -3,7 +3,7 @@
  * Passport Security
  ***********************************************************/
 
-var Person = require("../app/models/person")
+var Account = require("../app/models/account")
 
 module.exports = function(app, passport) {
     // Configuring Passport
@@ -11,9 +11,9 @@ module.exports = function(app, passport) {
     app.use(passport.session())
 
     // use static authenticate method of model in LocalStrategy
-    passport.use(Person.createStrategy())
-
+    passport.use(Account.createStrategy())
+Account
     // use static serialize and deserialize of model for passport session support
-    passport.serializeUser(Person.serializeUser())
-    passport.deserializeUser(Person.deserializeUser())
+    passport.serializeUser(Account.serializeUser())
+    passport.deserializeUser(Account.deserializeUser())
 }

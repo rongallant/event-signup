@@ -1,11 +1,10 @@
-
 var express = require('express'),
     request = require('request'),
+    authorization = require('../..//helpers/authorization.js'),
     path = require("path"),
     router = express.Router(),
     Person = require('../../models/person'),
     appSettings = require('../utils/appSettings'),
-    authorization = require('../..//helpers/authorization.js'),
     appDesc = []
 
 appDesc['apiSingle'] = '/person'
@@ -31,6 +30,7 @@ function hasVal(variable){
 router.get('/edit/:id', function(req, res, next) {
     request({"uri":res.locals.apiItem + req.params.id, "headers":{'x-access-token':req.session.authToken}}, function (err, data){
         if (err) { return next(err) }
+        authorization.apiRequestErrorHandler(req, res, data, next)
         res.render(path.join(res.locals.editView), {
             title: "Editing " + appDesc['singularName'],
             user: req.user,

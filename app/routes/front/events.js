@@ -18,30 +18,59 @@ router.use(function(req, res, next) {
  * VIEWS
  ************************************************************/
 
-// Get Event
+function hasVal(varName) {
+    return (varName !== undefined) && (varName !== null)  && varName
+}
+
+function hasNoVal(varName) {
+    return !hasVal(varName)
+}
+
+// Get Users Reservation
 router.get('/signup', function(req, res, next) {
+    Reservation.findOne({ '_contact.username' : req.user.username }, function(err, data){
+        if (err) {
+            console.error(err.message)
+            return next(err)
+        }
+        req.reservation = data
+        return next()
+    })
+},
+
+// Get Event
+function(req, res, next) {
+    if (hasVal(req.reservation)) { return next() }
     Event.findOne({}, {}, { sort: { 'createdAt' : -1 } }, function(err, data) {
-        if (err) { console.log(err) }
+        if (err) {
+            console.error(err.message)
+            return next(err)
+        }
         req.event = data
         return next()
     })
-})
+},
 
-// Get Person
-router.get('/signup', function(req, res, next) {
-     Person.findOne({ 'username' : req.user.username })
+// Get Persons Details
+function(req, res, next) {
+    if (hasVal(req.reservation)) { return next() }
+    Person.findOne({ 'username' : req.user.username })
         .populate('address')
         .populate('emergencyContact')
-        .exec(function(err, rows) {
-            if (err) { console.log(err) }
-            req.person = rows
+        .exec(function(err, data) {
+            if (err) {
+                console.error(err.message)
+                return next(err)
+            }
+            req.person = data
             return next()
-    })
-})
-
-// Show Event Page
-router.get('/signup', function(req, res, next) {
-    var newReservation = new Reservation({
+        }
+    )
+},
+// Create New Reservation
+function(req, res, next) {
+    if (hasVal(req.reservation)) { return next() }
+    req.reservation = new Reservation({
         _event: req.event,
         _contact: req.person,
         name: req.body.name,
@@ -49,10 +78,14 @@ router.get('/signup', function(req, res, next) {
         startTime: req.body.startTime,
         endTime: req.body.endTime
     })
+    return next()
+},
+// Build Reservation
+function(req, res, next) {
     res.render("front/events/signup", {
         title: "Event Signup",
         user: req.user,
-        data: newReservation,
+        data: req.reservation,
         formMethod: 'POST',
         formAction: res.locals.apiUri.secure.reservation.base,
         formComplete: res.locals.pageAccountHome

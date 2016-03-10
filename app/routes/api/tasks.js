@@ -1,7 +1,6 @@
 var express = require('express'),
-  router = express.Router()
-
-var Task = require("../../models/task")
+    router = express.Router(),
+    Task = require("../../models/task")
 
 /************************************************************
  * REST API
@@ -39,7 +38,7 @@ router.get('/:currPage?', function(req, res, next) {
             console.error(err)
             return res.status(500).json({ "status" : 500, "message" : err.message })
         }
-        res.status(200).json({ "status" : "success", "data" : {"id" : req.body.id} })
+        res.status(200).json({ "status" : 200, "data" : {"id" : req.body.id} })
     })
 })
 

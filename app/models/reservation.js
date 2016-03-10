@@ -21,7 +21,18 @@ var ReservationSchema = new Schema({
     arrivingDate: Date,
     additionalInformation: String,
 
-    guests: [ Person.schema ],
+    guests: [{
+        firstName: {
+            type: String,
+            maxlength: 35,
+            required: true
+        },
+        lastName: {
+            type: String,
+            maxlength: 35,
+            required: true
+        }
+    }],
     pets: [ Pet.schema ],
 
     tasks: [{ type: Schema.Types.ObjectId, ref: 'Task', limit: 10 }],

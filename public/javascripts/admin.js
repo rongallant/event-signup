@@ -6,21 +6,18 @@ $(function(){
 
     var $topMenu = $('#mainMenuTop')
 
-    var $leftMenu = $('#mainMenuLeft')
+    // var $leftMenu = $('#mainMenuLeft')
 
-    $leftMenu.sidebar('setting', 'transition', 'overlay')
+    // $leftMenu.sidebar('setting', 'transition', 'overlay')
 
-    $('a.launch').click(function(){
-        $leftMenu.sidebar('toggle')
-    })
+    // $('a.launch').click(function(){
+    //     $leftMenu.sidebar('toggle')
+    // })
 
     $topMenu.find('.ui.dropdown').dropdown()
-    $('#toolbar .ui.dropdown').dropdown({
-        action: 'hide'
-    })
 
     var $toolbar = $('#toolbar')
-
+    $toolbar.find('.ui.dropdown').dropdown({action: 'hide'})
     $toolbar.visibility({
         type: 'fixed',
         continuous: true

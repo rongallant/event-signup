@@ -4,9 +4,6 @@ extends ../layout
 
 append javascripts
     script.
-        // var guestListContainer = [{firstName:'John',lastName:'Rambo', phone:'904-555-0123', email:'rambo@gmail.com' }]
-        // var petListContainer = [{kind:'dog',name:'Frodo',weight:11},{kind:'dog',name:'Boomer',weight:86},{kind:'cat',name:'Angel',weight:7}]
-
         var guestListContainer = !{data.guests.length ? data.guests : '[]'}
         var petListContainer = #{ data.pets.length ? data.pets : '[]'}
 
@@ -42,6 +39,8 @@ append javascripts
                 debug: false,
                 fields: validationRules,
                 onFailure: function(formErrors, fields) {
+
+                    console.log(formErrors)
                     fields['guests'] = guestListContainer
                     fields['pets'] = petListContainer
                     customValidators($form, fields, formErrors)
@@ -56,9 +55,12 @@ append javascripts
                     console.log('Attemping to save into #{formAction} via #{formMethod}' )
                     $.ajax({
                         type: '#{formMethod}',
+                        url: '#{apiItem}',
                         data: fields,
-                        url: '#{formAction}',
                         dataType: 'JSON',
+                        headers: {
+                            "x-access-token":"#{authToken}"
+                        },
                         statusCode: {
                             201: function(data, textStatus, jqXHR) {
                                 $.get('/message/success/Saved successfully')
@@ -66,19 +68,29 @@ append javascripts
                         }
                     })
                     .error(function(response) {
-                        console.error('ERROR')
-                        console.error(response)
+                        console.error('AJAX ERROR')
+                        console.error(JSON.parse(response.responseText).message)
+                        // console.error(JSON.parse(response.responseText.errors))
+                        var formErrors = []
+                        var p = JSON.parse(response.responseText).errors
+                        for (var key in p) {
+                            if (p.hasOwnProperty(key)) {
+                                formErrors.push(p[key].message)
+                            }
+                        }
+                        if (formErrors.length > 0) {
+                            $form.form('add errors', formErrors)
+                        }
                         toaster('error', JSON.parse(response.responseText).message)
                         return false
                     })
                     .done(function(response) {
                         console.log('SUCCESS')
+                        console.log(response)
                         location.replace('#{formComplete}')
                     })
                     return false
                 }
-            }, {
-                selector : { field : 'input, textarea, select, div' }
             })
         })
 

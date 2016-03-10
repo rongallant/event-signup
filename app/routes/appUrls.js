@@ -9,13 +9,16 @@ module.exports = function(app) {
 
         // Site
         res.locals.fullUrl = 'https://' + req.get('host')
+
         res.locals.pageHome = '/' // index page
         res.locals.pageAbout = '/about'
+
         res.locals.pageAccountHome = '/guest'
         res.locals.pageAccountSignup = '/account/signup'
         res.locals.pageAccountComplete = '/account/complete'
         res.locals.pageAccountLogin = '/account/login'
         res.locals.pageAccountLogout = '/account/logout'
+
         res.locals.pageEvent = '/events'
         res.locals.pageEventSignup = '/events/signup'
 
@@ -68,7 +71,6 @@ module.exports = function(app) {
                 tasks : res.locals.fullUrl + '/api/tasks/'
             }
         }
-
         next()
     })
 }

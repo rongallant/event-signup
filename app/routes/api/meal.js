@@ -44,7 +44,7 @@ router.get('/:id', function(req, res, next) {
         .populate('_task._contact')
         .exec(function(err, data) {
             if (err) {
-                res.status(404).json({ "status" : 404, "error" : err.message })
+                res.status(404).json({ "status" : 404, "message" : err.message, "error" : JSON.stringify(err) })
             } else {
                 res.status(200).json({ "status" : 200, "data" : data })
             }
