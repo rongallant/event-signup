@@ -1,6 +1,6 @@
 var express = require('express'),
     router = express.Router(),
-    mongoose = require('mongoose')
+    Mongoose = require('mongoose')
 
 var Task = require("../../models/task")
 var Meal = require("../../models/meal")
@@ -21,7 +21,7 @@ router.post('/', function(req, res, next) {
             location: req.body._task.location,
             effort: req.body._task.effort,
             personsRequired: req.body._task.personsRequired,
-            _contact: mongoose.Types.ObjectId(req.body._contact)
+            _contact: Mongoose.Types.ObjectId(req.body._contact)
         })
         var data = new Meal({
             allergins: req.body.allergins,

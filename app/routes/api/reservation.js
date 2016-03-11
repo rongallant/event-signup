@@ -1,8 +1,10 @@
 var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'),
-    Reservation = require("../../models/reservation"),
-    Person = require("../../models/person")
+    EmergencyContact = require("../../models/emergencyContact"),
+    Person = require("../../models/person"),
+    Reservation = require("../../models/reservation")
+
 
 /************************************************************
  * REST API
@@ -24,7 +26,7 @@ router.post('/', function(req, res, next) {
         var fullName = req.body.emergencyContact.fullName.split(' '),
             firstName = fullName[0],
             lastName = fullName[fullName.length - 1]
-        req.emergencyContact = new Person({
+        req.emergencyContact = new EmergencyContact({
             username: req.body.emergencyContact.email,
             firstName: firstName,
             lastName: lastName,
@@ -33,31 +35,35 @@ router.post('/', function(req, res, next) {
         })
     } catch(err) {
         if (isJSON(err) && err.name === 'ValidationError') {
-            return res.status(304).json(err)
+            return res.status(500).json(err)
         }
         return res.json({ "status" : "500", "message" : "Error creating emergency contact", "error" : err })
     }
     return next()
-})
+},
 
 // Save Contact
-router.post('/', function(req, res, next) {
+function(req, res, next) {
+
     console.log('reservation.js - POST - Save Emergency Contact to user')
-    Person.findById(req.body._contact)
-        .update({ emergencyContact: req.emergencyContact }, function(err, data) {
+    console.log('emergencyContact: ' + req.emergencyContact)
+
+    Person.findOne({"username" : req.user.username})
+        .update({ emergencyContact: req.emergencyContact })
+        .exec(function(err, data) {
         if (err) {
-            console.log(JSON.parse(err))
+            console.error(err)
             if (err && isJSON(err)) {
-                return res.status(304).json(err)
+                return res.status(500).json(err)
             }
             return res.json({ "status" : "500", "message" : "Error saving emergency contact", "error" : err })
         }
         return next()
     })
-})
+},
 
 // Save Reservation
-router.post('/', function(req, res, next) {
+function(req, res, next) {
     console.log('reservation.js - POST - Save Reservation')
     try {
         console.log(req.body.guests)

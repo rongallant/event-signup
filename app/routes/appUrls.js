@@ -65,8 +65,6 @@ module.exports = function(app) {
                 reservation : {
                     base: res.locals.fullUrl + '/api/reservation/'
                 },
-                scheduleDate : res.locals.fullUrl + '/api/scheduleDate/',
-                scheduleDates : res.locals.fullUrl + '/api/scheduleDates/',
                 task : res.locals.fullUrl + '/api/task/',
                 tasks : res.locals.fullUrl + '/api/tasks/'
             }

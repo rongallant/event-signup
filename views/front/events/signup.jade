@@ -4,8 +4,9 @@ extends ../layout
 
 append javascripts
     script.
-        var guestListContainer = !{data.guests.length ? data.guests : '[]'}
-        var petListContainer = #{ data.pets.length ? data.pets : '[]'}
+
+        var guestListContainer = #{ data.guests[0] && data.guests[0].length ? data.guests : '[]' }
+        var petListContainer = #{ data.pets[0] && data.pets[0].length ? data.pets : '[]' }
 
         function customValidators($form, fields, guests, pets, formErrors) {
             if (typeof formErrors == 'undefined') {

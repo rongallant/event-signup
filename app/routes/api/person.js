@@ -33,8 +33,7 @@ router.post('/', function(req, res, next) {
 /* EDIT Returns single item. */
 router.get('/:id', function(req, res, next) {
     Person.findById(req.params.id)
-        .populate('address')
-        .populate('emergencyContact')
+        .populate('address emergencyContact _vendor')
         .exec(function(err, data) {
         if (err) {
             console.error(err)
@@ -48,6 +47,7 @@ router.get('/:id', function(req, res, next) {
 /* by username Returns single person. */
 router.get('/username/:username', function(req, res, next) {
     Person.findOne({ 'username' : req.params.username })
+        .populate('address emergencyContact _vendor')
         .exec(function(err, data) {
         if (err) {
             console.error(err)

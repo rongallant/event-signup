@@ -50,6 +50,7 @@ append javascripts
                         }
                     })
                     .error(function(response) {
+                        console.log(response)
                         toaster('error', 'Error: ' + JSON.parse(response.responseText).message)
                     })
                     .done(function(response) {
@@ -72,9 +73,6 @@ append javascripts
                         url: '#{apiItem}#{data.id}',
                         dataType: 'JSON',
                         statusCode: {
-                            204: function() {
-                                $.get('/message/success/Deleted successfully')
-                            },
                             501: function() {
                                 $.get('/message/error/Error deleting')
                             }

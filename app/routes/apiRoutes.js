@@ -4,7 +4,6 @@
  ***********************************************************/
 
 module.exports = function(app) {
-
     var
         apiActivity = require('./api/activity'),
         apiActivities = require('./api/activities'),
@@ -27,23 +26,24 @@ module.exports = function(app) {
         apiTasks = require('./api/tasks')
 
     // API
-    app.use('/api/event', apiEvent)
-    app.use('/api/events', apiEvents)
-
-    app.use('/api/person', apiPerson)
-    app.use('/api/persons', apiPersons)
+    app.use('/api/activity', apiActivity)
+    app.use('/api/activities', apiActivities)
 
     app.use('/api/address', apiAddress)
     app.use('/api/addresses', apiAddresses)
 
-    app.use('/api/activity', apiActivity)
-    app.use('/api/activities', apiActivities)
-
-    app.use('/api/task', apiTask)
-    app.use('/api/tasks', apiTasks)
+    app.use('/api/event', apiEvent)
+    app.use('/api/events', apiEvents)
 
     app.use('/api/meal', apiMeal)
     app.use('/api/meals', apiMeals)
 
+    app.use('/api/person', apiPerson)
+    app.use('/api/persons', apiPersons)
+
     app.use('/api/reservation', apiReservation)
+
+    app.use('/api/task', apiTask)
+    app.use('/api/tasks', apiTasks)
+
 }

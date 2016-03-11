@@ -5,20 +5,16 @@ var mongoose = require('mongoose'),
     EmergencyContact = require("./emergencyContact")
 
 var PersonSchema = new Schema({
-
     firstName: { type: String, maxlength: 35 },
     lastName: { type: String, maxlength: 35 },
     phone: { type: String, maxlength: 18 },
     gender: { type: String, maxlength: 5 },
-
     isChild: { type: Boolean },
     childAge: { type: Number, min: 0, max: 17 },
-
     gearList: { type: String, maxlength: 2000 },
-    
+
     emergencyContact: { type: EmergencyContact.schema  },
     address: { type: Address.schema  },
-
     _vendor: { type: Schema.Types.ObjectId, ref: 'Vendor'  },
 
 }, {

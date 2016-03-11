@@ -25,11 +25,11 @@ router.use(function(req, res, next) {
  ************************************************************/
 
 function hasVal(variable){
-    return (typeof variable !== 'undefined')
+    return (variable !== 'undefined' && variable)
 }
 
 router.get('/edit/:id', function(req, res, next) {
-    request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
+    request({"uri":res.locals.apiUri.secure.event.base + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
         if (err) { return next(err) }
         authorization.apiRequestErrorHandler(req, res, data, next)
         res.render(path.join(res.locals.editView), {
@@ -38,7 +38,7 @@ router.get('/edit/:id', function(req, res, next) {
             data: JSON.parse(data.body).data,
             formMode: 'edit',
             formMethod: 'PUT',
-            formAction: res.locals.apiItem + req.params.id
+            formAction: res.locals.apiUri.secure.event.base + req.params.id
         })
     })
 })
@@ -51,20 +51,21 @@ router.get('/create', function(req, res) {
         data: appDesc['newObject'],
         formMode: 'create',
         formMethod: 'POST',
-        formAction: res.locals.apiItem
+        formAction: res.locals.apiUri.secure.event.base
     })
 })
 
 router.get('/:currPage?', function(req, res, next){
     res.locals.moment = moment
-    var apiUri = res.locals.apiCollection
+    var apiUri = res.locals.apiUri.secure.events
     if (hasVal(req.params.currPage))
         apiUri += req.params.currPage
     else
         apiUri += 1
     if (hasVal(req.query.q))
         apiUri += '?q=' + req.query.q
-    request({"uri":apiUri, "headers":{"x-access-token":req.session.authToken}}, function (err, data) {
+
+    request({uri: apiUri, headers: {"x-access-token":req.session.authToken} }, function (err, data) {
         if (err) { return next(err) }
         authorization.apiRequestErrorHandler(req, res, data, next)
         res.render(res.locals.listView, {
