@@ -34,7 +34,6 @@ module.exports = function(app) {
         res.locals.pageAdminEvents = '/admin/events'
         res.locals.pageAdminPersons = '/admin/persons'
         res.locals.pageAdminAddresses = '/admin/addresses'
-        res.locals.pageAdminScheduleDates = '/admin/scheduleDates'
         res.locals.pageAdminActivities = '/admin/activities'
         res.locals.pageAdminTasks = '/admin/tasks'
         res.locals.pageAdminMeals = '/admin/tasks/meals'

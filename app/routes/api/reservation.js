@@ -76,6 +76,7 @@ function(req, res, next) {
             guests: req.body.guests,
             pets: req.body.pets
         })
+        console.log('reservation')
         console.log(reservation)
     } catch(err) {
         if (isJSON(err) && err.name === 'ValidationError') {

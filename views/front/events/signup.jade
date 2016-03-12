@@ -71,7 +71,6 @@ append javascripts
                     .error(function(response) {
                         console.error('AJAX ERROR')
                         console.error(JSON.parse(response.responseText).message)
-                        // console.error(JSON.parse(response.responseText.errors))
                         var formErrors = []
                         var p = JSON.parse(response.responseText).errors
                         for (var key in p) {
@@ -99,13 +98,11 @@ append javascripts
     -var guestRowItem = "fields.firstName + ' ' + fields.lastName"
     +selectorJs('guests', 5, guestFormRules, guestRowItem, 'guestListContainer')
 
-    -var petFormRules = "{name:{rules:[{type:'empty'}, {type:'maxLength[35]'}]},weight: {rules:[{type:'empty'}, {type:'maxLength[3]'}]}}"
-    -var petRowItem = "fields.name + ' - ' + fields.weight + ' lb'"
+    -var petFormRules = "{petName:{rules:[{type:'empty'}, {type:'maxLength[35]'}]},petWeight:{rules:[{type:'empty'}, {type:'maxLength[3]'}]}}"
+    -var petRowItem = "fields.petName + ' - ' + fields.petWeight + ' lb'"
     +selectorJs('pets', 2, petFormRules, petRowItem, 'petListContainer')
 
 append frontContent
-
-    // pre= data.guests
 
     .ui.text.container
         h1.ui.header Signup for #{data._event.name}
@@ -182,19 +179,19 @@ append footer
     +selectorModal('pets', 'Pet', 'paw brown', 'brown')
         .two.fields
             .field
-                label(for='kind') Kind
-                    select.ui.dropdown(type='text', name='kind', id='kind')
+                label(for='petType') Pet Type
+                    select.ui.dropdown(type='text', name='petType', id='petType')
                         option Dog
                         option Cat
                         option Other
 
             .field
-                label(for='name') Pets Name
-                input(type='text', name='name', id='name', maxlength='35')
+                label(for='petName') Pets Name
+                input(type='text', name='petName', id='petName', maxlength='35')
 
             .field
-                label(for='weight') Pets Weight
+                label(for='petWeight') Pets Weight
                 .ui.right.labeled.input
-                    input(type='number', name='weight', id='weight', maxlength='3')
+                    input(type='number', name='petWeight', id='petWeight', maxlength='3')
                     .ui.basic.label
                         | lb
