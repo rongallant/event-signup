@@ -5,8 +5,12 @@ append javascripts
 
     script.
         $(function(){
+            Chart.defaults.global.responsive = true
+            var options = {
 
-           var options = {
+                // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+                maintainAspectRatio: false,
+
                 //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
                 scaleBeginAtZero : true,
 
@@ -64,22 +68,24 @@ append javascripts
 
 append appContent
 
-    .ui.cards
 
-        .card
+    .ui.three.column.stackable.grid
 
-            .content: .header
-
-
-        .card
-            canvas.image(id="myChart", width="100%", height="300")
-            .content: .header Guests per day
+        .column
+            .ui.fluid.card
+                canvas.image(id="myChart" height="300")
+                .content: .header Guests per day
 
 
-        .card
-            .content: .header Equipment needed
+        .column
+            .ui.fluid.card
+                .content: .header Equipment needed
+
+            .ui.fluid.card
+                .content: .header
 
 
-        .card
-            .content: .header Food needed
+        .column
+            .ui.fluid.card
+                .content: .header Food needed
 

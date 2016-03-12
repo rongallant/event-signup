@@ -62,9 +62,17 @@ router.get('/:currPage?', function(req, res, next){
         apiUri += 1
     if (hasVal(req.query.q))
         apiUri += '?q=' + req.query.q
+
+
     request({"uri":apiUri, "headers":{"x-access-token":req.session.authToken}}, function (err, data) {
+
+
+
+console.log('data.body')
+console.log(data.body)
+
+
         if (err) { return next(err) }
-        authorization.apiRequestErrorHandler(req, res, data, next)
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
             user: req.user,

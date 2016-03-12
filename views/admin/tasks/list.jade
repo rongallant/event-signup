@@ -17,7 +17,7 @@ block appContent
                 th Contact
 
         tbody
-            if !data.length
+            if !data.docs.length
                 tr: td.center.aligned(colspan='4')
                     .ui.basic.icon.button
                         a(href=createAction)
@@ -25,7 +25,7 @@ block appContent
                             | Add First Task
 
             else
-                each row in data
+                each row in data.docs
                     tr
                         td(data-label="Name")
                             a#row1Link(href=editAction + row.id)

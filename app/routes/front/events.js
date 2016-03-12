@@ -44,7 +44,7 @@ function(req, res, next) {
     } catch(err) {
         console.log("Error finding user: " + req.user.username)
         err = new Error("Error finding user")
-        err.status = 500
+        err.statusCode = 500
         return next(err)
     }
 },
@@ -58,8 +58,7 @@ function(req, res, next) {
                 console.error(err.message)
                 return next(err)
             }
-    console.log('Get Users Reservation')
-    console.log('req.reservation = ' + req.reservation)
+            console.log('Get Users Reservation')
             req.reservation = data
             return next()
         }
@@ -68,17 +67,7 @@ function(req, res, next) {
 
 // Get Event
 function(req, res, next) {
-
-    if (hasVal(req.reservation)) {
-       console.log(' req.reservation._contact = ' +  req.reservation._contact)
-        console.log('req.reservation = ' + req.reservation)
-    }
-
-
     if (hasVal(req.reservation)) { return next() }
-
-
-    console.log('Get Latest Active Event')
     Event.findOne({"active" : true})
         .sort({ 'createdAt' : -1 })
         .exec(function(err, data) {
@@ -89,7 +78,7 @@ function(req, res, next) {
             if (hasNoVal(data)) {
                 console.log("No event was found")
                 err = new Error("No event was found")
-                err.status = 404
+                err.statusCode = 404
                 return next(err)
             }
             // console.log('No active event found')
@@ -104,10 +93,6 @@ function(req, res, next) {
     if (hasVal(req.reservation)) { return next() }
     console.log("Create new reservation")
     try {
-
-        console.log('req.user.id = ' + req.user.id)
-        console.log('req.contactid = ' + req.contactid)
-
         req.reservation = new Reservation({
             _contact: mongoose.Types.ObjectId(req.contactid),
             _event: mongoose.Types.ObjectId(req.event.id),
@@ -120,7 +105,7 @@ function(req, res, next) {
     } catch(err) {
         console.log("Error creating reservation")
         err = new Error("Error creating reservation")
-        err.status = 500
+        err.statusCode = 500
         return next(err)
     }
 },
@@ -128,7 +113,6 @@ function(req, res, next) {
 // Render Reservation Page
 function(req, res, next) {
     console.log(' Render Reservation Page')
-    console.log('req.reservation = ' + req.reservation)
     res.render("front/events/signup", {
         title: "Event Signup",
         user: req.user,

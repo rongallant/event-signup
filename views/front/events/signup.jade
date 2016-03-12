@@ -5,8 +5,8 @@ extends ../layout
 append javascripts
     script.
 
-        var guestListContainer = #{ data.guests[0] && data.guests[0].length ? data.guests : '[]' }
-        var petListContainer = #{ data.pets[0] && data.pets[0].length ? data.pets : '[]' }
+        var guestListContainer = !{ data.guests && data.guests.length ? JSON.stringify(data.guests) : '[]' }
+        var petListContainer = !{ data.pets && data.pets.length ? JSON.stringify(data.pets) : '[]' }
 
         function customValidators($form, fields, guests, pets, formErrors) {
             if (typeof formErrors == 'undefined') {
@@ -104,6 +104,9 @@ append javascripts
     +selectorJs('pets', 2, petFormRules, petRowItem, 'petListContainer')
 
 append frontContent
+
+    // pre= data.guests
+
     .ui.text.container
         h1.ui.header Signup for #{data._event.name}
         .ui.hidden.divider
@@ -129,7 +132,7 @@ append frontContent
                         .field.required
                             label(for='emergencyContact_fullName') Full Name
                             input(type='text', id='emergencyContact_fullName', name='emergencyContact[fullName]',
-                                value=data._contact.emergencyContact?data._contact.emergencyContact.fullName:'')
+                                value=data._contact.emergencyContact?data._contact.emergencyContact.firstName +' '+ data._contact.emergencyContact.lastName:'')
 
                         .field.required
                             label(for='emergencyContact_phone') Phone Number

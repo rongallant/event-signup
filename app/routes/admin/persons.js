@@ -1,6 +1,6 @@
 var express = require('express'),
     request = require('request'),
-    authorization = require('../..//helpers/authorization.js'),
+    authorization = require('../../helpers/authorization.js'),
     path = require("path"),
     router = express.Router(),
     Person = require('../../models/person'),
@@ -64,15 +64,20 @@ router.get('/:currPage?', function(req, res, next){
         if (hasVal(req.query.q))
             apiUri += '?q=' + req.query.q
 
-        request({"uri":apiUri, "headers":{"x-access-token":req.session.authToken}}, function (err, data) {
+        request({"uri":apiUri, "headers":{"x-access-token":req.session.authToken}}, function (err, response) {
             if (err) {
+                console.error(err)
                 return next(err)
             }
-            authorization.apiRequestErrorHandler(req, res, data, next)
-            res.render(res.locals.listView, {
+            // authorization.apiRequestErrorHandler(req, res, data, next)
+
+            console.log('JSON.parse(response.body).data')
+            console.log(JSON.parse(response.body).data)
+
+            return res.render(res.locals.listView, {
                 title: appDesc['pluralName'],
                 user: req.user,
-                data: JSON.parse(data.body).data
+                data: JSON.parse(response.body).data
             })
         })
     } catch(err) {

@@ -73,10 +73,8 @@ function(req, res, next) {
             teamName: req.teamName,
             arrivingDate: req.body.arrivingDate,
             additionalInformation: req.body.additionalInformation,
-            guests: [ req.body.guests ],
-            pets: [ req.body.pets ],
-            tasks: [ req.body.tasks ],
-            activities: [ mongoose.Types.ObjectId(req.body.activities) ],
+            guests: req.body.guests,
+            pets: req.body.pets
         })
         console.log(reservation)
     } catch(err) {
@@ -106,7 +104,7 @@ function(req, res, next) {
 /* GET Returns single item. */
 router.get('/:id', function(req, res, next) {
     Reservation.findById(req.params.id)
-        .populate('_contact')
+        .populate('_event _contact guests pets activities tasks')
         .exec(function(err, data) {
             if (err) {
                 console.error(err)

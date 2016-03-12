@@ -1,18 +1,14 @@
-var express = require('express')
-var router = express.Router()
-
-var Person = require("../../models/person")
-
-var URL_BASE = "/admin/persons"
+var express = require('express'),
+    router = express.Router(),
+    Person = require("../../models/person")
 
 function hasVal(variable){
-    return (typeof variable !== 'undefined')
+    return (variable !== 'undefined' && variable)
 }
 
 /* GET Returns all item. */
 router.get('/:currPage?', function(req, res, next) {
-    console.log('req.params.currPage: ' + req.params.currPage)
-    req.params.currPage = (typeof req.params.currPage !== 'undefined') ? req.params.currPage : 1
+    req.params.currPage = hasVal(req.params.currPage) ? req.params.currPage : 1
     var query = {}
     if (hasVal(req.query.q)) {
         var regex = new RegExp(req.query.q, 'i')
@@ -36,10 +32,9 @@ router.get('/:currPage?', function(req, res, next) {
     }
     Person.paginate(query, options, function(err, data) {
         if (err) {
-            res.status(500).json({ "status": 500, "message" : err.message })
-        } else {
-            res.status(200).json({ "status": 200, "data" : data })
+            return next(err)
         }
+        return res.status(200).json({ "status": "200", "data" : data })
     })
 })
 

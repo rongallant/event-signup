@@ -35,10 +35,9 @@ router.get('/:currPage?', function(req, res, next) {
     }
     Task.paginate(query, options, function(err, data) {
         if (err) {
-            console.error(err)
-            return res.status(500).json({ "status" : 500, "message" : err.message })
+            return next(err)
         }
-        res.status(200).json({ "status" : 200, "data" : {"id" : req.body.id} })
+        return res.status(200).json({ "status": "200", "data" : data })
     })
 })
 

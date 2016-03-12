@@ -1,8 +1,10 @@
+require("./vendor")
 var mongoose = require('mongoose'),
-    mongoosePaginate = require('mongoose-paginate'),
     Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate'),
     Address = require("./address"),
     EmergencyContact = require("./emergencyContact")
+
 
 var PersonSchema = new Schema({
     firstName: { type: String, maxlength: 35 },

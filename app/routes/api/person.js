@@ -1,10 +1,7 @@
-var express = require('express')
-var router = express.Router()
-
-var mongoose = require('mongoose'),
+var express = require('express'),
+    router = express.Router(),
+    mongoose = require('mongoose'),
     Person = require("../../models/person")
-
-var URL_BASE = "/admin/persons"
 
 /* CREATE New item created. */
 router.post('/', function(req, res, next) {
