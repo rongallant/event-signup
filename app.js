@@ -10,10 +10,10 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     mongoose = require('mongoose'),
     passport = require('passport'),
+    request = require('request'),
     flash = require('connect-flash'),
     methodOverride = require('method-override'),
     jwt = require('jsonwebtoken')
-
 require('console.table')
 
 /************************************************************
@@ -21,7 +21,11 @@ require('console.table')
  ***********************************************************/
 
 function isNull(varName) {
-    return typeof varName == 'undefined'
+    return varName == 'undefined' || !varName
+}
+
+function notNull(varName) {
+    return varName != 'undefined' && varName
 }
 
 var app = express()
@@ -94,57 +98,92 @@ app.set('authToken', configDB.secret); // secret variable
  * Security
  ***********************************************************/
 
+require('./app/routes/appUrls')(app)
 require('./config/passport')(app, passport); // pass passport for configuration
-
-/************************************************************
- * Routes
- ***********************************************************/
 
 var apiPaths = ["/api*"]
 var publicApiPaths = ["/public_api*"]
-var sitePaths = ["/admin*", "/guest*", "/events*"]
+var sitePaths = ["/admin*", "/guest*", "/events*", "/accounts*"]
+var adminPaths = ["/admin*"]
+
+// ADMIN Authorization
+app.use(adminPaths, function(req, res, next) {
+    if (req.isAuthenticated() && authorization.isAdmin(req.user.roles)) {
+        console.info("200 : Authorized to access admin area " + req.path)
+        return next()
+    }
+    console.info("401 : Not Authorized to access admin area " + req.path)
+    var err = new Error('Not Authorized to access admin area ' + req.path)
+    err.statusCode = 401
+    return next(err)
+})
 
 // SITE Authorization
 app.use(sitePaths, function(req, res, next) {
-    console.log('SITE Authorization')
-    authorization.pageIsAuthenticated(req, res, next)
+    if (req.isAuthenticated() && authorization.isUser(req.user.roles)) {
+        var getUserUri = res.locals.apiUri.public.hasprofile  + req.user.username
+        var headers = { "x-access-token":req.session.authToken }
+        request({ "uri":getUserUri, "headers":headers }, function (err, data){
+            if (err) { 
+                console.log('Error checking for profile')
+                console.error(err)
+                return next(err)
+            }
+            if (!JSON.parse(data.body).id) {
+                console.log("No person found associated with account.")
+                return res.redirect(res.locals.pageAccountComplete)
+            }
+        })
+        console.info("200 : Authorized to access " + req.path)
+        return next()
+    }
+    console.info("401 : Not Authorized to access " + req.path)
+    var err = new Error('Not Authorized to access ' + req.path) 
+    err.statusCode = 401
+    return next(err)
 })
 
 // Set auth header
 app.use(function(req, res, next) {
-    console.log("\nSet auth header")
-    console.log('req.session = ' + JSON.stringify(req.session))
-    if (!isNull(req.session) && !isNull(req.session.authToken)) {
+    if (isNull(res.getHeader("x-access-token")) && !isNull(req.session) && !isNull(req.session.authToken)) {
         res.locals.authToken = req.session.authToken
         res.setHeader("x-access-token", req.session.authToken)
-        console.log('res.locals.authToken = ' + res.locals.authToken)
     }
-    console.log('next')
     return next()
 })
 
 // API Authorization
 app.use(apiPaths, function(req, res, next) {
     try {
-        console.log('API Authorization')
-        console.log('x-access-token = ' + req.headers['x-access-token'])
-        console.log('req.body.token = ' + req.body.token)
-        console.log('req.query.token = ' + req.query.token)
-
-        var token = req.body.token || req.query.token || req.headers['x-access-token']
+        // Debug
+        // if (notNull(req.headers['x-access-token']))  console.log('x-access-token = ' + req.headers['x-access-token'])
+        // if (notNull(req.body.token))  console.log('req.body.token = ' + req.body.token)
+        // if (notNull(req.query.token))  console.log('req.query.token = ' + req.query.token)
+        // if (notNull(res.locals.authToken))  console.log('res.locals.authToken = ' + res.locals.authToken)
+        // Auth
+        var token = req.body.token || req.query.token || req.headers['x-access-token'] || res.locals.authToken
         if (token) {
             res.setHeader("x-access-token", token)
-            console.log('Verify Token')
             jwt.verify(token, req.app.get('authToken'), function(err, decoded) {
                 if (err) {
-                    console.info("401 : Failed to authenticate token.  " + req.originalUrl)
+                    console.error("401 : Failed to authenticate token.  " + req.originalUrl)
                     console.error(err)
-                    res.status(401).json({ "status": 401, "message": "Failed to authenticate token.", "error" : JSON.stringify(err) })
+                    res.status(401).json({ "status": "401", "message": "Failed to authenticate token.", "error" : JSON.stringify(err) })
                 } else {
-                    req.decoded = decoded
-                    console.info("200 : Authorized to access " + req.originalUrl)
-                    console.log('decoded =  ' + decoded)
-                    return next()
+                    
+                    req.decoded = decoded.encTokenData
+                    
+                    
+                    
+                    console.log('req.decoded = ' + req.decoded)
+                    // Person.js Schema enum. ["USER", "ADMIN"]
+                    if (authorization.isUser(req.decoded.roles)) {
+                        console.log("200 : Authorized to access " + req.originalUrl)
+                        console.log('API decoded') // Debug
+                        console.log(decoded.encTokenData) // Debug
+                        return next()
+                    }
+                    return res.status(401).json({ "status": "401", "message": "Does not have privileges." })
                 }
             })
         } else {
@@ -159,8 +198,11 @@ app.use(apiPaths, function(req, res, next) {
     }
 })
 
+/************************************************************
+ * Routes
+ ***********************************************************/
+
 // LOAD SITE ROUTES
-require('./app/routes/appUrls')(app)
 require('./app/routes/apiRoutes')(app)
 require('./app/routes/siteRoutes')(app)
 require('./app/routes/adminRoutes')(app)
@@ -176,7 +218,7 @@ require('./app/routes/adminRoutes')(app)
  * 5xx Server Error.
  ***********************************************************/
 
-if (app.get('env') === 'development') {
+if (app.get('env') === 'STOPdevelopment') {
     // ALL - Non Errors
     app.use(function (req, res, next) {
         console.log('\nNON ERRORS')
@@ -207,22 +249,27 @@ if (app.get('env') === 'development') {
 
 app.use(apiPaths, function (err, req, res, next)
 {
-    console.log('API Error Handler')
-    console.log(err)
-    if (err && err.statusCode && err.message) {
+    if (app.get('env') === 'development') {
+        console.log('API Error Handler')
+        console.log(err)
+    }
+    if (err && err.statusCode && err.message && app.get('env') === 'development') {
         res.status(err.statusCode).json({ "status": err.statusCode, "message" : err.message })
     } else {
-        res.status(500).json({ "status": 500, "message" : "System Error" })
+        res.status(500).json({ "status": "500", "message": "API System Error", "error": JSON.stringify(err) })
     }
 })
 
 app.use(sitePaths, function (err, req, res, next)
 {
-    console.error('SITE Error Handler')
+    if (app.get('env') === 'development') {
+        console.error('SITE Error Handler')
+        console.log(err)
+    }
     // SITE - Not Authorized
     if (err.statusCode == 401) {
         console.error('Not Authorized : ' + err.message)
-        console.log('res.originalUrl = ' + res.originalUrl)
+        console.log('req.originalUrl = ' + req.originalUrl)
         err = new Error('Not Authorized')
         err.statusCode = 401
         req.flash('warning', "You have been logged out")
@@ -235,7 +282,7 @@ app.use(sitePaths, function (err, req, res, next)
         return res.render('error', {
             title: res.statusCode + ' : Error',
             message: res.statusCode + ' : Error',
-            error: res.statusMessage
+            error: (app.get('env') === 'development') ? err : res.statusMessage
         })
     }
 
@@ -245,7 +292,7 @@ app.use(sitePaths, function (err, req, res, next)
         return res.render('error', {
             title: res.statusCode + ' : Error',
             message: res.statusCode + ' : Error',
-            error:  res.statusMessage
+            error:  (app.get('env') === 'development') ? err : res.statusMessage
         })
     }
 
@@ -254,7 +301,7 @@ app.use(sitePaths, function (err, req, res, next)
     res.render('error', {
         title: '500 : System Error',
         message: '500 : System Error',
-        error: err.message
+        error:  (app.get('env') === 'development') ? err : res.statusMessage
     })
 })
 

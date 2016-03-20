@@ -8,7 +8,6 @@ var VendorSchema = new Schema({
     companyDetails: String,
     companyWebsite: String
 }, {
-    strict: true,
     timestamps: true,
     toObject: {
         virtuals: true

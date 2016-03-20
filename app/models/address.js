@@ -1,6 +1,5 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    mongoosePaginate = require('mongoose-paginate'),
     countries = require("i18n-iso-countries")
 
 var AddressSchema = new Schema({
@@ -10,10 +9,9 @@ var AddressSchema = new Schema({
     address2:  { type: String },
     city:  { type: String },
     state:  { type: String },
-    country:  { type: String, uppercase: true },
     postalCode:  { type: String, uppercase: true  },
-    location: { type: String },
-    _contact: { type: Schema.Types.ObjectId, ref: 'Person' }
+    country:  { type: String, uppercase: true },
+    location: { type: String }
 }, {
     strict: true,
     timestamps: true,
@@ -24,8 +22,6 @@ var AddressSchema = new Schema({
         virtuals: true
     }
 })
-
-AddressSchema.plugin(mongoosePaginate);
 
 // Remove double spaces
 function normalizeStr(str){

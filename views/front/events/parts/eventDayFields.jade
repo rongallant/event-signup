@@ -1,56 +1,137 @@
-.ui.stackable.grid
-    .two.column.row
+.ui.hidden.divider
 
-        .column.five.wide
-            .field
-                .ui.checkbox
-                    input(type='checkbox', name='thisDay', id='thisDay')
-                    label(for='thisDay') I am attending this day
+pre= data
 
-            .field
-                .ui.checkbox
-                    input(type='checkbox', name='thisDaysMeals', id='thisDaysMeals')
-                    label(for='thisDaysMeals') I am eating all meals
 
-            .field
-                .ui.checkbox
-                    input(type='checkbox', name='thisDaystasks', id='thisDaystasks')
-                    label(for='thisDaystasks') I would like to help out
+h4 Check out our schedule of events
 
-        .ui.vertical.divider
-        .column
-            .ui.divided.items
+#schedule.ui.secondary.menu
+
+    a.active.item(data-tab='tab_12', class='12')
+        .ui.mini.statistic
+            .value= 12
+            .label Thu
+    a.item(data-tab='tab_13', class='13')
+        .ui.mini.statistic
+            .value= 13
+            .label Fri
+    a.item(data-tab='tab_14', class='14')
+        .ui.mini.statistic
+            .value= 14
+            .label Sat
+    a.item(data-tab='tab_15', class='15')
+        .ui.mini.statistic
+            .value= 15
+            .label Sun
+    a.item(data-tab='tab_16', class='16')
+        .ui.mini.statistic
+            .value= 16
+            .label Mon
+    a.item(data-tab='tab_17', class='17')
+        .ui.mini.statistic
+            .value= 17
+            .label Tue
+
+each i in [12,13,14,15,16,17]
+    .ui.tab.segment(data-tab='tab_#{i}', class=i==12 ? 'active' : '')
+
+        .ui.relaxed.divided.items
+
                 .item
-                    i.food.icon.big
-                    .content
-                        i.like.icon
-                        .header
-                            | Breakfast
-                        .meta  8 am - 9 am
-                        .description
-                            .row Buttermilk Pancakes (made from scratch) with Real Fancy Grade Maple Syrup
-                            .row Eggs Scrambled, Poached, or Fried any style
-                            .row Bacon or Sausage
-                        .extra
-                            .ui.right.floated.button
-                                | Action
+                    .ui.image
+                        i.grey.food.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 8:00 am - 9:30 am
+                        .header Breakfast
+                        .content
+                            p this is the description
+                            .extra
+                                i.warning.sign.icon
+                                .ui.celled.horizontal.list
+                                  .item Soy
+                                  .item Milk
+                                  .item Gluten
 
-            .ui.items
                 .item
-                    .ui.icon
-                        i.rocket.icon.big
-                    .content
-                        i.favorite.icon
-                        .header
-                            | Paracord Braceletes
-                        .meta 12 pm - 2 pm
-                        .description
-                        p.
-                           paracord bracelets sell for loads of money! come learn how to make them
-                           yourself for less than a dollar a piece! and your kids will have a blast
-                           with them!
-                        .extra
-                            .ui.right.floated.button
-                                | Action
+                    .ui.image
+                        i.grey.rocket.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 11:00 am - 1:00 pm
+                        .header Make Paracord Bracelets
+                        .content
+                            p this is the description
+                            .extra
+                                span.ui.left.floated Hosted By Old Dog
+                                .ui.right.floated
+                                    i.green.checkmark.icon
+                                    | Attending
 
 
+                .item
+                    .ui.image
+                        i.grey.food.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 1:00 pm - 3:00 pm
+                        .header Lunch
+                        .content
+                            p this is the description
+                            .extra
+                                i.warning.sign.icon
+                                .ui.celled.horizontal.list
+                                  .item Gluten
+                                  .item Peanuts
+                                  .item Soy
+
+                                .ui.right.floated
+                                    i.green.checkmark.icon
+                                    | Attending
+
+                .item
+                    .ui.image
+                        i.grey.rocket.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 3:00 pm - 5:30 pm
+                        .header Make Leather Bracelets
+                        .content
+                            p this is the description
+                            .extra
+                                span.ui.left.floated Hosted By Rictaflora
+
+
+
+                .item
+                    .ui.image
+                        i.grey.food.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 7:00 pm - 9:00 pm
+                        .header Dinner
+                        .content
+                            p this is the description
+                            .extra
+                                i.warning.sign.icon
+                                .ui.celled.horizontal.list
+                                  .item Gluten
+                                  .item Peanuts
+                                  .item Soy
+
+                                .ui.right.floated
+                                    i.green.checkmark.icon
+                                    | Attending
+
+
+                .item
+                    .ui.image
+                        i.grey.fire.icon.big
+                    .top.aligned.content
+                        .meta.ui.right.floated
+                            div 10:30 pm - 12:00 am
+                        .header Hanging Out Around the Fire
+                        .content
+                            p this is the description
+                            .extra
+                                span Open to All

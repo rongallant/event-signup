@@ -108,6 +108,10 @@ append frontContent
         h1.ui.header Signup for #{data._event.name}
         .ui.hidden.divider
         .ui.hidden.divider
+        
+        pre= data._contact
+        pre= data._contact.emergencyContact
+        
         form.ui.form(name='mainForm')
 
             input(type='hidden', name='_event', value=data._event.id)
@@ -141,7 +145,7 @@ append frontContent
                             input(type='text', id='emergencyContact_email', name='emergencyContact[email]',
                                 value=data._contact.emergencyContact?data._contact.emergencyContact.email:'')
 
-            // include parts/eventSelector
+            // include parts/eventDayFields
 
             .ui.container
                 .ui.grid

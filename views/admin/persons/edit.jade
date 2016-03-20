@@ -1,6 +1,6 @@
-include ../../mixins/addressSelector
+include ../addresses/parts/addressFields
+include ../addresses/parts/addressSelector
 include ../../mixins/personSelector
-include ../../mixins/formFields
 include ../includes/formToolbar
 include ../includes/formElements
 
@@ -12,9 +12,8 @@ block toolbar
 append javascripts
     script.
         $(function(){
-            // Validation Rules
             var validationRules = {
-                username: {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
+                // username: {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
                 firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
                 lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'},{type:'doesntContain[a-zA-Z]'}]},
                 email: {rules:[{type:'empty'}, {type:'maxLength[254]'},{type:'email'}]},
@@ -43,7 +42,7 @@ append javascripts
             $form.form({
                 fields: validationRules,
                 inline : false,
-                onSuccess: function(event, fields){
+                onSuccess: function(event, fields) {
                     $.ajax({
                         type: '#{formMethod}',
                         data: fields,
@@ -107,7 +106,7 @@ append javascripts
             $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
             $form.find('.ui.checkbox').checkbox()
             $form.find('.personSelector').search(localPersonSearch)
-            $form.find('.addressSelector').search(localAddressSearch)
+            $form.find('#addressSearch').search(googleAddressSearchAndPopulate)
         })
 
 append appContent
@@ -122,9 +121,9 @@ append appContent
 
                 +formSegmentIntro
 
-                .field.required
-                    label(for='username') Username/Nickname
-                    input(type="text", name='username', id='username', value=data.username)
+                // .field.required
+                //     label(for='username') Username/Nickname
+                //     input(type="text", name='username', id='username', value=data.username)
 
                 .two.fields
 
@@ -138,9 +137,9 @@ append appContent
 
                 .two.fields
 
-                    .field.required
-                        label(for='email') Email
-                        input(type="email", name='email', id='email', value=data.email)
+                    // .field.required
+                    //     label(for='email') Email
+                    //     input(type="email", name='email', id='email', value=data.email)
 
                     .field.required
                         label(for='phone') Phone
@@ -154,47 +153,63 @@ append appContent
                                 input(type='checkbox', name='isChild', id='isChild', checked=data.isChild)
                         input(type='number', name='childAge', id='childAge', max='17', maxlength='2', placeholder='Childs age...', value=data.childAge)
 
-                .field
-                    label(for='address') Address
-                    +addressSelector('address', data.address?data.address.shortAddress:'', data.address?data.address.id:'')
+            +formSegment
+                +formSegmentHeader('Address')
+                +formSegmentIntro
+                    +addressFields(data.address)
 
+            +formSegment
+                +formSegmentHeader('Emergency Contact')
+                +formSegmentIntro
 
-                .field
-                    label(for='emergencyContact') Emergency Contact
-                    +personSelector('emergencyContact', 'emergencyContact', data.emergencyContact?data.emergencyContact.id:'', data.emergencyContact?data.emergencyContact.fullName:'')
+                    .field.required
+                        label(for='emergencyContact_fullName') Full Name
+                        input(type='text', id='emergencyContact_fullName', name='emergencyContact[fullName]',
+                            value=data.emergencyContact?data.emergencyContact.firstName +' '+ data.emergencyContact.lastName:'')
+
+                    .field.required
+                        label(for='emergencyContact_phone') Phone Number
+                        input(type='text', id='emergencyContact_phone', name='emergencyContact[phone]',
+                            value=data.emergencyContact?data.emergencyContact.phone:'')
+
+                    .field.required
+                        label(for='emergencyContact_email') Email Address
+                        input(type='text', id='emergencyContact_email', name='emergencyContact[email]',
+                            value=data.emergencyContact?data.emergencyContact.email:'')
 
             +formSegment
 
                 +formSegmentHeader('Hammock Setup')
 
                 +formSegmentIntro
-                    p Tell us a little about your hammock setup or any other gear that may be of interest.
 
-                .field.required.textarea
+                p Tell us a little about your hammock setup or any other gear that may be of interest.
+
+                .field.textarea
                     label(for='gearList') Hammock Setup
                     +textarea('gearList', 'gearList', '2000')
                         = data.gearList
 
-            +formSegment
+            // +formSegment
 
-                +formSegmentHeader('Are you a vendor?')
+            //     +formSegmentHeader('Are you a vendor?')
 
-                +formSegmentIntro
+            //     +formSegmentIntro
 
-                .field
-                    label(for='companyName') Company Name
-                    input(type="text", name='_vendor.companyName', id='companyName', value=data._vendor?data._vendor.companyName:'')
+            //     .field
+            //         label(for='companyName') Company Name
+            //         input(type="text", name='_vendor[companyName]', id='companyName', value=data._vendor?data._vendor.companyName:'')
 
-                .field.textarea
-                    label(for='companyDetails') Company Details
-                    +textarea('_vendor.companyDetails', 'companyDetails', '2000')
-                        = data.description
+            //     .field.textarea
+            //         label(for='companyDetails') Company Details
+            //         +textarea('_vendor[companyDetails]', 'companyDetails', '2000')
+            //             = data.description
 
-                .field
-                    label(for='companyWebsite') Company Website
-                    .ui.labeled.input
-                        .ui.label http://
-                        input(type="text", name='_vendor.companyWebsite', id='companyWebsite', value=data._vendor?data._vendor.companyWebsite:'')
+            //     .field
+            //         label(for='companyWebsite') Company Website
+            //         .ui.labeled.input
+            //             .ui.label http://
+            //             input(type="text", name='_vendor[companyWebsite]', id='companyWebsite', value=data._vendor?data._vendor.companyWebsite:'')
 
             div(style='display: none;')
                 input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')

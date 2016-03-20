@@ -1,4 +1,5 @@
-include ../../mixins/addressSelector
+include ../addresses/parts/addressFields
+include ../addresses/parts/addressSelector
 include ../../mixins/personSelector
 include ../../mixins/scheduleDatesSelector
 include ../scheduleDates/parts/form
@@ -33,7 +34,8 @@ append javascripts
                     description: ['empty'],
                     mainPerson: ['empty'],
                     location: ['empty'],
-                    schedules: ['empty']
+                    schedules: ['empty'],
+                    _contact: ['empty']
                 },
                 inline : false,
                 onSuccess: function(event, fields){
@@ -87,7 +89,8 @@ append javascripts
                 $('.ui.delete.modal').modal('show')
             })
             $form.find('.personSelector').search(localPersonSearch)
-            $form.find('.addressSelector').search(localAddressSearch)
+            $form.find('#addressSearch').search(googleAddressSearchAndPopulate)
+            $form.find('select.dropdown, .selection.dropdown').dropdown()
             $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
             $form.find('#startDate').pickadate()
             $form.find('#startTime').pickatime()
@@ -106,6 +109,7 @@ append appContent
                 +formSegmentHeader('Event Details')
 
                 +formSegmentIntro
+                    p Before you start, make sure you have created the person in the person section you wish to be the main contact for this event.
 
                 .field.required
                     label(for="eventName") Event Name
@@ -116,17 +120,22 @@ append appContent
                     +textarea('description', 'description', '2000')
                         = data.description
 
-                .fields
+                .field.required
+                    label(for='_contact') Main Contact
+                    +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
 
-                    .field.ten.wide.required
-                        label(for="address") Location
-                        +addressSelector('address', data.address?data.address.shortAddress:'', data.address?data.address.id:'')
+            +formSegment
 
-                .fields
+                +formSegmentHeader("Address")
 
-                    .field.ten.wide.required
-                        label(for='_contact') Main Contact
-                        +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+                +formSegmentIntro
+                p Your address is used to know where you are coming from and is another way to contact you in case we need to.
+                
+                h4 address
+                | {
+                pre= JSON.stringify(data)
+                | }
+                +addressFields(data.address?data.address[0]:[])
 
             +formSegment
 

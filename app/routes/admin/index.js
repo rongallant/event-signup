@@ -1,5 +1,6 @@
 var express = require('express'),
     router = express.Router(),
+    auth = require('../../helpers/authorization.js'),
     appSettings = require('../utils/appSettings')
 
 var appDesc = []
@@ -15,7 +16,7 @@ router.use(function(req, res, next) {
     next()
 })
 
-router.get('/', function(req, res, next) {
+router.get('/', auth.needsRole('ADMIN'), function(req, res, next) {
     res.render('admin/portal', {
         title: 'Admin Portal',
         user: req.user

@@ -1,8 +1,8 @@
 var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'),
+    Account = require("../../models/account"),
     Event = require("../../models/event"),
-    Person = require("../../models/person"),
     Reservation = require("../../models/reservation"),
     appSettings = require('../utils/appSettings'),
     appDesc = []
@@ -27,80 +27,77 @@ function hasNoVal(varName) {
     return !hasVal(varName)
 }
 
-router.get('/signup',
-
 // Get User ID
-function(req, res, next) {
-    try {
-        Person.findOne({ "username" : req.user.username },  "_id", function(err, data){
-            if (err) {
-                console.error(err.message)
-                return next(err)
-            }
-            console.log('Get User ID = ' + data)
-            req.contactid = data.id
+function getPersonId(req, res, next) {
+    Account.findOne({ "username" : req.user.username },  "_person", function(err, data){
+        if (err) {
+            console.error(err)
+            return next(err)
+        }
+        req.personId = data._person
         return next()
-        })
-    } catch(err) {
-        console.log("Error finding user: " + req.user.username)
-        err = new Error("Error finding user")
-        err.statusCode = 500
-        return next(err)
-    }
-},
+    })
+}
 
 // Get Users Reservation
-function(req, res, next) {
-    Reservation.findOne({ "_contact" : mongoose.Types.ObjectId(req.contactid) })
+function getUserReservation(req, res, next) {
+    console.log({ "_contact" : mongoose.Types.ObjectId(req.personId) })
+    Reservation.findOne({ "_contact" : mongoose.Types.ObjectId(req.personId) })
         .populate('activities _contact _contact.emergencyContact _event pets tasks')
         .exec(function(err, data){
             if (err) {
+                console.log('Issue finding users reservation')
                 console.error(err.message)
                 return next(err)
+            } else if (hasNoVal(data)) {
+                console.log('Could not find users reservation')
+                return next()
+            } else {
+                console.log('Found Users Reservation')
+                // console.log(data)
+                req.reservation = data
+                return next()
             }
-            console.log('Get Users Reservation')
-            req.reservation = data
-            return next()
         }
     )
-},
+}
 
 // Get Event
-function(req, res, next) {
+function getCurrentEvent(req, res, next) {
     if (hasVal(req.reservation)) { return next() }
     Event.findOne({"active" : true})
         .sort({ 'createdAt' : -1 })
+        .select("_id")
         .exec(function(err, data) {
             if (err) {
                 console.error(err.message)
                 return next(err)
-            }
-            if (hasNoVal(data)) {
+            } else if (hasNoVal(data)) {
                 console.log("No event was found")
                 err = new Error("No event was found")
                 err.statusCode = 404
                 return next(err)
             }
-            // console.log('No active event found')
-            console.log(data)
+            // console.log("Found event")
             req.event = data
             return next()
         }
     )
-},
+}
+
 // Create new reservation
-function(req, res, next) {
+function createNewReservation(req, res, next) {
     if (hasVal(req.reservation)) { return next() }
-    console.log("Create new reservation")
     try {
         req.reservation = new Reservation({
-            _contact: mongoose.Types.ObjectId(req.contactid),
+            _contact: mongoose.Types.ObjectId(req.personId),
             _event: mongoose.Types.ObjectId(req.event.id),
             name: req.body.name,
             description: req.body.description,
             startTime: req.body.startTime,
             endTime: req.body.endTime
         })
+        // console.log("Created Reservation")
         return next()
     } catch(err) {
         console.log("Error creating reservation")
@@ -108,11 +105,13 @@ function(req, res, next) {
         err.statusCode = 500
         return next(err)
     }
-},
+}
 
 // Render Reservation Page
-function(req, res, next) {
-    console.log(' Render Reservation Page')
+router.get('/signup', getPersonId, getUserReservation, getCurrentEvent, createNewReservation, function(req, res, next) {
+    console.log('Render Reservation Page')
+    // console.log(req.reservation)
+     
     res.render("front/events/signup", {
         title: "Event Signup",
         user: req.user,

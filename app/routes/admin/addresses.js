@@ -1,7 +1,7 @@
 var express = require('express'),
     request = require('request'),
     path = require("path"),
-    authorization = require('../..//helpers/authorization.js'),
+    auth = require('../../helpers/authorization.js'),
     router = express.Router(),
     Address = require('../../models/address'),
     appSettings = require('../utils/appSettings'),
@@ -28,11 +28,10 @@ function hasVal(variable){
     return (typeof variable !== 'undefined')
 }
 
-router.get('/edit/:id', function(req, res, next) {
+router.get('/edit/:id', auth.needsRole('ADMIN'), function(req, res, next) {
     try {
         request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
             if (err) { return next(err) }
-            authorization.apiRequestErrorHandler(req, res, data, next)
             res.locals.countries = countries
             res.render(path.join(res.locals.editView), {
                 title: "Editing " + appDesc['singularName'],
@@ -48,7 +47,7 @@ router.get('/edit/:id', function(req, res, next) {
     }
 })
 
-router.get('/create', function(req, res) {
+router.get('/create', auth.needsRole('ADMIN'), function(req, res) {
     req.session.redirectTo = res.locals.editView
     res.render(res.locals.editView, {
         title: 'Create New ' + appDesc['singularName'],
@@ -60,7 +59,7 @@ router.get('/create', function(req, res) {
     })
 })
 
-router.get('/:currPage?', function(req, res, next){
+router.get('/:currPage?', auth.needsRole('ADMIN'), function(req, res, next){
     try {
         var apiUri = res.locals.apiCollection
         if (hasVal(req.params.currPage))
@@ -71,7 +70,6 @@ router.get('/:currPage?', function(req, res, next){
             apiUri += '?q=' + req.query.q
         request({"uri":apiUri, "headers":{'x-access-token':req.session.authToken}}, function (err, data) {
             if (err) { throw new Error(err) }
-            authorization.apiRequestErrorHandler(req, res, data, next)
             res.render(res.locals.listView, {
                 title: appDesc['pluralName'],
                 user: req.user,

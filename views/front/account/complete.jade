@@ -27,7 +27,7 @@ append javascripts
                 phone: {
                     rules:[
                         { type: 'empty' },
-                        { type: 'maxLength[14]' }
+                        { type: 'maxLength[15]' }
                     ]
                 }
             }
@@ -43,20 +43,22 @@ append javascripts
                     $.ajax({
                         type: '#{formMethod}',
                         data: fields,
-                        url: '#{apiItem}',
+                        url: '#{formAction}',
                         dataType: 'JSON',
                         statusCode: {
                             201: function(data, textStatus, jqXHR) {
-                                console.log(data)
                                 $.get('/message/success/Saved successfully')
                             }
                         }
                     })
                     .error(function(response) {
+                        console.log('AJAX ERROR')
+                        console.log(response.responseText)
                         toaster('error', 'Error: ' + JSON.parse(response.responseText).message)
-                        location.replace('/account/login/')
+                        // location.replace('/account/login/')
                     })
                     .done(function(response) {
+                        console.log('SUCCESS')
                         location.replace('#{formComplete}')
                     })
                     return false
@@ -89,15 +91,18 @@ append frontContent
                 .two.fields.required
                     .field
                         label(for='firstName') First Name
-                        input(type='text', id='firstName', name='firstName')
+                        input(type='text', id='firstName', name='_person[firstName]', maxlength='35'
+                            value=data._person ? data._person.firstName : '')
 
                     .field
                         label(for='lastName') Last Name
-                        input(type='text', id='lastName', name='lastName')
+                        input(type='text', id='lastName', name='_person[lastName]', maxlength='35'
+                            value=data._person ? data._person.lastName : '')
 
                 .field
                     label(for='phone') Phone Number
-                    input(type='text', id='phone', name='phone')
+                    input(type='text', id='phone', name='_person[phone]', maxlength='15'
+                            value=data._person ? data._person.phone : '')
 
                 .ui.primary.submit.button Update Profile
 

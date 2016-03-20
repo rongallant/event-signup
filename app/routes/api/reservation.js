@@ -1,6 +1,7 @@
 var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'),
+    Account = require("../../models/account"),
     EmergencyContact = require("../../models/emergencyContact"),
     Person = require("../../models/person"),
     Reservation = require("../../models/reservation")
@@ -19,54 +20,51 @@ function isJSON(testVar) {
     }
 }
 
-// Get contact and update  their emergency contact
-router.post('/', function(req, res, next) {
-    console.log('reservation.js - POST - Create Emergency Contact')
-    try {
-        var fullName = req.body.emergencyContact.fullName.split(' '),
-            firstName = fullName[0],
-            lastName = fullName[fullName.length - 1]
-        req.emergencyContact = new EmergencyContact({
-            username: req.body.emergencyContact.email,
-            firstName: firstName,
-            lastName: lastName,
-            phone: req.body.emergencyContact.phone,
-            email: req.body.emergencyContact.email
-        })
-    } catch(err) {
-        if (isJSON(err) && err.name === 'ValidationError') {
-            return res.status(500).json(err)
-        }
-        return res.json({ "status" : "500", "message" : "Error creating emergency contact", "error" : err })
-    }
-    return next()
-},
+// function getPersonId(req, res, next) {
+//     Account.findOne({ "username" : req.user.username },  "_person", function(err, data){
+//         if (err) {
+//             console.error(err)
+//             return next(err)
+//         }
+//         req.personId = data._person._id
+//         console.log('_person' + req.body._contact)
+//         console.log('data._person' + data._person)
+//         console.log('data._person._id' + data._person._id)
+//         return next()
+//     })
+// }
 
 // Save Contact
-function(req, res, next) {
-
-    console.log('reservation.js - POST - Save Emergency Contact to user')
-    console.log('emergencyContact: ' + req.emergencyContact)
-
-    Person.findOne({"username" : req.user.username})
-        .update({ emergencyContact: req.emergencyContact })
-        .exec(function(err, data) {
+function insertContactsEmergencyContact(req, res, next) {
+    console.log('POST - reservation.js - Save Emergency Contact to user')
+     var fullName = req.body.emergencyContact.fullName.split(' '),
+            firstName = fullName[0],
+            lastName = fullName[fullName.length - 1]
+    var newEmergencyContact = {
+        username: req.body.emergencyContact.email,
+        firstName: firstName,
+        lastName: lastName,
+        phone: req.body.emergencyContact.phone,
+        email: req.body.emergencyContact.email
+    }
+    Person.update({ _id: req.body._contact }, { $set: { emergencyContact: newEmergencyContact } }, function(err, data) {
         if (err) {
+            console.error("Error saving emergency contact")
             console.error(err)
-            if (err && isJSON(err)) {
-                return res.status(500).json(err)
-            }
-            return res.json({ "status" : "500", "message" : "Error saving emergency contact", "error" : err })
+            return res.json({ "status": "500", "message": "Could not save emergency contact", "error": JSON.stringify(err) })
+        } else if (data.ok === 0) {  
+            console.error("Did not save emergency contact " + data)
+            return next()
         }
+        console.log("Emergency contact saved")
+        console.log(data)
         return next()
     })
-},
+}
 
-// Save Reservation
-function(req, res, next) {
-    console.log('reservation.js - POST - Save Reservation')
+function createReservation(req, res, next) {
+    console.log('POST - reservation.js - Create Reservation')
     try {
-        console.log(req.body.guests)
         var reservation = Reservation({
             _contact: mongoose.Types.ObjectId(req.body._contact),
             _event: mongoose.Types.ObjectId(req.body._event),
@@ -76,29 +74,26 @@ function(req, res, next) {
             guests: req.body.guests,
             pets: req.body.pets
         })
-        console.log('reservation')
-        console.log(reservation)
+        req.newReservation = reservation
+        return next()
     } catch(err) {
-        if (isJSON(err) && err.name === 'ValidationError') {
-            console.error('ValidationError creating Reservation')
-            return res.status(500).json(err)
-        }
         console.error("Error creating reservation")
         console.error(err)
-        return res.status(500).json({ "status" : err.status, "message" : "Error creating reservation", "error" : err })
+        return res.status(500).json({ "status": "500", "message": "Error creating reservation", "error": JSON.stringify(err) })
     }
-    reservation.save(function(err, data) {
+}
+
+// Save Reservation
+router.post('/', insertContactsEmergencyContact, createReservation, function(req, res, next) {
+    // console.log('POST - reservation.js - Save Reservation')
+    req.newReservation.save(function(err, data) {
         if (err) {
-            try {
-                console.log(err.message)
-                console.log(err.errors)
-                return res.status(500).json(err)
-            } catch(err) {
-                console.error("Error saving reservation")
-                return res.status(500).json({ "status" : "500", "message" : "Error saving reservation", "error" : err })
-            }
+            console.error("Error saving reservation")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Error saving reservation", "error": JSON.stringify(err) })
         }
-        return res.status(201).json({ "status" : "201", "message" : "Reservation Successfully Saved" })
+        console.log("Reservation Successfully Saved")
+        return res.status(201).json({ "status": "201", "message": "Reservation Successfully Saved" })
     })
 })
 
@@ -131,9 +126,9 @@ router.put('/', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
     Reservation.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
-            return res.status(500).json({ "status" : 500, "message" : "Error deleting reservation", "error": err  })
+            return res.status(500).json({ "status": "500", "message": "Error deleting reservation", "error": err  })
         }
-        return res.status(204).json({ "status" : 204, "message" : "Successfully Deleted" })
+        return res.status(204).json({ "status" : "204", "message" : "Successfully Deleted" })
     })
 })
 

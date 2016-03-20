@@ -1,18 +1,15 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    mongoosePaginate = require('mongoose-paginate')
+    Schema = mongoose.Schema
 
 var GuestSchema = new Schema({
-    arrivingDate: Date,
-    departingDate: Date,
-    additionalInformation: String,
-    _person: { type: Schema.Types.ObjectId, ref: 'Person' },
-    _reservation: { type: Schema.Types.ObjectId, ref: 'Reservation' },
-    _activities: [{ type: Schema.Types.ObjectId, ref: 'Activity' }],
-    _tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }],
-    _meals: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
-    _pet: { type: Schema.Types.ObjectId, ref: 'Pet' }
-
+    firstName: {
+        type: String,
+        maxlength: 35
+    },
+    lastName: {
+        type: String,
+        maxlength: 35
+    }
 }, {
     strict: true,
     timestamps: true,
@@ -23,7 +20,5 @@ var GuestSchema = new Schema({
         virtuals: true
     }
 })
-
-GuestSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Guest', GuestSchema)

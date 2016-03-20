@@ -1,27 +1,8 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
+    Guest = require('./guest').schema,
     Pet = require('./pet').schema,
     mongoosePaginate = require('mongoose-paginate')
-
-
-var Guest = new Schema({
-    firstName: {
-        type: String,
-        maxlength: 35
-    },
-    lastName: {
-        type: String,
-        maxlength: 35
-    }
-}, {
-    strict: true,
-    toObject: {
-        virtuals: true
-    },
-    toJSON: {
-        virtuals: true
-    }
-})
 
 var ReservationSchema = new Schema({
     arrivingDate: Date,

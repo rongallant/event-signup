@@ -12,8 +12,16 @@ module.exports = function(app, passport) {
 
     // use static authenticate method of model in LocalStrategy
     passport.use(Account.createStrategy())
-Account
+
     // use static serialize and deserialize of model for passport session support
-    passport.serializeUser(Account.serializeUser())
-    passport.deserializeUser(Account.deserializeUser())
+
+    passport.serializeUser(function(user, done) {
+        done(null, user._id)
+    })
+    
+    passport.deserializeUser(function(id, done) {
+        Account.findById(id, 'username roles _person', function(err, user) {
+            done(err, user)
+        })
+    })
 }

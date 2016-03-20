@@ -1,6 +1,6 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    Address = require('./address'),
+    Address = require('./address').schema,
     mongoosePaginate = require('mongoose-paginate'),
     moment = require('moment')
 
@@ -9,12 +9,11 @@ var EventSchema = new Schema({
     description: { type: String, maxlength: 2000 },
     startDateTime: { type: Date },
     endDateTime: { type: Date },
-    address: { type: Address.schema },
+    address: [ Address ],
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
     active: { type: Boolean, default: true }
 }, {
     strict: true,
-    timestamps: true,
     toObject: {
         virtuals: true
     },

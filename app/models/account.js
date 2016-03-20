@@ -1,6 +1,6 @@
 var mongoose = require('mongoose'),
-    passportLocalMongoose = require('passport-local-mongoose'),
     Schema = mongoose.Schema,
+    passportLocalMongoose = require('passport-local-mongoose'),
     mongoosePaginate = require('mongoose-paginate'),
     bcrypt = require('bcrypt-nodejs')
 
@@ -17,13 +17,11 @@ var AccountSchema = new Schema({
     roles: [{
         type: String,
         maxlength: 35,
-        enum: ['CONTACT', 'USER', 'ADMIN', 'MANAGER'],
+        enum: ['CONTACT', 'USER', 'ADMIN', 'MANAGER', 'API'],
         default: 'CONTACT'
     }],
     email: { type: String, maxlength: 254 },
-
     _person: { type: Schema.Types.ObjectId, ref: 'Person' }
-
 }, {
     strict: true,
     timestamps: true,
@@ -42,7 +40,7 @@ AccountSchema.plugin(mongoosePaginate);
 // Save timestamp
 AccountSchema.pre('save', function(next) {
     this.starttime = new Date()
-    next()
+    return next()
 })
 
 // methods ======================

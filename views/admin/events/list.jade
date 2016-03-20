@@ -25,13 +25,12 @@ block appContent
         thead
             tr
                 th Name
-                th Description
                 th Dates
                 th.right.aligned Contact
 
         tbody
             if !data.docs.length
-                tr: td.center.aligned(colspan='4')
+                tr: td.center.aligned(colspan='3')
                     .ui.basic.icon.button
                         a(href=createAction)
                             i.plus.icon
@@ -42,9 +41,6 @@ block appContent
                     tr
                         td(data-label="Name")
                             a#row1Link(href=editAction + row.id)= row.name
-
-                        td(data-label="Description")
-                            = row.description
 
                         td(data-label="Dates")
                             = moment(row.startDateTime).format('M/D/YY')

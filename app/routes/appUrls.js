@@ -41,7 +41,9 @@ module.exports = function(app) {
         // API
         res.locals.apiUri = {
             "public": {
-                account : res.locals.fullUrl + '/public_api/account/'
+                account : res.locals.fullUrl + '/public_api/account/',
+                login : res.locals.fullUrl + '/public_api/account/login/',
+                hasprofile : res.locals.fullUrl + '/public_api/account/hasprofile/'
             },
             "secure": {
                 activity : res.locals.fullUrl + '/api/activity/',

@@ -31,6 +31,7 @@ var googleAddressSearchAndPopulate = {
     },
     onSelect: function(result, response) {
         var address = []
+        var point_of_interest = null
         var components = result.address_components
         for (var x in components) {
             switch(components[x]['types'][0]) {
@@ -48,15 +49,23 @@ var googleAddressSearchAndPopulate = {
                     countryField.dropdown('set value', components[x]['short_name'].toLowerCase())
                     countryField.dropdown({action: 'activate'})
                     break
+                case 'point_of_interest':
+                    point_of_interest = partVal(components[x]['short_name'])
+                    break
                 case 'street_number':
-                   address += partVal(components[x]['short_name'])
+                    address += partVal(components[x]['short_name'])
                     break
                 case 'route':
-                   address += ' ' + partVal(components[x]['short_name'])
+                    address += ' ' + partVal(components[x]['short_name'])
                     break
             }
-            $('#address2').val('')
+        }
+        if (point_of_interest != null) {
+            $('#address1').val(point_of_interest)
+            $('#address2').val(address)
+        } else {
             $('#address1').val(address)
+            $('#address2').val('')
         }
         var location = result.geometry.location.lat + ', ' + result.geometry.location.lng
         $('#location').val(location)

@@ -11,14 +11,14 @@ block appContent
 
         thead
             tr
-                th Username
+                // th Username
                 th Name
                 th
                 th.right.aligned Attributes
 
         tbody
             if !data.docs.length
-                tr: td.center.aligned(colspan='5')
+                tr: td.center.aligned(colspan='3')
                     .ui.basic.icon.button
                         a(href=createAction)
                             i.plus.icon
@@ -27,12 +27,13 @@ block appContent
             else
                 each row in data.docs
                     tr
-                        td(data-label="Username")
-                            a#row1Link(href=editAction + row.id)
-                                = row.username
+                        // td(data-label="Username")
+                        //     a#row1Link(href=editAction + row.id)
+                        //         = row.username
 
                         td(data-label="Name")
-                            = row.fullName
+                            a#row1Link(href=editAction + row.id)
+                                = row.fullName
 
                         td.right.aligned(data-label="")
                             if row.email

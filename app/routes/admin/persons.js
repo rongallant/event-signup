@@ -1,6 +1,6 @@
 var express = require('express'),
     request = require('request'),
-    authorization = require('../../helpers/authorization.js'),
+    auth = require("../../helpers/authorization"),
     path = require("path"),
     router = express.Router(),
     Person = require('../../models/person'),
@@ -27,22 +27,25 @@ function hasVal(variable){
     return (typeof variable !== 'undefined')
 }
 
-router.get('/edit/:id', function(req, res, next) {
-    request({"uri":res.locals.apiItem + req.params.id, "headers":{'x-access-token':req.session.authToken}}, function (err, data){
+router.get('/edit/:id', auth.needsRole('ADMIN'), function(req, res, next) {
+    request({"uri":res.locals.apiUri.secure.person.base + req.params.id, "headers":{'x-access-token':req.session.authToken}}, function (err, data){
         if (err) { return next(err) }
-        authorization.apiRequestErrorHandler(req, res, data, next)
+        
+        console.log("Person")
+        console.log(data.body)
+        
         res.render(path.join(res.locals.editView), {
             title: "Editing " + appDesc['singularName'],
             user: req.user,
             data: JSON.parse(data.body).data,
             formMode: 'edit',
             formMethod: 'PUT',
-            formAction: res.locals.apiItem + req.params.id
+            formAction: res.locals.apiUri.secure.person.base + req.params.id
         })
     })
 })
 
-router.get('/create', function(req, res) {
+router.get('/create', auth.needsRole('ADMIN'), function(req, res) {
     req.session.redirectTo = res.locals.editView
     res.render(res.locals.editView, {
         title: 'Create New ' + appDesc['singularName'],
@@ -50,13 +53,13 @@ router.get('/create', function(req, res) {
         data: appDesc['newObject'],
         formMode: 'create',
         formMethod: 'POST',
-        formAction: res.locals.apiItem
+        formAction: res.locals.apiUri.secure.person.base
     })
 })
 
-router.get('/:currPage?', function(req, res, next){
+router.get('/:currPage?', auth.needsRole('ADMIN'), function(req, res, next){
     try {
-        var apiUri = res.locals.apiCollection
+        var apiUri = res.locals.apiUri.secure.persons
         if (hasVal(req.params.currPage))
             apiUri += req.params.currPage
         else
@@ -69,11 +72,6 @@ router.get('/:currPage?', function(req, res, next){
                 console.error(err)
                 return next(err)
             }
-            // authorization.apiRequestErrorHandler(req, res, data, next)
-
-            console.log('JSON.parse(response.body).data')
-            console.log(JSON.parse(response.body).data)
-
             return res.render(res.locals.listView, {
                 title: appDesc['pluralName'],
                 user: req.user,

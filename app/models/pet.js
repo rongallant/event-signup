@@ -1,6 +1,5 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    mongoosePaginate = require('mongoose-paginate')
+    Schema = mongoose.Schema
 
 var PetSchema = new Schema({
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
@@ -17,7 +16,5 @@ var PetSchema = new Schema({
         virtuals: true
     }
 })
-
-PetSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Pet', PetSchema)
