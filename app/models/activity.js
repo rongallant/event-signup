@@ -3,6 +3,7 @@ var mongoose = require('mongoose'),
     mongoosePaginate = require('mongoose-paginate')
 
 var ActivitySchema = new Schema({
+    _event: { type: Schema.Types.ObjectId, ref: 'Event' },
     name: { type: String, maxlength: 70 },
     description: { type: String, maxlength: 2000 },
     startTime: String,

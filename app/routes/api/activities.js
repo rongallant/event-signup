@@ -12,6 +12,7 @@ function hasVal(variable){
     return (typeof variable !== 'undefined')
 }
 
+
 /* GET Returns all item. */
 router.get('/:currPage?', function(req, res, next) {
     try {
@@ -35,15 +36,28 @@ router.get('/:currPage?', function(req, res, next) {
             page: req.params.currPage,
             limit: req.app.locals.resultsPerPage
         }
-        Activity.paginate(query, options, function(err, data) {
-            if (err) {
-                return res.status(500).json({ "status": 500, "message": err.message })
-            } else {
-                res.status(200).json({ "status" : 200, "data" : data })
-            }
-        })
     } catch(err) {
         return next(err)
+    }
+    Activity.paginate(query, options, function(err, data) {
+        if (err) {
+            return res.status(500).json({ "status": "500", "message": "Could not retrieve activities", "error": err })
+        }
+        return res.status(200).json({ "status": "200", "message": "Retrieved activities", "data": data })
+    })
+})
+
+/* GET Returns all activities by event ID. */
+router.get('/byEvent/:eventId', function(req, res, next) {
+    if (!req.params.eventId) {
+        return res.status(404).json({ "status": "404", "message": "Event id not provided" })
+    } else {
+        Activity.find({ "_event": req.params.eventId }, function(err, data) {
+            if (err) {
+                return res.status(500).json({ "status": "500", "message": "Could not retrieve activities", "error": err })
+            }
+            return res.status(200).json({ "status": "200", "message": "Retrieved activities", "data": data })
+        })
     }
 })
 

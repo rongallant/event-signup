@@ -1,5 +1,6 @@
 include ../../mixins/personSelector
 include ../../mixins/scheduleDatesSelector
+include ../../mixins/selector
 include ../addresses/parts/addressFields
 include ../addresses/parts/addressSelector
 include ../scheduleDates/parts/form
@@ -23,6 +24,22 @@ append javascripts
     script(src="/pickadate/picker.time.js")
     // Local Form Scripts
     script.
+        var activityListContainer = !{ activities ? JSON.stringify(activities) : '[]' }
+
+        function customValidators($form, fields, guests, pets, formErrors) {
+            if (typeof formErrors == 'undefined') {
+                formErrors = []
+            }
+            if (fields['activityArray'].length > 25) {
+                formErrors.push('No more than 25 activities')
+            }
+            console.log(formErrors)
+            if (formErrors.length > 0) {
+                $form.form('add errors', formErrors)
+            }
+            return (formErrors.length > 0)
+        }
+
         function addDays(date, days) {
             var result = new Date(date)
             result.setDate(result.getDate() + days)
@@ -40,16 +57,26 @@ append javascripts
                 },
                 inline : false,
                 keyboardShortcuts: false,
-                onSuccess: function(event, fields){
+                onFailure: function(formErrors, fields) {
+                    console.log(formErrors)
+                    fields['activityArray'] = activityListContainer
+                    customValidators($form, fields, formErrors)
+                    return false
+                },
+                onSuccess: function(event, fields) {
+                    fields['activityArray'] = activityListContainer
+                    if (customValidators($form, fields)) { // has errors
+                        return false
+                    }
                     $.ajax({
                         type: '#{formMethod}',
                         url: '#{formAction}',
                         data: fields,
                         dataType: 'JSON',
                         statusCode: {
-                            201: function(data, textStatus, jqXHR) {
-                                console.log(JSON.parse(response.responseText).message)
-                                $.get('/message/success/' + JSON.parse(response.responseText).message)
+                            201: function(data) {
+                                // console.log(data)
+                                $.get('/message/success/' + data.message)
                             }
                         }
                     })
@@ -101,6 +128,10 @@ append javascripts
             $form.find('#endDate').pickadate()
             $form.find('#endTime').pickatime()
         })
+
+    -var activityFormRules = "{name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},endTime:{rules:[{type:'empty'}]}}"
+    -var activityRowItem = "fields.name + ' - ' + fields.startTime + ' to ' + fields.startTime"
+    +selectorJs('activities', 25, activityFormRules, activityRowItem, 'activityListContainer')
 
 append appContent
 
@@ -163,8 +194,37 @@ append appContent
                         label(for="endDate") End Time
                         input(type='text', name="endTime", id="endTime", value=data.endTime, placeholder='Time')
 
+
+            .ui.relaxed.stackable.grid
+                .eight.wide.column
+                    +formSegment
+                        +selectorListPanel('activities', data.guests, 'Activities', '', '')
+
             div(style='display: none;')
                 input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
                 input(type="hidden", name="id", value=data.id)
 
         +messageContainer
+
+    +selectorModal('activities', 'Activity', '', '')
+        .field.required
+            label(for='name') Activity Name
+            input(type='text', name='name', id='name')
+
+        .field.required.textarea
+            label(for='description') Activity Description
+            +textarea('description', 'description', '2000')
+
+        .two.fields
+
+            .field.required
+                label(for="startTime") Start Time
+                input(type="text", name="startTime", id="startTime")
+
+            .field.required#endTimeField
+                label(for="endTime") End Time
+                input(type="text", name="endTime", id="endTime")
+
+        .field.required
+            label(for='_contact') Main Contact
+            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')

@@ -1,17 +1,47 @@
 var express = require('express'),
     router = express.Router(),
+    request = require('request'),
     mongoose = require('mongoose'),
     moment = require('moment'),
+    Activity = require("../../models/activity"),
     Event = require("../../models/event")
 
 /************************************************************
  * REST API
  ************************************************************/
 
+function hasVal(variable){
+    return (variable !== 'undefined' && variable)
+}
+
+function isJson(jsonString) {
+    try {
+        jQuery.parseJSON(jsonString)
+        return true
+    } catch(e) {
+        return false
+    }
+}
+
+// Update activities
+function addActivities(activities, eventId) {
+    if (activities !== 'undefined' && activities) {
+        for (var i in activities) {
+            var activity = new Activity(activities[i])
+            activity._event = mongoose.Types.ObjectId(eventId)
+            activity.save(function(err, activity) {
+                    if (err) { console.error(err) }
+                    console.log('Added activity')
+                }
+            )
+        }
+    }
+}
+
 /* POST New item created. */
 router.post('/', function(req, res, next) {
     console.log("Create new event")
-    new Event({
+    var newEvent = new Event({
         name: req.body.name,
         description: req.body['description'],
         startDate: req.body.startDate,
@@ -26,6 +56,7 @@ router.post('/', function(req, res, next) {
             console.error(err)
             return res.status(500).json({ "status": "500", "message": "Error saving event", "error": err })
         } else {
+            addActivities(req.body.activityArray, newEvent._id)
             return res.status(201).json({ "status": "201", "message": "Address added to event", "data": data })
         }
     })
@@ -81,11 +112,13 @@ router.put('/', function(req, res, next) {
 function(req, res, next) {
     console.log("update event")
     console.log(req.body)
-    Event.findByIdAndUpdate(req.body.id, { $set:req.body, upsert: true }, function(err, data) {
+    Event.findByIdAndUpdate(req.body.id, { $set: req.body, upsert: true }, function(err, data) {
             if (err) {
+                console.error("Could not update event")
                 console.error(err)
-                return res.status(500).json({ "status" : "500", "message" : "Could not update event", "error" : JSON.stringify(err) })
+                return res.status(500).json({ "status" : "500", "message" : "Could not update event" })
             }
+            addActivities(req.body.activityArray, req.body.id)
             return res.status(201).json({ "status" : "201", "message" : "Event updated", "data" : { "id" : req.body.id } })
         }
     )

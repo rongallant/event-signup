@@ -35,9 +35,9 @@ router.get('/:currPage?', function(req, res, next) {
     }
     Event.paginate(query, options, function(err, data) {
         if (err) {
-            res.status(500).json({ "status": 500, "message" : err.message })
+            res.status(500).json({ "status": "500", "message": "Could not retrieve events", "error": err })
         } else {
-            res.status(200).json({"status" : 200, "data" : data})
+            res.status(200).json({ "status": "200", "message": "List of events", "data": data})
         }
     })
 })

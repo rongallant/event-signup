@@ -19,9 +19,9 @@ router.post('/', function(req, res, next) {
         endTime: req.body.endTime
     }).save(function(err, data) {
         if (err) {
-            return res.status(501).json({ "status" : 501, "message" : err.message, "error" : JSON.stringify(err) })
+            return res.status(501).json({ "status": "501", "message": "Could not create activity", "error": err })
         }
-        return res.status(201).json({ "status" : 200, "data" : data })
+        return res.status(201).json({ "status": "200", "message": "Created activity", "data" : data })
     })
 })
 

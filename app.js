@@ -125,7 +125,7 @@ app.use(sitePaths, function(req, res, next) {
         var getUserUri = res.locals.apiUri.public.hasprofile  + req.user.username
         var headers = { "x-access-token":req.session.authToken }
         request({ "uri": getUserUri, "headers":headers }, function (err, data){
-            if (err) { 
+            if (err) {
                 console.log('Error checking for profile')
                 console.error(err)
             } else if (!JSON.parse(data.body)._person) {
@@ -138,7 +138,7 @@ app.use(sitePaths, function(req, res, next) {
         })
     } else {
         console.info("401 : Not Authorized to access " + req.path)
-        var err = new Error('Not Authorized to access ' + req.path) 
+        var err = new Error('Not Authorized to access ' + req.path)
         err.statusCode = 401
         return next(err)
     }
@@ -158,10 +158,10 @@ app.use(function(req, res, next) {
 app.use(apiPaths, function(req, res, next) {
     console.log("API Authorization")
     // Debug
-    if (notNull(req.headers['x-access-token']))  console.log('x-access-token = ' + req.headers['x-access-token'])
-    if (notNull(req.body.token))  console.log('req.body.token = ' + req.body.token)
-    if (notNull(req.query.token))  console.log('req.query.token = ' + req.query.token)
-    if (notNull(res.locals.authToken))  console.log('res.locals.authToken = ' + res.locals.authToken)
+    // if (notNull(req.headers['x-access-token']))  console.log('x-access-token = ' + req.headers['x-access-token'])
+    // if (notNull(req.body.token))  console.log('req.body.token = ' + req.body.token)
+    // if (notNull(req.query.token))  console.log('req.query.token = ' + req.query.token)
+    // if (notNull(res.locals.authToken))  console.log('res.locals.authToken = ' + res.locals.authToken)
     // Auth
     var token = req.body.token || req.query.token || req.headers['x-access-token'] || res.locals.authToken
     if (token) {
@@ -241,8 +241,8 @@ if (app.get('env') === 'development') {
 // TODO Check for ajax message before creating a new one.
 app.use(apiPaths, function (err, req, res, next)
 {
+    console.log("API Error Handler")
     if (req.xhr) {
-        console.log("API Error Handler")
         if (app.get('env') === 'development') {
             console.log('API Error Handler')
             console.log(err)

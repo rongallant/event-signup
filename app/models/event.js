@@ -1,11 +1,11 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    Address = require('./address'),
     mongoosePaginate = require('mongoose-paginate'),
-    moment = require('moment')
+    moment = require('moment'),
+    Address = require('./address')
 
 var EventSchema = new Schema({
-    name: { 
+    name: {
         type: String,
         maxlength: 70,
         required: true,
@@ -30,13 +30,25 @@ var EventSchema = new Schema({
 })
 
 function timeToDate(strTime, currDateTime) {
-    var dateTimeStr = moment(currDateTime).format(global.viewPatternDate) + ' ' + strTime
-    return moment(dateTimeStr, global.viewPatternDate + ' ' + global.viewPatternTime).format()
+    var result
+    try {
+        var dateTimeStr = moment(currDateTime).format(global.viewPatternDate) + ' ' + strTime
+        result = moment(dateTimeStr, global.viewPatternDate + ' ' + global.viewPatternTime).format()
+    } catch (e) {
+        console.log(e)
+    }
+    return result
 }
 
 function stringToDate (strDate, currDateTime) {
-    var newDate = strDate + ' ' + moment(currDateTime).format(global.viewPatternTime)
-    return moment(newDate, global.viewPatternDate + ' ' + global.viewPatternTime).format()
+    var result
+    try {
+        var newDate = strDate + ' ' + moment(currDateTime).format(global.viewPatternTime)
+        result =  moment(newDate, global.viewPatternDate + ' ' + global.viewPatternTime).format()
+    } catch (e) {
+        console.log(e)
+    }
+    return result
 }
 
 EventSchema.virtual('startDate')
