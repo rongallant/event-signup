@@ -21,48 +21,49 @@ append javascripts
 block content
     body.admin
 
-    #mainMenuTop.ui.primary.pointing.menu.fixed
-
-        +menuHeaderItem
-
-        .right.menu
-
-            .ui.right.dropdown.item
-                | Admin Menu
-                i.dropdown.icon
-                .menu
-                    .header
-                        i.newspaper.icon
-                        | Current Event
-                    a.item(href='#') Reservations
-                    a.item(href='/admin/persons/') People
-                    // a.item(href='/admin/addresses/') Addresses
-
-                    .divider
-
-                    .header
-                        i.edit.icon
-                        | Event Management
-                    a.item(href='/admin/events/') Events
-                    a.item(href='/admin/activities/')  Activities
-                    a.item(href='/admin/meals/') Meals
-                    a.item(href='/admin/tasks/') Tasks
-
-                    .divider
-
-                    a.item(href='/admin/')
-                        i.home.icon
-                        | Admin Home
-                    a.item(href='/guest')
-                        i.user.icon
-                        | Guest View
-                    if user
-                        a.item(href=pageAccountLogout)
-                            i.sign.out.icon
-                            | Sign Out
-
-    block toolbar
-
-    .ui.main.container
-
-        block appContent
+        #mainMenuTop.ui.primary.pointing.menu.fixed
+            .ui.container
+        
+                +menuHeaderItem
+        
+                .right.menu
+        
+                    .ui.right.dropdown.item
+                        | Admin Menu
+                        i.dropdown.icon
+                        .menu
+                            .header
+                                i.newspaper.icon
+                                | Current Event
+                            a.item(href='#') Reservations
+                            a.item(href='/admin/persons/') People
+                            // a.item(href='/admin/addresses/') Addresses
+        
+                            .divider
+        
+                            .header
+                                i.edit.icon
+                                | Event Management
+                            a.item(href='/admin/events/') Events
+                            a.item(href='/admin/activities/')  Activities
+                            a.item(href='/admin/meals/') Meals
+                            a.item(href='/admin/tasks/') Tasks
+        
+                            .divider
+        
+                            a.item(href='/admin/')
+                                i.home.icon
+                                | Admin Home
+                            a.item(href='/guest')
+                                i.user.icon
+                                | Guest View
+                            if user
+                                a.item(href=pageAccountLogout)
+                                    i.sign.out.icon
+                                    | Sign Out
+    
+        block toolbar
+    
+        .ui.main.container
+    
+            block appContent

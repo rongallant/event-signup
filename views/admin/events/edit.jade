@@ -41,21 +41,23 @@ append javascripts
                 onSuccess: function(event, fields){
                     $.ajax({
                         type: '#{formMethod}',
+                        url: '#{formAction}',
                         data: fields,
-                        url: '#{apiItem}',
                         dataType: 'JSON',
                         statusCode: {
                             201: function(data, textStatus, jqXHR) {
                                 console.log('201 Error')
-                                $.get('/message/success/Saved successfully')
+                                $.get('/message/success/' + JSON.parse(response.responseText).message)
                             }
                         }
                     })
                     .error(function(response) {
+                        console.log("Ajax Error")
                         console.log(response)
-                        toaster('error', 'Error: ' + JSON.parse(response.responseText).message)
+                        toaster('error', 'Error: ' + response.statusText)
                     })
                     .done(function(response) {
+                        console.log('#{editAction}' + response.data.id)
                         location.replace('#{editAction}' + response.data.id)
                     })
                     return false
@@ -67,7 +69,8 @@ append javascripts
             // CREATE / SAVE
             $form.form(validationRules)
 
-            $('.ui.delete.modal').modal({
+            $deleteModal = $('.ui.delete.modal')
+            $deleteModal.modal({
                 onApprove: function(){
                     $.ajax({
                         type: 'delete',
@@ -86,7 +89,7 @@ append javascripts
                 }
             })
             $('.delete.button').click(function(){
-                $('.ui.delete.modal').modal('show')
+                $deleteModal.modal('show')
             })
             $form.find('.personSelector').search(localPersonSearch)
             $form.find('#addressSearch').search(googleAddressSearchAndPopulate)
@@ -130,12 +133,8 @@ append appContent
 
                 +formSegmentIntro
                 p Your address is used to know where you are coming from and is another way to contact you in case we need to.
-                
-                h4 address
-                | {
-                pre= JSON.stringify(data)
-                | }
-                +addressFields(data.address?data.address[0]:[])
+
+                +addressFields(data.address?data.address:'')
 
             +formSegment
 

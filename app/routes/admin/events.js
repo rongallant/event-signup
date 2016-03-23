@@ -1,6 +1,6 @@
 var express = require('express'),
     request = require('request'),
-    auth = require('../../helpers/authorization.js'),
+    auth = require('../..//helpers/authorization.js'),
     path = require("path"),
     moment = require("moment"),
     router = express.Router(),
@@ -66,6 +66,11 @@ router.get('/:currPage?', auth.needsRole('ADMIN'), function(req, res, next){
 
     request({uri: apiUri, headers: {"x-access-token":req.session.authToken} }, function (err, data) {
         if (err) { return next(err) }
+        
+        console.log('data')
+        console.log(JSON.parse(data.body).data)
+        
+        
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
             user: req.user,

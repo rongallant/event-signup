@@ -14,7 +14,7 @@ var AddressSchema = new Schema({
     location: { type: String }
 }, {
     strict: true,
-    timestamps: true,
+    timestamps: false,
     toObject: {
         virtuals: true
     },

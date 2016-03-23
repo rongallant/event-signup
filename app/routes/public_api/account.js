@@ -14,6 +14,7 @@ router.post('/login', function(req, res, next) {
     console.log('\nGET /account/login/')
     passport.authenticate('local', function(err, user, info) {
         if (err) {
+            console.error("Could not log in")
             console.error(err)
             return res.status(500).json({ "status": "500", "message": "Could not log in", "error": JSON.stringify(err) })
         } else if (!user) {
@@ -22,6 +23,7 @@ router.post('/login', function(req, res, next) {
         }
         req.logIn(user, function(err) {
             if (err) {
+                console.error("Could not log in")
                 console.error(err)
                 return res.status(401).json({ "status": "401", "message": "Could not log in", "error": JSON.stringify(err) })
             }
@@ -29,7 +31,6 @@ router.post('/login', function(req, res, next) {
                 options = { "expiresIn" : "2h" },
                 token = jwt.sign(payload, res.app.get('authToken'), options)
             req.session.authToken = token
-            console.log('200: ', 'You have logged in.') // Debug
             return res.status(200).json({ "status": "200", "message": "You have logged in", "data": user, "token" : token })
         })
     })(req, res, next)
@@ -37,28 +38,32 @@ router.post('/login', function(req, res, next) {
 
 /* REGISTER NEW USER */
 router.post('/', function(req, res, next) {
-    console.log('\nPOST /account/')
     // See if username is available then register it.
     try {
         var data = new Account({
             username: req.body.username,
-            email: req.body.email
+            email: req.body.email,
+            roles: ['USER', 'ADMIN']
+            
         })
         Account.register(data, req.body.password, function(err, account) {
             if (err) {
-                console.error("REGISTER: " + err)
+                console.error("Could not create account")
+                console.error(err)
                 return res.status(500).json({ "status": "500", "message": "Could not create account", "error": JSON.stringify(err) })
             }
             data.save(function(err, data) {
                 if (err) {
-                    console.error("SAVE: " + err)
+                    console.error("Could not create account")
+                    console.error(err)
                     return res.status(500).json({ "status": "500", "message": "Could not create account", "error": JSON.stringify(err) })
                 }
                 return res.status(201).json({ "status" : "201", "message" : "Registration Successfull", "data" : data })
             })
         })
     } catch (err) {
-        console.error("CATCH: " + err)
+        console.error("Could not create account")
+        console.error(err)
         return res.status(500).json({ "status": "500", "message": "Could not create account", "error": JSON.stringify(err) })
     }
 })
@@ -95,7 +100,7 @@ router.get('/:username', function(req, res, next) {
 router.get('/hasprofile/:username', function(req, res, next) {
     console.log('\nGET /account/' + req.params.id)
     Account.findOne({ username:req.params.username })
-        .select('_person._id')
+        .select("_person")
         .exec(function(err, data) {
             if (err) {
                 console.error("Could not look up account profile")
@@ -103,11 +108,9 @@ router.get('/hasprofile/:username', function(req, res, next) {
                 return res.status(500).json({ "status": "500", "message": "Could not look up account profile", "error": JSON.stringify(err) })
             }
             if (data) {
-                console.log('Found profile for account')
                 return res.send(data)
             }
-            console.error('Could not find account')
-            return res.status(404)
+            return res.status(404).json({ "status": "404", "message": 'Could not find account' })
         }
     )
 })
@@ -121,6 +124,7 @@ router.put('/', function(req, res, next) {
             console.error(err)
             return next(err)
         } else {
+            console.error("Profile saved")
             req.newPersonProfileId = data._id
             return next()
         }
@@ -129,6 +133,7 @@ router.put('/', function(req, res, next) {
 function(req, res, next) {
      Account.findOne({username:req.user.username}, function (err, data) {
         if (err) {
+            console.error("Could not add profile account")
             console.error(err)
             return res.status(501).json({ "status": "501", "message": "Could not update account", "error": JSON.stringify(err) })
         }
@@ -136,12 +141,15 @@ function(req, res, next) {
             data._person = mongoose.Types.ObjectId(req.newPersonProfileId)
             data.save(function (err, data) {
                 if (err) {
+                    console.error("Could not update account")
                     console.error(err)
                     return res.status(501).json({ "status": "501", "message": "Could not update account", "error": JSON.stringify(err) })
                 }
+                console.log("Account updated")
                 return res.status(201).json({ "status": "201", "message": "Account updated", "data": data })
             })
         } else {
+            console.error("Account not found")
             res.status(404).json({ "status": "404", "message": "Account not found" })
         }
     })

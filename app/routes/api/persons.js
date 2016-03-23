@@ -25,16 +25,17 @@ router.get('/:currPage?', function(req, res, next) {
     }
     var options = {
         sort: { updatedAt: -1 },
-        populate: 'address emergencyContact',
         lean: false, // False enables virtual params
         page: req.params.currPage,
         limit: req.app.locals.resultsPerPage
     }
     Person.paginate(query, options, function(err, data) {
         if (err) {
-            return next(err)
+            console.error("Could not retrieve list of people.")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Could not retrieve list of people.", "error": JSON.stringify(err) })
         }
-        return res.status(200).json({ "status": "200", "data" : data })
+        return res.status(200).json({ "status": "200", "message": "Returned results",  "data" : data })
     })
 })
 

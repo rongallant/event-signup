@@ -10,9 +10,10 @@
 //- « = /fda/2, 3 = /fda/3, 4 = #, .. 7 = /fda/7, » = /fda/8
 
 mixin listToolbar
+
     - start    = start              || 1
-    - numPages = data.pages         || 10
-    - curr     = data.page          || 1
+    - numPages = data ? data.pages  :  0
+    - curr     = data ? data.page   :  1
     - base     = listAction + '/'   || '#'
     - var prev = Number(curr) - 1
     - var next = Number(curr) + 1

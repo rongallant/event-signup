@@ -73,12 +73,12 @@ function getCurrentEvent(req, res, next) {
                 console.error(err.message)
                 return next(err)
             } else if (hasNoVal(data)) {
-                console.log("No event was found")
-                err = new Error("No event was found")
-                err.statusCode = 404
-                return next(err)
+                return res.render("message", {
+                    title: "Event Signup",
+                    user: req.user,
+                    message: "No event was found. Please try again later."
+                })
             }
-            // console.log("Found event")
             req.event = data
             return next()
         }

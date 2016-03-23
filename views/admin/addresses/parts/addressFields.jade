@@ -1,7 +1,3 @@
-
-mixin countryField(field, displayValue, value)
-
-
 // Needs:
 // searchAPI.js
 // $('form').find('#addressSearch').search(googleAddressSearchAndPopulate)
@@ -43,729 +39,729 @@ mixin addressFields(address)
                 input.search(autocomplete='off', tabindex='0', value=address.country)
                 .default.text Select Country
                 .menu(tabindex='-1')
-                    .item(data-value='ad')
-                        i.ad.flag
-                        | Andorra
-                    .item(data-value='ae')
-                        i.ae.flag
-                        | U.A.E
-                    .item(data-value='af')
-                        i.af.flag
-                        | Afghanistan
-                    .item(data-value='ag')
-                        i.ag.flag
-                        | Antigua
-                    .item(data-value='ai')
-                        i.ai.flag
-                        | Anguilla
-                    .item(data-value='al')
-                        i.al.flag
-                        | Albania
-                    .item(data-value='am')
-                        i.am.flag
-                        | Armenia
-                    .item(data-value='an')
-                        i.an.flag
-                        | Netherlands Antilles
-                    .item(data-value='ao')
-                        i.ao.flag
-                        | Angola
-                    .item(data-value='ar')
-                        i.ar.flag
-                        | Argentina
-                    .item(data-value='as')
-                        i.as.flag
-                        | American Samoa
-                    .item(data-value='at')
-                        i.at.flag
-                        | Austria
-                    .item(data-value='au')
-                        i.au.flag
-                        | Australia
-                    .item(data-value='aw')
-                        i.aw.flag
-                        | Aruba
-                    .item(data-value='ax')
-                        i.ax.flag
-                        | Aland Islands
-                    .item(data-value='az')
-                        i.az.flag
-                        | Azerbaijan
-                    .item(data-value='ba')
-                        i.ba.flag
-                        | Bosnia
-                    .item(data-value='bb')
-                        i.bb.flag
-                        | Barbados
-                    .item(data-value='bd')
-                        i.bd.flag
-                        | Bangladesh
-                    .item(data-value='be')
-                        i.be.flag
-                        | Belgium
-                    .item(data-value='bf')
-                        i.bf.flag
-                        | Burkina Faso
-                    .item(data-value='bg')
-                        i.bg.flag
-                        | Bulgaria
-                    .item(data-value='bh')
-                        i.bh.flag
-                        | Bahrain
-                    .item(data-value='bi')
-                        i.bi.flag
-                        | Burundi
-                    .item(data-value='bj')
-                        i.bj.flag
-                        | Benin
-                    .item(data-value='bm')
-                        i.bm.flag
-                        | Bermuda
-                    .item(data-value='bn')
-                        i.bn.flag
-                        | Brunei
-                    .item(data-value='bo')
-                        i.bo.flag
-                        | Bolivia
-                    .item(data-value='br')
-                        i.br.flag
-                        | Brazil
-                    .item(data-value='bs')
-                        i.bs.flag
-                        | Bahamas
-                    .item(data-value='bt')
-                        i.bt.flag
-                        | Bhutan
-                    .item(data-value='bv')
-                        i.bv.flag
-                        | Bouvet Island
-                    .item(data-value='bw')
-                        i.bw.flag
-                        | Botswana
-                    .item(data-value='by')
-                        i.by.flag
-                        | Belarus
-                    .item(data-value='bz')
-                        i.bz.flag
-                        | Belize
-                    .item(data-value='ca')
-                        i.ca.flag
-                        | Canada
-                    .item(data-value='cc')
-                        i.cc.flag
-                        | Cocos Islands
-                    .item(data-value='cd')
-                        i.cd.flag
-                        | Congo
-                    .item(data-value='cf')
-                        i.cf.flag
-                        | Central African Republic
-                    .item(data-value='cg')
-                        i.cg.flag
-                        | Congo Brazzaville
-                    .item(data-value='ch')
-                        i.ch.flag
-                        | Switzerland
-                    .item(data-value='ci')
-                        i.ci.flag
-                        | Cote Divoire
-                    .item(data-value='ck')
-                        i.ck.flag
-                        | Cook Islands
-                    .item(data-value='cl')
-                        i.cl.flag
-                        | Chile
-                    .item(data-value='cm')
-                        i.cm.flag
-                        | Cameroon
-                    .item(data-value='cn')
-                        i.cn.flag
-                        | China
-                    .item(data-value='co')
-                        i.co.flag
-                        | Colombia
-                    .item(data-value='cr')
-                        i.cr.flag
-                        | Costa Rica
-                    .item(data-value='cs')
-                        i.cs.flag
-                        | Serbia
-                    .item(data-value='cu')
-                        i.cu.flag
-                        | Cuba
-                    .item(data-value='cv')
-                        i.cv.flag
-                        | Cape Verde
-                    .item(data-value='cx')
-                        i.cx.flag
-                        | Christmas Island
-                    .item(data-value='cy')
-                        i.cy.flag
-                        | Cyprus
-                    .item(data-value='cz')
-                        i.cz.flag
-                        | Czech Republic
-                    .item(data-value='de')
-                        i.de.flag
-                        | Germany
-                    .item(data-value='dj')
-                        i.dj.flag
-                        | Djibouti
-                    .item(data-value='dk')
-                        i.dk.flag
-                        | Denmark
-                    .item(data-value='dm')
-                        i.dm.flag
-                        | Dominica
-                    .item(data-value='do')
-                        i.do.flag
-                        | Dominican Republic
-                    .item(data-value='dz')
-                        i.dz.flag
-                        | Algeria
-                    .item(data-value='ec')
-                        i.ec.flag
-                        | Ecuador
-                    .item(data-value='ee')
-                        i.ee.flag
-                        | Estonia
-                    .item(data-value='eg')
-                        i.eg.flag
-                        | Egypt
-                    .item(data-value='eh')
-                        i.eh.flag
-                        | Western Sahara
-                    .item(data-value='er')
-                        i.er.flag
-                        | Eritrea
-                    .item(data-value='es')
-                        i.es.flag
-                        | Spain
-                    .item(data-value='et')
-                        i.et.flag
-                        | Ethiopia
-                    .item(data-value='eu')
-                        i.eu.flag
-                        | European Union
-                    .item(data-value='fi')
-                        i.fi.flag
-                        | Finland
-                    .item(data-value='fj')
-                        i.fj.flag
-                        | Fiji
-                    .item(data-value='fk')
-                        i.fk.flag
-                        | Falkland Islands
-                    .item(data-value='fm')
-                        i.fm.flag
-                        | Micronesia
-                    .item(data-value='fo')
-                        i.fo.flag
-                        | Faroe Islands
-                    .item(data-value='fr')
-                        i.fr.flag
-                        | France
-                    .item(data-value='ga')
-                        i.ga.flag
-                        | Gabon
-                    .item(data-value='gb')
-                        i.gb.flag
-                        | United Kingdom
-                    .item(data-value='gd')
-                        i.gd.flag
-                        | Grenada
-                    .item(data-value='ge')
-                        i.ge.flag
-                        | Georgia
-                    .item(data-value='gf')
-                        i.gf.flag
-                        | French Guiana
-                    .item(data-value='gh')
-                        i.gh.flag
-                        | Ghana
-                    .item(data-value='gi')
-                        i.gi.flag
-                        | Gibraltar
-                    .item(data-value='gl')
-                        i.gl.flag
-                        | Greenland
-                    .item(data-value='gm')
-                        i.gm.flag
-                        | Gambia
-                    .item(data-value='gn')
-                        i.gn.flag
-                        | Guinea
-                    .item(data-value='gp')
-                        i.gp.flag
-                        | Guadeloupe
-                    .item(data-value='gq')
-                        i.gq.flag
-                        | Equatorial Guinea
-                    .item(data-value='gr')
-                        i.gr.flag
-                        | Greece
-                    .item(data-value='gs')
-                        i.gs.flag
-                        | Sandwich Islands
-                    .item(data-value='gt')
-                        i.gt.flag
-                        | Guatemala
-                    .item(data-value='gu')
-                        i.gu.flag
-                        | Guam
-                    .item(data-value='gw')
-                        i.gw.flag
-                        | Guinea-Bissau
-                    .item(data-value='gy')
-                        i.gy.flag
-                        | Guyana
-                    .item(data-value='hk')
-                        i.hk.flag
-                        | Hong Kong
-                    .item(data-value='hm')
-                        i.hm.flag
-                        | Heard Island
-                    .item(data-value='hn')
-                        i.hn.flag
-                        | Honduras
-                    .item(data-value='hr')
-                        i.hr.flag
-                        | Croatia
-                    .item(data-value='ht')
-                        i.ht.flag
-                        | Haiti
-                    .item(data-value='hu')
-                        i.hu.flag
-                        | Hungary
-                    .item(data-value='id')
-                        i.id.flag
-                        | Indonesia
-                    .item(data-value='ie')
-                        i.ie.flag
-                        | Ireland
-                    .item(data-value='il')
-                        i.il.flag
-                        | Israel
-                    .item(data-value='in')
-                        i.in.flag
-                        | India
-                    .item(data-value='io')
-                        i.io.flag
-                        | Indian Ocean Territory
-                    .item(data-value='iq')
-                        i.iq.flag
-                        | Iraq
-                    .item(data-value='ir')
-                        i.ir.flag
-                        | Iran
-                    .item(data-value='is')
-                        i.is.flag
-                        | Iceland
-                    .item(data-value='it')
-                        i.it.flag
-                        | Italy
-                    .item(data-value='jm')
-                        i.jm.flag
-                        | Jamaica
-                    .item(data-value='jo')
-                        i.jo.flag
-                        | Jordan
-                    .item(data-value='jp')
-                        i.jp.flag
-                        | Japan
-                    .item(data-value='ke')
-                        i.ke.flag
-                        | Kenya
-                    .item(data-value='kg')
-                        i.kg.flag
-                        | Kyrgyzstan
-                    .item(data-value='kh')
-                        i.kh.flag
-                        | Cambodia
-                    .item(data-value='ki')
-                        i.ki.flag
-                        | Kiribati
-                    .item(data-value='km')
-                        i.km.flag
-                        | Comoros
-                    .item(data-value='kn')
-                        i.kn.flag
-                        | Saint Kitts and Nevis
-                    .item(data-value='kp')
-                        i.kp.flag
-                        | North Korea
-                    .item(data-value='kr')
-                        i.kr.flag
-                        | South Korea
-                    .item(data-value='kw')
-                        i.kw.flag
-                        | Kuwait
-                    .item(data-value='ky')
-                        i.ky.flag
-                        | Cayman Islands
-                    .item(data-value='kz')
-                        i.kz.flag
-                        | Kazakhstan
-                    .item(data-value='la')
-                        i.la.flag
-                        | Laos
-                    .item(data-value='lb')
-                        i.lb.flag
-                        | Lebanon
-                    .item(data-value='lc')
-                        i.lc.flag
-                        | Saint Lucia
-                    .item(data-value='li')
-                        i.li.flag
-                        | Liechtenstein
-                    .item(data-value='lk')
-                        i.lk.flag
-                        | Sri Lanka
-                    .item(data-value='lr')
-                        i.lr.flag
-                        | Liberia
-                    .item(data-value='ls')
-                        i.ls.flag
-                        | Lesotho
-                    .item(data-value='lt')
-                        i.lt.flag
-                        | Lithuania
-                    .item(data-value='lu')
-                        i.lu.flag
-                        | Luxembourg
-                    .item(data-value='lv')
-                        i.lv.flag
-                        | Latvia
-                    .item(data-value='ly')
-                        i.ly.flag
-                        | Libya
-                    .item(data-value='ma')
-                        i.ma.flag
-                        | Morocco
-                    .item(data-value='mc')
-                        i.mc.flag
-                        | Monaco
-                    .item(data-value='md')
-                        i.md.flag
-                        | Moldova
-                    .item(data-value='me')
-                        i.me.flag
-                        | Montenegro
-                    .item(data-value='mg')
-                        i.mg.flag
-                        | Madagascar
-                    .item(data-value='mh')
-                        i.mh.flag
-                        | Marshall Islands
-                    .item(data-value='mk')
-                        i.mk.flag
-                        | MacEdonia
-                    .item(data-value='ml')
-                        i.ml.flag
-                        | Mali
-                    .item(data-value='ar')
-                        i.ar.flag
-                        | Burma
-                    .item(data-value='mn')
-                        i.mn.flag
-                        | Mongolia
-                    .item(data-value='mo')
-                        i.mo.flag
-                        | MacAu
-                    .item(data-value='mp')
-                        i.mp.flag
-                        | Northern Mariana Islands
-                    .item(data-value='mq')
-                        i.mq.flag
-                        | Martinique
-                    .item(data-value='mr')
-                        i.mr.flag
-                        | Mauritania
-                    .item(data-value='ms')
-                        i.ms.flag
-                        | Montserrat
-                    .item(data-value='mt')
-                        i.mt.flag
-                        | Malta
-                    .item(data-value='mu')
-                        i.mu.flag
-                        | Mauritius
-                    .item(data-value='mv')
-                        i.mv.flag
-                        | Maldives
-                    .item(data-value='mw')
-                        i.mw.flag
-                        | Malawi
-                    .item(data-value='mx')
-                        i.mx.flag
-                        | Mexico
-                    .item(data-value='my')
-                        i.my.flag
-                        | Malaysia
-                    .item(data-value='mz')
-                        i.mz.flag
-                        | Mozambique
-                    .item(data-value='na')
-                        i.na.flag
-                        | Namibia
-                    .item(data-value='nc')
-                        i.nc.flag
-                        | New Caledonia
-                    .item(data-value='ne')
-                        i.ne.flag
-                        | Niger
-                    .item(data-value='nf')
-                        i.nf.flag
-                        | Norfolk Island
-                    .item(data-value='ng')
-                        i.ng.flag
-                        | Nigeria
-                    .item(data-value='ni')
-                        i.ni.flag
-                        | Nicaragua
-                    .item(data-value='nl')
-                        i.nl.flag
-                        | Netherlands
-                    .item(data-value='no')
-                        i.no.flag
-                        | Norway
-                    .item(data-value='np')
-                        i.np.flag
-                        | Nepal
-                    .item(data-value='nr')
-                        i.nr.flag
-                        | Nauru
-                    .item(data-value='nu')
-                        i.nu.flag
-                        | Niue
-                    .item(data-value='nz')
-                        i.nz.flag
-                        | New Zealand
-                    .item(data-value='om')
-                        i.om.flag
-                        | Oman
-                    .item(data-value='pa')
-                        i.pa.flag
-                        | Panama
-                    .item(data-value='pe')
-                        i.pe.flag
-                        | Peru
-                    .item(data-value='pf')
-                        i.pf.flag
-                        | French Polynesia
-                    .item(data-value='pg')
-                        i.pg.flag
-                        | New Guinea
-                    .item(data-value='ph')
-                        i.ph.flag
-                        | Philippines
-                    .item(data-value='pk')
-                        i.pk.flag
-                        | Pakistan
-                    .item(data-value='pl')
-                        i.pl.flag
-                        | Poland
-                    .item(data-value='pm')
-                        i.pm.flag
-                        | Saint Pierre
-                    .item(data-value='pn')
-                        i.pn.flag
-                        | Pitcairn Islands
-                    .item(data-value='pr')
-                        i.pr.flag
-                        | Puerto Rico
-                    .item(data-value='ps')
-                        i.ps.flag
-                        | Palestine
-                    .item(data-value='pt')
-                        i.pt.flag
-                        | Portugal
-                    .item(data-value='pw')
-                        i.pw.flag
-                        | Palau
-                    .item(data-value='py')
-                        i.py.flag
-                        | Paraguay
-                    .item(data-value='qa')
-                        i.qa.flag
-                        | Qatar
-                    .item(data-value='re')
-                        i.re.flag
-                        | Reunion
-                    .item(data-value='ro')
-                        i.ro.flag
-                        | Romania
-                    .item(data-value='rs')
-                        i.rs.flag
-                        | Serbia
-                    .item(data-value='ru')
-                        i.ru.flag
-                        | Russia
-                    .item(data-value='rw')
-                        i.rw.flag
-                        | Rwanda
-                    .item(data-value='sa')
-                        i.sa.flag
-                        | Saudi Arabia
-                    .item(data-value='sb')
-                        i.sb.flag
-                        | Solomon Islands
-                    .item(data-value='sc')
-                        i.sc.flag
-                        | Seychelles
-                    .item(data-value='sd')
-                        i.sd.flag
-                        | Sudan
-                    .item(data-value='se')
-                        i.se.flag
-                        | Sweden
-                    .item(data-value='sg')
-                        i.sg.flag
-                        | Singapore
-                    .item(data-value='sh')
-                        i.sh.flag
-                        | Saint Helena
-                    .item(data-value='si')
-                        i.si.flag
-                        | Slovenia
-                    .item(data-value='sj')
-                        i.sj.flag
-                        | Svalbard, I Flag Jan Mayen
-                    .item(data-value='sk')
-                        i.sk.flag
-                        | Slovakia
-                    .item(data-value='sl')
-                        i.sl.flag
-                        | Sierra Leone
-                    .item(data-value='sm')
-                        i.sm.flag
-                        | San Marino
-                    .item(data-value='sn')
-                        i.sn.flag
-                        | Senegal
-                    .item(data-value='so')
-                        i.so.flag
-                        | Somalia
-                    .item(data-value='sr')
-                        i.sr.flag
-                        | Suriname
-                    .item(data-value='st')
-                        i.st.flag
-                        | Sao Tome
-                    .item(data-value='sv')
-                        i.sv.flag
-                        | El Salvador
-                    .item(data-value='sy')
-                        i.sy.flag
-                        | Syria
-                    .item(data-value='sz')
-                        i.sz.flag
-                        | Swaziland
-                    .item(data-value='tc')
-                        i.tc.flag
-                        | Caicos Islands
-                    .item(data-value='td')
-                        i.td.flag
-                        | Chad
-                    .item(data-value='tf')
-                        i.tf.flag
-                        | French Territories
-                    .item(data-value='tg')
-                        i.tg.flag
-                        | Togo
-                    .item(data-value='th')
-                        i.th.flag
-                        | Thailand
-                    .item(data-value='tj')
-                        i.tj.flag
-                        | Tajikistan
-                    .item(data-value='tk')
-                        i.tk.flag
-                        | Tokelau
-                    .item(data-value='tl')
-                        i.tl.flag
-                        | Timorleste
-                    .item(data-value='tm')
-                        i.tm.flag
-                        | Turkmenistan
-                    .item(data-value='tn')
-                        i.tn.flag
-                        | Tunisia
-                    .item(data-value='to')
-                        i.to.flag
-                        | Tonga
-                    .item(data-value='tr')
-                        i.tr.flag
-                        | Turkey
-                    .item(data-value='tt')
-                        i.tt.flag
-                        | Trinidad
-                    .item(data-value='tv')
-                        i.tv.flag
-                        | Tuvalu
-                    .item(data-value='tw')
-                        i.tw.flag
-                        | Taiwan
-                    .item(data-value='tz')
-                        i.tz.flag
-                        | Tanzania
-                    .item(data-value='ua')
-                        i.ua.flag
-                        | Ukraine
-                    .item(data-value='ug')
-                        i.ug.flag
-                        | Uganda
-                    .item(data-value='um')
-                        i.um.flag
-                        | Us Minor Islands
-                    .item(data-value='us')
-                        i.us.flag
-                        | United States
-                    .item(data-value='uy')
-                        i.uy.flag
-                        | Uruguay
-                    .item(data-value='uz')
-                        i.uz.flag
-                        | Uzbekistan
-                    .item(data-value='va')
-                        i.va.flag
-                        | Vatican City
-                    .item(data-value='vc')
-                        i.vc.flag
-                        | Saint Vincent
-                    .item(data-value='ve')
-                        i.ve.flag
-                        | Venezuela
-                    .item(data-value='vg')
-                        i.vg.flag
-                        | British Virgin Islands
-                    .item(data-value='vi')
-                        i.vi.flag
-                        | Us Virgin Islands
-                    .item(data-value='vn')
-                        i.vn.flag
-                        | Vietnam
-                    .item(data-value='vu')
-                        i.vu.flag
-                        | Vanuatu
-                    .item(data-value='wf')
-                        i.wf.flag
-                        | Wallis and Futuna
-                    .item(data-value='ws')
-                        i.ws.flag
-                        | Samoa
-                    .item(data-value='ye')
-                        i.ye.flag
-                        | Yemen
-                    .item(data-value='yt')
-                        i.yt.flag
-                        | Mayotte
-                    .item(data-value='za')
-                        i.za.flag
-                        | South Africa
-                    .item(data-value='zm')
-                        i.zm.flag
-                        | Zambia
-                    .item(data-value='zw')
-                        i.zw.flag
-                        | Zimbabwe
+                   .item(data-value='AD')
+                       i.ad.flag
+                       | Andorra
+                   .item(data-value='AE')
+                       i.ae.flag
+                       | U.A.E
+                   .item(data-value='AF')
+                       i.af.flag
+                       | Afghanistan
+                   .item(data-value='AG')
+                       i.ag.flag
+                       | Antigua
+                   .item(data-value='AI')
+                       i.ai.flag
+                       | Anguilla
+                   .item(data-value='AL')
+                       i.al.flag
+                       | Albania
+                   .item(data-value='AM')
+                       i.am.flag
+                       | Armenia
+                   .item(data-value='AN')
+                       i.an.flag
+                       | Netherlands Antilles
+                   .item(data-value='AO')
+                       i.ao.flag
+                       | Angola
+                   .item(data-value='AR')
+                       i.ar.flag
+                       | Argentina
+                   .item(data-value='AS')
+                       i.as.flag
+                       | American Samoa
+                   .item(data-value='AT')
+                       i.at.flag
+                       | Austria
+                   .item(data-value='AU')
+                       i.au.flag
+                       | Australia
+                   .item(data-value='AW')
+                       i.aw.flag
+                       | Aruba
+                   .item(data-value='AX')
+                       i.ax.flag
+                       | Aland Islands
+                   .item(data-value='AZ')
+                       i.az.flag
+                       | Azerbaijan
+                   .item(data-value='BA')
+                       i.ba.flag
+                       | Bosnia
+                   .item(data-value='BB')
+                       i.bb.flag
+                       | Barbados
+                   .item(data-value='BD')
+                       i.bd.flag
+                       | Bangladesh
+                   .item(data-value='BE')
+                       i.be.flag
+                       | Belgium
+                   .item(data-value='BF')
+                       i.bf.flag
+                       | Burkina Faso
+                   .item(data-value='BG')
+                       i.bg.flag
+                       | Bulgaria
+                   .item(data-value='BH')
+                       i.bh.flag
+                       | Bahrain
+                   .item(data-value='BI')
+                       i.bi.flag
+                       | Burundi
+                   .item(data-value='BJ')
+                       i.bj.flag
+                       | Benin
+                   .item(data-value='BM')
+                       i.bm.flag
+                       | Bermuda
+                   .item(data-value='BN')
+                       i.bn.flag
+                       | Brunei
+                   .item(data-value='BO')
+                       i.bo.flag
+                       | Bolivia
+                   .item(data-value='BR')
+                       i.br.flag
+                       | Brazil
+                   .item(data-value='BS')
+                       i.bs.flag
+                       | Bahamas
+                   .item(data-value='BT')
+                       i.bt.flag
+                       | Bhutan
+                   .item(data-value='BV')
+                       i.bv.flag
+                       | Bouvet Island
+                   .item(data-value='BW')
+                       i.bw.flag
+                       | Botswana
+                   .item(data-value='BY')
+                       i.by.flag
+                       | Belarus
+                   .item(data-value='BZ')
+                       i.bz.flag
+                       | Belize
+                   .item(data-value='CA')
+                       i.ca.flag
+                       | Canada
+                   .item(data-value='CC')
+                       i.cc.flag
+                       | Cocos Islands
+                   .item(data-value='CD')
+                       i.cd.flag
+                       | Congo
+                   .item(data-value='CF')
+                       i.cf.flag
+                       | Central African Republic
+                   .item(data-value='CG')
+                       i.cg.flag
+                       | Congo Brazzaville
+                   .item(data-value='CH')
+                       i.ch.flag
+                       | Switzerland
+                   .item(data-value='CI')
+                       i.ci.flag
+                       | Cote Divoire
+                   .item(data-value='CK')
+                       i.ck.flag
+                       | Cook Islands
+                   .item(data-value='CL')
+                       i.cl.flag
+                       | Chile
+                   .item(data-value='CM')
+                       i.cm.flag
+                       | Cameroon
+                   .item(data-value='CN')
+                       i.cn.flag
+                       | China
+                   .item(data-value='CO')
+                       i.co.flag
+                       | Colombia
+                   .item(data-value='CR')
+                       i.cr.flag
+                       | Costa Rica
+                   .item(data-value='CS')
+                       i.cs.flag
+                       | Serbia
+                   .item(data-value='CU')
+                       i.cu.flag
+                       | Cuba
+                   .item(data-value='CV')
+                       i.cv.flag
+                       | Cape Verde
+                   .item(data-value='CX')
+                       i.cx.flag
+                       | Christmas Island
+                   .item(data-value='CY')
+                       i.cy.flag
+                       | Cyprus
+                   .item(data-value='CZ')
+                       i.cz.flag
+                       | Czech Republic
+                   .item(data-value='DE')
+                       i.de.flag
+                       | Germany
+                   .item(data-value='DJ')
+                       i.dj.flag
+                       | Djibouti
+                   .item(data-value='DK')
+                       i.dk.flag
+                       | Denmark
+                   .item(data-value='DM')
+                       i.dm.flag
+                       | Dominica
+                   .item(data-value='DO')
+                       i.do.flag
+                       | Dominican Republic
+                   .item(data-value='DZ')
+                       i.dz.flag
+                       | Algeria
+                   .item(data-value='EC')
+                       i.ec.flag
+                       | Ecuador
+                   .item(data-value='EE')
+                       i.ee.flag
+                       | Estonia
+                   .item(data-value='EG')
+                       i.eg.flag
+                       | Egypt
+                   .item(data-value='EH')
+                       i.eh.flag
+                       | Western Sahara
+                   .item(data-value='ER')
+                       i.er.flag
+                       | Eritrea
+                   .item(data-value='ES')
+                       i.es.flag
+                       | Spain
+                   .item(data-value='ET')
+                       i.et.flag
+                       | Ethiopia
+                   .item(data-value='EU')
+                       i.eu.flag
+                       | European Union
+                   .item(data-value='FI')
+                       i.fi.flag
+                       | Finland
+                   .item(data-value='FJ')
+                       i.fj.flag
+                       | Fiji
+                   .item(data-value='FK')
+                       i.fk.flag
+                       | Falkland Islands
+                   .item(data-value='FM')
+                       i.fm.flag
+                       | Micronesia
+                   .item(data-value='FO')
+                       i.fo.flag
+                       | Faroe Islands
+                   .item(data-value='FR')
+                       i.fr.flag
+                       | France
+                   .item(data-value='GA')
+                       i.ga.flag
+                       | Gabon
+                   .item(data-value='GB')
+                       i.gb.flag
+                       | United Kingdom
+                   .item(data-value='GD')
+                       i.gd.flag
+                       | Grenada
+                   .item(data-value='GE')
+                       i.ge.flag
+                       | Georgia
+                   .item(data-value='GF')
+                       i.gf.flag
+                       | French Guiana
+                   .item(data-value='GH')
+                       i.gh.flag
+                       | Ghana
+                   .item(data-value='GI')
+                       i.gi.flag
+                       | Gibraltar
+                   .item(data-value='GL')
+                       i.gl.flag
+                       | Greenland
+                   .item(data-value='GM')
+                       i.gm.flag
+                       | Gambia
+                   .item(data-value='GN')
+                       i.gn.flag
+                       | Guinea
+                   .item(data-value='GP')
+                       i.gp.flag
+                       | Guadeloupe
+                   .item(data-value='GQ')
+                       i.gq.flag
+                       | Equatorial Guinea
+                   .item(data-value='GR')
+                       i.gr.flag
+                       | Greece
+                   .item(data-value='GS')
+                       i.gs.flag
+                       | Sandwich Islands
+                   .item(data-value='GT')
+                       i.gt.flag
+                       | Guatemala
+                   .item(data-value='GU')
+                       i.gu.flag
+                       | Guam
+                   .item(data-value='GW')
+                       i.gw.flag
+                       | Guinea-Bissau
+                   .item(data-value='GY')
+                       i.gy.flag
+                       | Guyana
+                   .item(data-value='HK')
+                       i.hk.flag
+                       | Hong Kong
+                   .item(data-value='HM')
+                       i.hm.flag
+                       | Heard Island
+                   .item(data-value='HN')
+                       i.hn.flag
+                       | Honduras
+                   .item(data-value='HR')
+                       i.hr.flag
+                       | Croatia
+                   .item(data-value='HT')
+                       i.ht.flag
+                       | Haiti
+                   .item(data-value='HU')
+                       i.hu.flag
+                       | Hungary
+                   .item(data-value='ID')
+                       i.id.flag
+                       | Indonesia
+                   .item(data-value='IE')
+                       i.ie.flag
+                       | Ireland
+                   .item(data-value='IL')
+                       i.il.flag
+                       | Israel
+                   .item(data-value='IN')
+                       i.in.flag
+                       | India
+                   .item(data-value='IO')
+                       i.io.flag
+                       | Indian Ocean Territory
+                   .item(data-value='IQ')
+                       i.iq.flag
+                       | Iraq
+                   .item(data-value='IR')
+                       i.ir.flag
+                       | Iran
+                   .item(data-value='IS')
+                       i.is.flag
+                       | Iceland
+                   .item(data-value='IT')
+                       i.it.flag
+                       | Italy
+                   .item(data-value='JM')
+                       i.jm.flag
+                       | Jamaica
+                   .item(data-value='JO')
+                       i.jo.flag
+                       | Jordan
+                   .item(data-value='JP')
+                       i.jp.flag
+                       | Japan
+                   .item(data-value='KE')
+                       i.ke.flag
+                       | Kenya
+                   .item(data-value='KG')
+                       i.kg.flag
+                       | Kyrgyzstan
+                   .item(data-value='KH')
+                       i.kh.flag
+                       | Cambodia
+                   .item(data-value='KI')
+                       i.ki.flag
+                       | Kiribati
+                   .item(data-value='KM')
+                       i.km.flag
+                       | Comoros
+                   .item(data-value='KN')
+                       i.kn.flag
+                       | Saint Kitts and Nevis
+                   .item(data-value='KP')
+                       i.kp.flag
+                       | North Korea
+                   .item(data-value='KR')
+                       i.kr.flag
+                       | South Korea
+                   .item(data-value='KW')
+                       i.kw.flag
+                       | Kuwait
+                   .item(data-value='KY')
+                       i.ky.flag
+                       | Cayman Islands
+                   .item(data-value='KZ')
+                       i.kz.flag
+                       | Kazakhstan
+                   .item(data-value='LA')
+                       i.la.flag
+                       | Laos
+                   .item(data-value='LB')
+                       i.lb.flag
+                       | Lebanon
+                   .item(data-value='LC')
+                       i.lc.flag
+                       | Saint Lucia
+                   .item(data-value='LI')
+                       i.li.flag
+                       | Liechtenstein
+                   .item(data-value='LK')
+                       i.lk.flag
+                       | Sri Lanka
+                   .item(data-value='LR')
+                       i.lr.flag
+                       | Liberia
+                   .item(data-value='LS')
+                       i.ls.flag
+                       | Lesotho
+                   .item(data-value='LT')
+                       i.lt.flag
+                       | Lithuania
+                   .item(data-value='LU')
+                       i.lu.flag
+                       | Luxembourg
+                   .item(data-value='LV')
+                       i.lv.flag
+                       | Latvia
+                   .item(data-value='LY')
+                       i.ly.flag
+                       | Libya
+                   .item(data-value='MA')
+                       i.ma.flag
+                       | Morocco
+                   .item(data-value='MC')
+                       i.mc.flag
+                       | Monaco
+                   .item(data-value='MD')
+                       i.md.flag
+                       | Moldova
+                   .item(data-value='ME')
+                       i.me.flag
+                       | Montenegro
+                   .item(data-value='MG')
+                       i.mg.flag
+                       | Madagascar
+                   .item(data-value='MH')
+                       i.mh.flag
+                       | Marshall Islands
+                   .item(data-value='MK')
+                       i.mk.flag
+                       | MacEdonia
+                   .item(data-value='ML')
+                       i.ml.flag
+                       | Mali
+                   .item(data-value='AR')
+                       i.ar.flag
+                       | Burma
+                   .item(data-value='MN')
+                       i.mn.flag
+                       | Mongolia
+                   .item(data-value='MO')
+                       i.mo.flag
+                       | MacAu
+                   .item(data-value='MP')
+                       i.mp.flag
+                       | Northern Mariana Islands
+                   .item(data-value='MQ')
+                       i.mq.flag
+                       | Martinique
+                   .item(data-value='MR')
+                       i.mr.flag
+                       | Mauritania
+                   .item(data-value='MS')
+                       i.ms.flag
+                       | Montserrat
+                   .item(data-value='MT')
+                       i.mt.flag
+                       | Malta
+                   .item(data-value='MU')
+                       i.mu.flag
+                       | Mauritius
+                   .item(data-value='MV')
+                       i.mv.flag
+                       | Maldives
+                   .item(data-value='MW')
+                       i.mw.flag
+                       | Malawi
+                   .item(data-value='MX')
+                       i.mx.flag
+                       | Mexico
+                   .item(data-value='MY')
+                       i.my.flag
+                       | Malaysia
+                   .item(data-value='MZ')
+                       i.mz.flag
+                       | Mozambique
+                   .item(data-value='NA')
+                       i.na.flag
+                       | Namibia
+                   .item(data-value='NC')
+                       i.nc.flag
+                       | New Caledonia
+                   .item(data-value='NE')
+                       i.ne.flag
+                       | Niger
+                   .item(data-value='NF')
+                       i.nf.flag
+                       | Norfolk Island
+                   .item(data-value='NG')
+                       i.ng.flag
+                       | Nigeria
+                   .item(data-value='NI')
+                       i.ni.flag
+                       | Nicaragua
+                   .item(data-value='NL')
+                       i.nl.flag
+                       | Netherlands
+                   .item(data-value='NO')
+                       i.no.flag
+                       | Norway
+                   .item(data-value='NP')
+                       i.np.flag
+                       | Nepal
+                   .item(data-value='NR')
+                       i.nr.flag
+                       | Nauru
+                   .item(data-value='NU')
+                       i.nu.flag
+                       | Niue
+                   .item(data-value='NZ')
+                       i.nz.flag
+                       | New Zealand
+                   .item(data-value='OM')
+                       i.om.flag
+                       | Oman
+                   .item(data-value='PA')
+                       i.pa.flag
+                       | Panama
+                   .item(data-value='PE')
+                       i.pe.flag
+                       | Peru
+                   .item(data-value='PF')
+                       i.pf.flag
+                       | French Polynesia
+                   .item(data-value='PG')
+                       i.pg.flag
+                       | New Guinea
+                   .item(data-value='PH')
+                       i.ph.flag
+                       | Philippines
+                   .item(data-value='PK')
+                       i.pk.flag
+                       | Pakistan
+                   .item(data-value='PL')
+                       i.pl.flag
+                       | Poland
+                   .item(data-value='PM')
+                       i.pm.flag
+                       | Saint Pierre
+                   .item(data-value='PN')
+                       i.pn.flag
+                       | Pitcairn Islands
+                   .item(data-value='PR')
+                       i.pr.flag
+                       | Puerto Rico
+                   .item(data-value='PS')
+                       i.ps.flag
+                       | Palestine
+                   .item(data-value='PT')
+                       i.pt.flag
+                       | Portugal
+                   .item(data-value='PW')
+                       i.pw.flag
+                       | Palau
+                   .item(data-value='PY')
+                       i.py.flag
+                       | Paraguay
+                   .item(data-value='QA')
+                       i.qa.flag
+                       | Qatar
+                   .item(data-value='RE')
+                       i.re.flag
+                       | Reunion
+                   .item(data-value='RO')
+                       i.ro.flag
+                       | Romania
+                   .item(data-value='RS')
+                       i.rs.flag
+                       | Serbia
+                   .item(data-value='RU')
+                       i.ru.flag
+                       | Russia
+                   .item(data-value='RW')
+                       i.rw.flag
+                       | Rwanda
+                   .item(data-value='SA')
+                       i.sa.flag
+                       | Saudi Arabia
+                   .item(data-value='SB')
+                       i.sb.flag
+                       | Solomon Islands
+                   .item(data-value='SC')
+                       i.sc.flag
+                       | Seychelles
+                   .item(data-value='SD')
+                       i.sd.flag
+                       | Sudan
+                   .item(data-value='SE')
+                       i.se.flag
+                       | Sweden
+                   .item(data-value='SG')
+                       i.sg.flag
+                       | Singapore
+                   .item(data-value='SH')
+                       i.sh.flag
+                       | Saint Helena
+                   .item(data-value='SI')
+                       i.si.flag
+                       | Slovenia
+                   .item(data-value='SJ')
+                       i.sj.flag
+                       | Svalbard, I Flag Jan Mayen
+                   .item(data-value='SK')
+                       i.sk.flag
+                       | Slovakia
+                   .item(data-value='SL')
+                       i.sl.flag
+                       | Sierra Leone
+                   .item(data-value='SM')
+                       i.sm.flag
+                       | San Marino
+                   .item(data-value='SN')
+                       i.sn.flag
+                       | Senegal
+                   .item(data-value='SO')
+                       i.so.flag
+                       | Somalia
+                   .item(data-value='SR')
+                       i.sr.flag
+                       | Suriname
+                   .item(data-value='ST')
+                       i.st.flag
+                       | Sao Tome
+                   .item(data-value='SV')
+                       i.sv.flag
+                       | El Salvador
+                   .item(data-value='SY')
+                       i.sy.flag
+                       | Syria
+                   .item(data-value='SZ')
+                       i.sz.flag
+                       | Swaziland
+                   .item(data-value='TC')
+                       i.tc.flag
+                       | Caicos Islands
+                   .item(data-value='TD')
+                       i.td.flag
+                       | Chad
+                   .item(data-value='TF')
+                       i.tf.flag
+                       | French Territories
+                   .item(data-value='TG')
+                       i.tg.flag
+                       | Togo
+                   .item(data-value='TH')
+                       i.th.flag
+                       | Thailand
+                   .item(data-value='TJ')
+                       i.tj.flag
+                       | Tajikistan
+                   .item(data-value='TK')
+                       i.tk.flag
+                       | Tokelau
+                   .item(data-value='TL')
+                       i.tl.flag
+                       | Timorleste
+                   .item(data-value='TM')
+                       i.tm.flag
+                       | Turkmenistan
+                   .item(data-value='TN')
+                       i.tn.flag
+                       | Tunisia
+                   .item(data-value='TO')
+                       i.to.flag
+                       | Tonga
+                   .item(data-value='TR')
+                       i.tr.flag
+                       | Turkey
+                   .item(data-value='TT')
+                       i.tt.flag
+                       | Trinidad
+                   .item(data-value='TV')
+                       i.tv.flag
+                       | Tuvalu
+                   .item(data-value='TW')
+                       i.tw.flag
+                       | Taiwan
+                   .item(data-value='TZ')
+                       i.tz.flag
+                       | Tanzania
+                   .item(data-value='UA')
+                       i.ua.flag
+                       | Ukraine
+                   .item(data-value='UG')
+                       i.ug.flag
+                       | Uganda
+                   .item(data-value='UM')
+                       i.um.flag
+                       | Us Minor Islands
+                   .item(data-value='US')
+                       i.us.flag
+                       | United States
+                   .item(data-value='UY')
+                       i.uy.flag
+                       | Uruguay
+                   .item(data-value='UZ')
+                       i.uz.flag
+                       | Uzbekistan
+                   .item(data-value='VA')
+                       i.va.flag
+                       | Vatican City
+                   .item(data-value='VC')
+                       i.vc.flag
+                       | Saint Vincent
+                   .item(data-value='VE')
+                       i.ve.flag
+                       | Venezuela
+                   .item(data-value='VG')
+                       i.vg.flag
+                       | British Virgin Islands
+                   .item(data-value='VI')
+                       i.vi.flag
+                       | Us Virgin Islands
+                   .item(data-value='VN')
+                       i.vn.flag
+                       | Vietnam
+                   .item(data-value='VU')
+                       i.vu.flag
+                       | Vanuatu
+                   .item(data-value='WF')
+                       i.wf.flag
+                       | Wallis and Futuna
+                   .item(data-value='WS')
+                       i.ws.flag
+                       | Samoa
+                   .item(data-value='YE')
+                       i.ye.flag
+                       | Yemen
+                   .item(data-value='YT')
+                       i.yt.flag
+                       | Mayotte
+                   .item(data-value='ZA')
+                       i.za.flag
+                       | South Africa
+                   .item(data-value='ZM')
+                       i.zm.flag
+                       | Zambia
+                   .item(data-value='ZW')
+                       i.zw.flag
+                       | Zimbabwe

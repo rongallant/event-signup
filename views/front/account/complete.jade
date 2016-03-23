@@ -55,7 +55,6 @@ append javascripts
                         console.log('AJAX ERROR')
                         console.log(response.responseText)
                         toaster('error', 'Error: ' + JSON.parse(response.responseText).message)
-                        // location.replace('/account/login/')
                     })
                     .done(function(response) {
                         console.log('SUCCESS')

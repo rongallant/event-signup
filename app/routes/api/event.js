@@ -1,8 +1,8 @@
 var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
     moment = require('moment'),
+    Address = require("../../models/address"),
     Event = require("../../models/event")
 
 /************************************************************
@@ -11,44 +11,54 @@ var express = require('express'),
 
 /* POST New item created. */
 router.post('/', function(req, res, next) {
-    try {
-        console.log('Post Event')
-        console.log(req.body)
+    console.log("Create new event")
 
-        var event = new Event({
-            name: req.body.name,
-            description: req.body.description,
-            startDate: req.body.startDate,
-            startTime: req.body.startTime,
-            endDate: req.body.endDate,
-            endTime: req.body.endTime,
-            address: req.body.address, // Using array because I can't get embeded docs to play nice.
-            _contact: mongoose.Types.ObjectId(req.body._contact)
-        })
-    } catch(err) {
-        console.error("Error creating event")
-        console.error(err)
-        return res.status(500).json({ "status" : "500", "message" : "Error creating event", "error" : JSON.stringify(err) })
-    }
-    event.save(function(err, data) {
+    var newEvent = new Event({
+        name: req.body.name,
+        description: req.body['description'],
+        startDate: req.body.startDate,
+        startTime: req.body.startTime,
+        endDate: req.body.endDate,
+        endTime: req.body.endTime,
+        _contact: mongoose.Types.ObjectId(req.body._contact),
+        address: req.body.address
+    })
+   
+    newEvent.save(function(err, data) {
         if (err) {
-            return res.status(500).json({ "status" : "500", "message" : "Error saving event", "error" : JSON.stringify(err) })
+            console.error("Error saving event")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Error saving event", "error": err })
+        } else {
+            // data.address = req.body.address
+            // data.save(function(err) {
+            //      if (err) {
+            //         console.error("Could not add address to event")
+            //         console.error(err)
+            //         return res.status(500).json({ "status": "500", "message": "Error saving event", "error": err })
+            //      }
+            //     console.log("Address added to event")
+            //     console.log(data)
+            return res.status(201).json({ "status": "201", "message": "Address added to event" })
+            // })
         }
-        return res.status(201).json({ "status" : "201", "data": data })
     })
 })
 
 /* GET Returns single item. */
 router.get('/:id', function(req, res, next) {
     Event.findById(req.params.id)
-        .populate('_contact address')
+        .populate('_contact')
         .exec(function(err, data) {
-            console.log('data')
-            console.log(data)
             if (err) {
-                return res.status(404).json({ "status" : "404", "message" : err.message, "error" : JSON.stringify(err) })
+                console.error("Could not find event")
+                console.error(err)
+                return res.status(500).json({ "status": "500", "message": "Could not find event", "error": err })
+            } else if (!data) {
+                return res.status(404).json({ "status": "500", "message": "Event not found" })
+            } else {
+                return res.status(200).json({ "status": "200", "data": data })
             }
-            return res.status(200).json({ "status" : "200", "data": data })
         }
     )
 })
@@ -56,13 +66,18 @@ router.get('/:id', function(req, res, next) {
 /* GET Latest Event. */
 router.get('/current', function(req, res, next) {
     Event.findOne({active:true})
-        .populate('_contact address')
+        .populate('_contact')
         .sort('-createdAt')
         .exec(function(err, data) {
             if (err) {
-                return res.status(404).json({ "status" : "404", "message" : "Latest event not found", "error" : JSON.stringify(err) })
+                console.error("Could not find event")
+                console.error(err)
+                return res.status(500).json({ "status": "500", "message": "Could not find event", "error": err })
+            } else if (!data) {
+                return res.status(404).json({ "status": "500", "message": "Event not found" })
+            } else {
+                return res.status(200).json({ "status" : 200, "data": data })
             }
-            return res.status(200).json({ "status" : 200, "data": data })
         }
     )
 })

@@ -14,7 +14,7 @@ exports.hasRole = function(userRoles, allowedRoles) {
     // console.log(allowedRoles.length)
 
     for (var i = 0, len = userRoles.length; i < len; i++) {
-        console.log('Rule: ' + userRoles[i].toUpperCase() +' in '+ userRoles +': '+(allowedRoles.indexOf(userRoles[i].toUpperCase()) >= 0))
+        // console.log('Rule: ' + userRoles[i].toUpperCase() +' in '+ userRoles +': '+(allowedRoles.indexOf(userRoles[i].toUpperCase()) >= 0))
         if (allowedRoles.indexOf(userRoles[i].toUpperCase()) >= 0) {
             return true
         }
@@ -37,7 +37,7 @@ exports.needsRole = function(allowedRoles) {
             if (exports.hasRole(req.user.roles, allowedRoles)) {
                 return next();
             } else {
-                console.info("401 : Does not have privileges.  " + req.originalUrl)
+                console.error("401 : Does not have privileges.  " + req.originalUrl)
                 res.status(401).json({
                     "status": "401",
                     "message": "Does not have privileges."

@@ -2,8 +2,7 @@ require("./vendor")
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     mongoosePaginate = require('mongoose-paginate'),
-    Address = require("./address").schema,
-    EmergencyContact = require("./emergencyContact").schema
+    Address = require("./address").schema
 
 var PersonSchema = new Schema({
     firstName: { type: String, maxlength: 35 },
@@ -19,7 +18,7 @@ var PersonSchema = new Schema({
         phone: { type: String, maxlength: 18 },
         email: { type: String, maxlength: 254 }
     },
-    address: [ Address ]
+    address: { Address }
     
     // Proposed new fields
     // _vendor: { type: Schema.Types.ObjectId, ref: 'Vendor'  }

@@ -29,7 +29,7 @@ block appContent
                 th.right.aligned Contact
 
         tbody
-            if !data.docs.length
+            if !data || !data.docs.length
                 tr: td.center.aligned(colspan='3')
                     .ui.basic.icon.button
                         a(href=createAction)

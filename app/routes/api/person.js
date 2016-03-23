@@ -4,22 +4,6 @@ var express = require('express'),
     Account = require("../../models/account"),
     Person = require("../../models/person")
 
-// router.all(function(req, res, next){
-//     if (req.body) {
-//         if (!(req.body._vendor && req.body._vendor.companyName)) {
-//             req.body._vendor = null
-//         } else {
-//             req.vendorObj = new Vendor({
-//                 _contact: mongoose.Types.ObjectId(req.body.id),
-//                 companyName: req.body._vendor.companyName,
-//                 companyDetails: req.body._vendor.companyDetails,
-//                 companyWebsite: req.body._vendor.companyWebsite
-//             })
-//         }
-//     }
-//     return next()
-// })
-
 /* CREATE New item created. */
 router.post('/', auth.needsRole('admin'), function(req, res, next) {
     var newPerson = new Person({
@@ -47,12 +31,12 @@ router.post('/', auth.needsRole('admin'), function(req, res, next) {
 /* EDIT Returns single item. */
 router.get('/:id', function(req, res, next) {
     Person.findById(req.params.id)
-        .populate('address emergencyContact _vendor')
+        // .populate('address')
         .exec(function(err, data) {
         if (err) {
             console.error("Could not retrieve person")
             console.error(err)
-            return res.status(400).json({ "status": "400", "message": "Could not retrieve person", "error": JSON.stringify(err) })
+            return res.status(400).json({ "status": "400", "message": "Could not retrieve person", "error": err })
         } else {
             return res.status(200).json({ "status": "200", "message": "Found person", "data": data })
         }
@@ -62,7 +46,7 @@ router.get('/:id', function(req, res, next) {
 /* by username Returns single person. */
 router.get('/username/:username', function(req, res, next) {
     Person.findOne({ 'username' : req.params.username })
-        .populate('address emergencyContact _vendor')
+        // .populate('address')
         .exec(function(err, data) {
         if (err) {
             console.error("Could not retrieve person")
@@ -76,16 +60,34 @@ router.get('/username/:username', function(req, res, next) {
 
 /* UPDATE Updates an item. */
 router.put('/',  auth.needsRole('ADMIN'), function(req, res, next) {
-    Person.findByIdAndUpdate(req.body.id, { $set:req.body, upsert: true }, function (err, data) {
+    
+    console.log('Update Person with: ')
+    console.log(req.body)
+
+    Person.findById(req.body.id, function (err, data) {
         if (err) {
             console.error("Could not update person")
             console.error(err)
             return res.status(500).json({ "status": "500", "message": "Could not update person", "error": JSON.stringify(err) })
-        } else {
-            return res.status(201).json({ "status": "201", "message": "Person updated", "data" : {"id" : req.body.id} })
         }
-    }
-  )
+     
+        data.address.remove('')
+        data.address = req.body.address
+        data.address.markModified('mixed')
+        
+        
+        data.save(function(err, data) {
+            if (err) {
+                console.error("Could not update person")
+                console.error(err)
+                return res.status(500).json({ "status": "500", "message": "Could not update person", "error": JSON.stringify(err) })
+            }
+            console.log("Person updated")
+            console.log(data)
+            return res.status(201).json({ "status": "201", "message": "Person updated", "data" : { "id" : req.body.id} })
+        
+        })
+    })
 })
 
 // TODO Do transaction is something cannot be deleted.
@@ -107,7 +109,7 @@ router.delete('/:id', function(req, res, next) {
             console.error(err)
             return res.status(500).json({ "status": "500", "message": "Could not delete account", "error": JSON.stringify(err) })
         } else {
-            return res.status(204).json({ "status" : 204, "message" : "Successfully Deleted" })
+            return res.status(204).json({ "status" : "204", "message" : "Successfully Deleted" })
         }
     })
 })
