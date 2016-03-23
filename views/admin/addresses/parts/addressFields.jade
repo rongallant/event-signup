@@ -6,7 +6,7 @@ mixin addressFields(address)
     if !address
         -address = {"address1": "","address2": "","city": "","state": "","postalCode": "","country": ""}
 
-    .field
+    .field.required
         label(for='address1') Address 1 (Search)
         #addressSearch.ui.search
             .ui.icon.input

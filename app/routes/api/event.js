@@ -2,7 +2,6 @@ var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'),
     moment = require('moment'),
-    Address = require("../../models/address"),
     Event = require("../../models/event")
 
 /************************************************************
@@ -12,8 +11,7 @@ var express = require('express'),
 /* POST New item created. */
 router.post('/', function(req, res, next) {
     console.log("Create new event")
-
-    var newEvent = new Event({
+    new Event({
         name: req.body.name,
         description: req.body['description'],
         startDate: req.body.startDate,
@@ -21,26 +19,14 @@ router.post('/', function(req, res, next) {
         endDate: req.body.endDate,
         endTime: req.body.endTime,
         _contact: mongoose.Types.ObjectId(req.body._contact),
-        address: req.body.address
-    })
-   
-    newEvent.save(function(err, data) {
+        address: req.body.address // This is an embedded doc working
+    }).save(function(err, data) {
         if (err) {
             console.error("Error saving event")
             console.error(err)
             return res.status(500).json({ "status": "500", "message": "Error saving event", "error": err })
         } else {
-            // data.address = req.body.address
-            // data.save(function(err) {
-            //      if (err) {
-            //         console.error("Could not add address to event")
-            //         console.error(err)
-            //         return res.status(500).json({ "status": "500", "message": "Error saving event", "error": err })
-            //      }
-            //     console.log("Address added to event")
-            //     console.log(data)
-            return res.status(201).json({ "status": "201", "message": "Address added to event" })
-            // })
+            return res.status(201).json({ "status": "201", "message": "Address added to event", "data": data })
         }
     })
 })

@@ -46,7 +46,7 @@ var googleAddressSearchAndPopulate = {
                     break
                 case 'country':
                     var countryField = $('#countryField')
-                    countryField.dropdown('set value', components[x]['short_name'].toLowerCase())
+                    countryField.dropdown('set value', components[x]['short_name'].toUpperCase())
                     countryField.dropdown({action: 'activate'})
                     break
                 case 'point_of_interest':

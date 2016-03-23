@@ -1,7 +1,7 @@
-include ../addresses/parts/addressFields
-include ../addresses/parts/addressSelector
 include ../../mixins/personSelector
 include ../../mixins/scheduleDatesSelector
+include ../addresses/parts/addressFields
+include ../addresses/parts/addressSelector
 include ../scheduleDates/parts/form
 include ../includes/formToolbar
 include ../includes/formElements
@@ -21,6 +21,7 @@ append javascripts
     script(src="/pickadate/picker.js")
     script(src="/pickadate/picker.date.js")
     script(src="/pickadate/picker.time.js")
+    // Local Form Scripts
     script.
         function addDays(date, days) {
             var result = new Date(date)
@@ -38,6 +39,7 @@ append javascripts
                     _contact: ['empty']
                 },
                 inline : false,
+                keyboardShortcuts: false,
                 onSuccess: function(event, fields){
                     $.ajax({
                         type: '#{formMethod}',
@@ -46,7 +48,7 @@ append javascripts
                         dataType: 'JSON',
                         statusCode: {
                             201: function(data, textStatus, jqXHR) {
-                                console.log('201 Error')
+                                console.log(JSON.parse(response.responseText).message)
                                 $.get('/message/success/' + JSON.parse(response.responseText).message)
                             }
                         }
@@ -57,7 +59,6 @@ append javascripts
                         toaster('error', 'Error: ' + response.statusText)
                     })
                     .done(function(response) {
-                        console.log('#{editAction}' + response.data.id)
                         location.replace('#{editAction}' + response.data.id)
                     })
                     return false

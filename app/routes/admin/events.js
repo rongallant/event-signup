@@ -37,7 +37,7 @@ router.get('/edit/:id', auth.needsRole('ADMIN'), function(req, res, next) {
             data: JSON.parse(data.body).data,
             formMode: 'edit',
             formMethod: 'PUT',
-            formAction: res.locals.apiUri.secure.event.base + req.params.id
+            formAction: res.locals.apiUri.secure.event.base
         })
     })
 })
@@ -66,11 +66,7 @@ router.get('/:currPage?', auth.needsRole('ADMIN'), function(req, res, next){
 
     request({uri: apiUri, headers: {"x-access-token":req.session.authToken} }, function (err, data) {
         if (err) { return next(err) }
-        
-        console.log('data')
-        console.log(JSON.parse(data.body).data)
-        
-        
+ 
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
             user: req.user,

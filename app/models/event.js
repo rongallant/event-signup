@@ -5,11 +5,18 @@ var mongoose = require('mongoose'),
     moment = require('moment')
 
 var EventSchema = new Schema({
-    name: { type: String, maxlength: 70 },
+    name: { 
+        type: String,
+        maxlength: 70,
+        required: true,
+        index: {
+            unique: true
+        }
+    },
     description: { type: String, maxlength: 2000 },
     startDateTime: { type: Date },
     endDateTime: { type: Date },
-    address: { type: Address.schema },
+    address: { type: Address.schema }, // This embeded doc works
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
     active: { type: Boolean, default: true }
 }, {
