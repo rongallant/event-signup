@@ -12,14 +12,17 @@ var URL_BASE = "/admin/meals"
 /* POST New item created. */
 router.post('/', function(req, res, next) {
     var data = new Task({
-      name: req.body.name,
-      description: req.body.description,
-      startTime: req.body.startTime,
-      endTime: req.body.endTime,
-      location: req.body.location,
-      effort: req.body.effort,
-      personsRequired: req.body.personsRequired,
-      _contact: mongoose.Types.ObjectId(req.body._contact)
+        _contact: mongoose.Types.ObjectId(req.body._contact),
+        _event: mongoose.Types.ObjectId(req.body._event),
+        name: req.body.name,
+        description: req.body.description,
+        location: req.body.location,
+        effort: req.body.effort,
+        personsRequired: req.body.personsRequired,
+        startDate: req.body.startDate,
+        startTime: req.body.startTime,
+        endDate: req.body.endDate,
+        endTime: req.body.endTime
     })
     data.save(function(err, data) {
         if (err) {

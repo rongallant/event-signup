@@ -24,14 +24,19 @@ append javascripts
     script(src="/pickadate/picker.time.js")
     // Local Form Scripts
     script.
+        // Global Vars
         var activityListContainer = !{ activities ? JSON.stringify(activities) : '[]' }
+        var mealListContainer = !{ meals ? JSON.stringify(meals) : '[]' }
 
-        function customValidators($form, fields, guests, pets, formErrors) {
+        function customValidators($form, fields, activities, meals, formErrors) {
             if (typeof formErrors == 'undefined') {
                 formErrors = []
             }
             if (fields['activityArray'].length > 25) {
                 formErrors.push('No more than 25 activities')
+            }
+            if (fields['mealArray'].length > 25) {
+                formErrors.push('No more than 25 meals')
             }
             console.log(formErrors)
             if (formErrors.length > 0) {
@@ -60,11 +65,13 @@ append javascripts
                 onFailure: function(formErrors, fields) {
                     console.log(formErrors)
                     fields['activityArray'] = activityListContainer
+                    fields['mealArray'] = mealListContainer
                     customValidators($form, fields, formErrors)
                     return false
                 },
                 onSuccess: function(event, fields) {
                     fields['activityArray'] = activityListContainer
+                    fields['mealArray'] = mealListContainer
                     if (customValidators($form, fields)) { // has errors
                         return false
                     }
@@ -75,7 +82,6 @@ append javascripts
                         dataType: 'JSON',
                         statusCode: {
                             201: function(data) {
-                                // console.log(data)
                                 $.get('/message/success/' + data.message)
                             }
                         }
@@ -127,13 +133,37 @@ append javascripts
             $form.find('#startTime').pickatime()
             $form.find('#endDate').pickadate()
             $form.find('#endTime').pickatime()
+
+            // Meal Form
+            var $mealsSelectForm = $('form[name=mealsSelectForm]')
+            $mealsSelectForm.find('.personSelector').search(localPersonSearch)
+            $mealsSelectForm.find('#startDate').pickadate()
+            $mealsSelectForm.find('#startTime').pickatime()
+            $mealsSelectForm.find('#endDate').pickadate()
+            $mealsSelectForm.find('#endTime').pickatime()
+
+
+            // Activity Form
+            var $activitiesSelectForm = $('form[name=activitiesSelectForm]')
+            $activitiesSelectForm.find('.personSelector').search(localPersonSearch)
+            $activitiesSelectForm.find('#startDate').pickadate()
+            $activitiesSelectForm.find('#startTime').pickatime()
+            $activitiesSelectForm.find('#endDate').pickadate()
+            $activitiesSelectForm.find('#endTime').pickatime()
+
         })
 
     -var activityFormRules = "{name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},endTime:{rules:[{type:'empty'}]}}"
     -var activityRowItem = "fields.name + ' - ' + fields.startTime + ' to ' + fields.startTime"
     +selectorJs('activities', 25, activityFormRules, activityRowItem, 'activityListContainer')
 
+    -var mealFormRules = "{name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},endTime:{rules:[{type:'empty'}]}}"
+    -var mealRowItem = "fields.name + ' - ' + fields.startTime + ' to ' + fields.startTime"
+    +selectorJs('meals', 25, mealFormRules, mealRowItem, 'mealListContainer')
+
 append appContent
+
+    - var isIncomplete = function(formMode) { return formMode !== 'edit' }
 
     form.ui.form(name='mainForm')
 
@@ -150,7 +180,7 @@ append appContent
                     label(for="eventName") Event Name
                     input(type="text", name="name", id="eventName", value=data.name)
 
-                .field.required.textarea
+                .field.textarea.required
                     label(for='description') Activity Description
                     +textarea('description', 'description', '2000')
                         = data.description
@@ -159,7 +189,7 @@ append appContent
                     label(for='_contact') Main Contact
                     +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
 
-            +formSegment
+            +formSegment(isIncomplete(formMode))
 
                 +formSegmentHeader("Address")
 
@@ -168,7 +198,7 @@ append appContent
 
                 +addressFields(data.address?data.address:'')
 
-            +formSegment
+            +formSegment(isIncomplete(formMode))
 
                 +formSegmentHeader('Event Schedule')
 
@@ -194,11 +224,14 @@ append appContent
                         label(for="endDate") End Time
                         input(type='text', name="endTime", id="endTime", value=data.endTime, placeholder='Time')
 
-
             .ui.relaxed.stackable.grid
                 .eight.wide.column
-                    +formSegment
-                        +selectorListPanel('activities', data.guests, 'Activities', '', '')
+                    +formSegment(isIncomplete(formMode))
+                        +selectorListPanel('meals', mealArray, 'Meal', '', '')
+
+                .eight.wide.column
+                    +formSegment(isIncomplete(formMode))
+                        +selectorListPanel('activities', activityArray, 'Activity', '', '')
 
             div(style='display: none;')
                 input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
@@ -206,6 +239,7 @@ append appContent
 
         +messageContainer
 
+    // Activity Form
     +selectorModal('activities', 'Activity', '', '')
         .field.required
             label(for='name') Activity Name
@@ -213,6 +247,31 @@ append appContent
 
         .field.required.textarea
             label(for='description') Activity Description
+            +textarea('description', 'description', '2000')
+
+        .two.fields
+
+            .field.required
+                label(for="startTime") Start Time
+                input(type="text", name="startTime", id="startTime")
+
+            .field.required#endTimeField
+                label(for="endTime") End Time
+                input(type="text", name="endTime", id="endTime")
+
+        .field.required
+            label(for='_contact') Main Contact
+            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+
+
+    // Meals Form
+    +selectorModal('meals', 'Meal', '', '')
+        .field.required
+            label(for='name') Meal Name
+            input(type='text', name='name', id='name')
+
+        .field.required.textarea
+            label(for='description') Meal Description
             +textarea('description', 'description', '2000')
 
         .two.fields

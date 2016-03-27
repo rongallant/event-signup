@@ -1,8 +1,7 @@
 var express = require('express'),
     router = express.Router(),
-    Mongoose = require('mongoose')
+    mongoose = require('mongoose')
 
-var Task = require("../../models/task")
 var Meal = require("../../models/meal")
 var URL_BASE = "/admin/meals"
 
@@ -13,19 +12,18 @@ var URL_BASE = "/admin/meals"
 /* POST New item created. */
 router.post('/', function(req, res, next) {
     try {
-        var task = new Task({
-            name: req.body._task.name,
-            description: req.body._task.description,
-            startTime: req.body._task.startTime,
-            endTime: req.body._task.endTime,
-            location: req.body._task.location,
-            effort: req.body._task.effort,
-            personsRequired: req.body._task.personsRequired,
-            _contact: Mongoose.Types.ObjectId(req.body._contact)
-        })
         var data = new Meal({
-            allergins: req.body.allergins,
-            _task: task
+            _contact: mongoose.Types.ObjectId(req.body._contact),
+            _event: mongoose.Types.ObjectId(req.body._event),
+            _task: mongoose.Types.ObjectId(req.body._task),
+            name: req.bodyTaskSchema.name,
+            description: req.bodyTaskSchema.description,
+            location: req.bodyTaskSchema.location,
+            allergins: req.body.allergins, // Array
+            startDate: req.body.startDate,
+            startTime: req.body.startTime,
+            endDate: req.body.endDate,
+            endTime: req.body.endTime
         })
         data.save(function(err, data) {
             if (err) {
@@ -41,7 +39,7 @@ router.post('/', function(req, res, next) {
 /* GET Returns single item. */
 router.get('/:id', function(req, res, next) {
     Meal.findById(req.params.id)
-        .populate('_task._contact')
+        .populate('_contact')
         .exec(function(err, data) {
             if (err) {
                 res.status(404).json({ "status" : 404, "message" : err.message, "error" : JSON.stringify(err) })

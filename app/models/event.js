@@ -56,7 +56,9 @@ EventSchema.virtual('startDate')
         return moment(this.startDateTime).format(global.viewPatternDate)
     })
     .set(function(startDate) {
-        this.set('startDateTime', stringToDate(startDate, this.startDateTime))
+        if (startDate) {
+            this.set('startDateTime', stringToDate(startDate, this.startDateTime))
+        }
     }
 )
 
@@ -65,7 +67,9 @@ EventSchema.virtual('startTime')
         return moment(this.startDateTime).format(global.viewPatternTime)
     })
     .set(function(startTimeTo) {
-        this.set('startDateTime', timeToDate(startTimeTo, this.startDateTime))
+        if (startTimeTo) {
+            this.set('startDateTime', timeToDate(startTimeTo, this.startDateTime))
+        }
     }
 )
 
@@ -74,7 +78,9 @@ EventSchema.virtual('endDate')
         return moment(this.endDateTime).format(global.viewPatternDate)
     })
     .set(function(endDate) {
-        this.set('endDateTime', stringToDate(endDate, this.endDateTime))
+        if (endDate) {
+            this.set('endDateTime', stringToDate(endDate, this.endDateTime))
+        }
     }
 )
 
@@ -83,7 +89,9 @@ EventSchema.virtual('endTime')
         return moment(this.endDateTime).format(global.viewPatternTime)
     })
     .set(function(endTimeTo) {
-        this.set('endDateTime', timeToDate(endTimeTo, this.endDateTime))
+        if (endTimeTo) {
+            this.set('endDateTime', timeToDate(endTimeTo, this.endDateTime))
+        }
     }
 )
 

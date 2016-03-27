@@ -131,7 +131,7 @@ append appContent
 
                     .field.twelve.wide.required
                         label(for='name') Meal Name
-                        input(type='text', name='_task[name]', id='name', value=data._task?data._task.name:'')
+                        input(type='text', name='name', id='name', value=data.name)
 
                 .field.required.textarea
                     label(for='description') Meal Description
@@ -152,17 +152,17 @@ append appContent
 
                     .field.required
                         label(for="startTime") Start Time
-                        input(type="text", name="_task[startTime]", id="startTime", value=data._task?data._task.startTime:'')
+                        input(type="text", name="startTime", id="startTime", value=data.startTime)
 
                     .field.required#endTimeField
                         label(for="endTime") End Time
-                        input(type="text", name="_task[endTime]", id="endTime", value=data._task?data._task.endTime:'')
+                        input(type="text", name="endTime", id="endTime", value=data.endTime)
 
                 .fields
 
                     .field.ten.wide.required
                         label(for='location') Location (Being served at)
-                        input(type='text', name='_task[location]', id='location', value=data._task?data._task.location:'')
+                        input(type='text', name='location', id='location', value=data.location)
 
             +formSegment
 
@@ -174,15 +174,15 @@ append appContent
 
                         .field.ten.wide.required
                             label(for='_contact') Main Contact
-                            if data._task && data._task._contact
-                                +personSelector('_contact', '_contact', data._task._contact?data._task._contact.id:'', data._task._contact?data._task._contact.fullName:'')
+                            if data._contact
+                                +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._task._contact.fullName:'')
                             else
                                 +personSelector('_contact', '_contact', '', '')
 
                     .fields
 
                         .field.three.wide.required
-                            label(for='effort') Effort
+                            label(for='effort') Effort (ADD TO MEAL OR TASK)
                             select.ui.dropdown(name='_task[effort]', id='effort')
                                 option
                                 each val in [1,2,3,4,5]
@@ -194,15 +194,9 @@ append appContent
                     .fields
 
                         .field.two.wide.required
-                            label(for='personsRequired') Persons Required
+                            label(for='personsRequired') Persons Required (FOR TASK)
                             input(type='number', name='_task[personsRequired]', id='personsRequired', value=data._task?data._task.personsRequired:'')
 
-                .field.required
-                    label() Volunteers
-                    ol
-                        li John Smith
-                        li John Rambo
-                        li Brad Thomas
 
             div(style='display: none;')
                 input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')

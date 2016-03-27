@@ -1,5 +1,5 @@
 var express = require('express'),
-  router = express.Router()
+    router = express.Router()
 
 var Activity = require("../../models/activity")
 var URL_BASE = "/admin/activities"

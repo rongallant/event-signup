@@ -15,6 +15,7 @@ function initSelectorModalButton(selectorId, maxLength, callback) {
     }
 }
 
+// Delete Item
 function initTrash(selectorId, maxListLength, rowItem, currentRows, callback) {
     var $listItems = $(selectorId).find('.listOut .item .trash')
     $listItems.click(function(index, value) {

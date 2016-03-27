@@ -158,10 +158,10 @@ app.use(function(req, res, next) {
 app.use(apiPaths, function(req, res, next) {
     console.log("API Authorization")
     // Debug
-    // if (notNull(req.headers['x-access-token']))  console.log('x-access-token = ' + req.headers['x-access-token'])
-    // if (notNull(req.body.token))  console.log('req.body.token = ' + req.body.token)
-    // if (notNull(req.query.token))  console.log('req.query.token = ' + req.query.token)
-    // if (notNull(res.locals.authToken))  console.log('res.locals.authToken = ' + res.locals.authToken)
+    if (notNull(req.headers['x-access-token']))  console.log('x-access-token = ' + req.headers['x-access-token'])
+    if (notNull(req.body.token))  console.log('req.body.token = ' + req.body.token)
+    if (notNull(req.query.token))  console.log('req.query.token = ' + req.query.token)
+    if (notNull(res.locals.authToken))  console.log('res.locals.authToken = ' + res.locals.authToken)
     // Auth
     var token = req.body.token || req.query.token || req.headers['x-access-token'] || res.locals.authToken
     if (token) {
@@ -221,7 +221,7 @@ if (app.get('env') === 'development') {
         console.log('x-access-token = ' + req.headers['x-access-token'])
         console.log('Ajax Request: ' + req.xhr)
         console.log('\n')
-        next()
+        return next()
     })
     // ALL - Errors
     app.use(function (err, req, res, next) {
@@ -234,7 +234,7 @@ if (app.get('env') === 'development') {
         console.log('res.headersSent: ' + res.headersSent)
         console.log('Ajax Request: ' + req.xhr)
         console.log('\n')
-        next(err)
+        return next(err)
     })
 }
 

@@ -7,9 +7,10 @@ mixin messageContainer
     .ui.error.message
     .ui.hidden.clearing.divider
 
-mixin formSegment
-    .ui.padded.segment
-        block
+mixin formSegment(hide)
+    if !hide
+        .ui.padded.segment
+            block
 
 mixin formSegmentAlt
     .ui.raised.segment
@@ -27,4 +28,3 @@ mixin textarea(fieldName, fieldId, maxLength)
         | / #{maxLength}
     textarea(name=fieldName, id=fieldId, rows="2", placeholder='Limit is #{maxLength} characters.', data-maxsize=maxLength, data-output='#{fieldId}Count', wrap='virtual')
         block
-

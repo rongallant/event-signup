@@ -61,7 +61,10 @@ module.exports = function(app) {
                     base : res.locals.fullUrl + '/api/events/'
                 },
                 meal : res.locals.fullUrl + '/api/meal/',
-                meals : res.locals.fullUrl + '/api/meals/',
+                meals: {
+                    base: res.locals.fullUrl + '/api/meals/',
+                    byEvent: res.locals.fullUrl + '/api/meals/byEvent/',
+                },
                 person : {
                     base : res.locals.fullUrl + '/api/person/',
                     byUsername : res.locals.fullUrl + '/api/person/username/',

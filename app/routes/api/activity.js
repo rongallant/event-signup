@@ -15,7 +15,9 @@ router.post('/', function(req, res, next) {
         _contact: mongoose.Types.ObjectId(req.body._contact),
         name: req.body.name,
         description: req.body.description,
+        startDate: req.body.startDate,
         startTime: req.body.startTime,
+        endDate: req.body.endDate,
         endTime: req.body.endTime
     }).save(function(err, data) {
         if (err) {

@@ -48,4 +48,21 @@ router.get('/:currPage?', function(req, res, next) {
     }
 })
 
+/* GET Returns all activities by event ID. */
+router.get('/byEvent/:eventId', function(req, res, next) {
+    if (!req.params.eventId) {
+        return res.status(404).json({ "status": "404", "message": "Event id not provided" })
+    } else {
+        Meal.find({ "_event": req.params.eventId })
+            .populate('_task')
+            .exec(function(err, data) {
+                if (err) {
+                    return res.status(500).json({ "status": "500", "message": "Could not retrieve meals", "error": err })
+                }
+                return res.status(200).json({ "status": "200", "message": "Retrieved meals", "data": data })
+            }
+        )
+    }
+})
+
 module.exports = router

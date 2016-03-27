@@ -1,10 +1,10 @@
 var express = require('express'),
     router = express.Router(),
-    request = require('request'),
     mongoose = require('mongoose'),
     moment = require('moment'),
     Activity = require("../../models/activity"),
-    Event = require("../../models/event")
+    Event = require("../../models/event"),
+    Meal = require("../../models/meal")
 
 /************************************************************
  * REST API
@@ -24,16 +24,50 @@ function isJson(jsonString) {
 }
 
 // Update activities
+// TODO Use API Call??
 function addActivities(activities, eventId) {
     if (activities !== 'undefined' && activities) {
         for (var i in activities) {
             var activity = new Activity(activities[i])
+
+            // startDate: req.body.startDate,
+            // startTime: req.body.startTime,
+            // endDate: req.body.endDate,
+            // endTime: req.body.endTime,
+
             activity._event = mongoose.Types.ObjectId(eventId)
             activity.save(function(err, activity) {
                     if (err) { console.error(err) }
                     console.log('Added activity')
                 }
             )
+        }
+    }
+}
+
+// Update meals
+// TODO Use API Call??
+function addMeals(meals, eventId) {
+    if (meals !== 'undefined' && meals) {
+        for (var i in meals) {
+            new Meal({
+                _event: mongoose.Types.ObjectId(eventId),
+                _contact: mongoose.Types.ObjectId(meals[i]._contact),
+                _task: mongoose.Types.ObjectId(meals[i]._task),
+                name: meals[i].name,
+                description: meals[i].description,
+
+                startDate: meals[i].startDate,
+                startTime: meals[i].startTime,
+                endDate: meals[i].endDate,
+                endTime: meals[i].endTime,
+
+                location: meals[i].location,
+                allergins: meals[i].allergins
+            }).save(function(err, activity) {
+                if (err) { console.error(err) }
+                console.log('Added activity')
+            })
         }
     }
 }
@@ -93,7 +127,7 @@ router.get('/current', function(req, res, next) {
             } else if (!data) {
                 return res.status(404).json({ "status": "500", "message": "Event not found" })
             } else {
-                return res.status(200).json({ "status" : 200, "data": data })
+                return res.status(200).json({ "status": "200", "message": "Found current event", "data": data })
             }
         }
     )
@@ -118,6 +152,7 @@ function(req, res, next) {
                 console.error(err)
                 return res.status(500).json({ "status" : "500", "message" : "Could not update event" })
             }
+            addMeals(req.body.mealArray, req.body.id)
             addActivities(req.body.activityArray, req.body.id)
             return res.status(201).json({ "status" : "201", "message" : "Event updated", "data" : { "id" : req.body.id } })
         }
