@@ -118,6 +118,7 @@ function initSelector(selectorId, maxListLength, rowItem, currentRows, formRules
     $itemsModal.find('form').form({
         fields: formRules,
         inline : true,
+        keyboardShortcuts: false,
         onSuccess: function(event, fields)
         {
             if (currentRows.length < maxListLength) {

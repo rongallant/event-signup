@@ -26,6 +26,7 @@ append javascripts
             $form.form({
                 fields: validationRules,
                 inline : false,
+                keyboardShortcuts: false,
                 onSuccess: function(event, fields){
                     $.ajax({
                         type: '#{formMethod}',

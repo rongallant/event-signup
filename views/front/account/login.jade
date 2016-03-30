@@ -21,6 +21,7 @@ append javascripts
             $form.form({
                 fields: validationRules,
                 inline : false,
+                keyboardShortcuts: true,
                 onSuccess: function(event, fields){
                     console.log('Attemping to log into #{formAction} via #{formMethod}' )
                     $.ajax({

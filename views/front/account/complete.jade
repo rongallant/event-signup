@@ -38,6 +38,7 @@ append javascripts
             $form.form({
                 fields: validationRules,
                 inline : false,
+                keyboardShortcuts: false,
                 onSuccess: function(event, fields){
                     console.log('Attemping to save into #{formAction} via #{formMethod}' )
                     $.ajax({
