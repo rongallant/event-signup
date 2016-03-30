@@ -49,33 +49,43 @@ module.exports = function(app) {
                 activity: res.locals.fullUrl + '/api/activity/',
                 activities: {
                     base: res.locals.fullUrl + '/api/activities/',
-                    byEvent: res.locals.fullUrl + '/api/activities/byEvent/'
+                    byEvent: res.locals.fullUrl + '/api/activities/byEvent/',
+                    byEventCount: res.locals.fullUrl + '/api/activities/byEventCount/'
                 },
                 address : res.locals.fullUrl + '/api/address/',
                 addresses : res.locals.fullUrl + '/api/addresses/',
                 event : {
                     base : res.locals.fullUrl + '/api/event/',
-                    latest : res.locals.fullUrl + '/api/event/latest/'
+                    latest : res.locals.fullUrl + '/api/event/latest/', // refactor to active
+                    deactivate : res.locals.fullUrl + '/api/event/deactivate/'
                 },
                 events : {
-                    base : res.locals.fullUrl + '/api/events/'
+                    base : res.locals.fullUrl + '/api/events/',
+                    disableOthers : res.locals.fullUrl + '/api/events/disableOthers/'
                 },
                 meal : res.locals.fullUrl + '/api/meal/',
                 meals: {
                     base: res.locals.fullUrl + '/api/meals/',
                     byEvent: res.locals.fullUrl + '/api/meals/byEvent/',
+                    byEventCount: res.locals.fullUrl + '/api/meals/byEventCount/'
                 },
                 person : {
                     base : res.locals.fullUrl + '/api/person/',
                     byUsername : res.locals.fullUrl + '/api/person/username/',
                     saveToken : res.locals.fullUrl + '/api/person/token/'
                 },
-                persons : res.locals.fullUrl + '/api/persons/',
+                persons : {
+                    base : res.locals.fullUrl + '/api/persons/',
+                    byEventCount : res.locals.fullUrl + '/api/persons/byEventCount/'
+                },
                 reservation : {
                     base: res.locals.fullUrl + '/api/reservation/'
                 },
                 task : res.locals.fullUrl + '/api/task/',
-                tasks : res.locals.fullUrl + '/api/tasks/'
+                tasks : {
+                    base: res.locals.fullUrl + '/api/tasks/',
+                    byEvent: res.locals.fullUrl + '/api/tasks/byEvent/',
+                }
             }
         }
         next()

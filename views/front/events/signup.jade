@@ -4,7 +4,6 @@ extends ../layout
 
 append javascripts
     script.
-
         var guestListContainer = !{ data.guests && data.guests.length ? JSON.stringify(data.guests) : '[]' }
         var petListContainer = !{ data.pets && data.pets.length ? JSON.stringify(data.pets) : '[]' }
 
@@ -111,8 +110,8 @@ append frontContent
 
         form.ui.form(name='mainForm')
 
-            input(type='hidden', name='_event', value=data._event.id)
-            input(type='hidden', name='_contact', value=data._contact.id)
+            input(type='hidden', name='_event', value=data._event)
+            input(type='hidden', name='_contact', value=data._contact)
 
             .ui.relaxed.stackable.grid
 

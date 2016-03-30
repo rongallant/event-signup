@@ -21,8 +21,7 @@ router.get('/:currPage?', function(req, res, next) {
             $or: [
                 { "name": regex },
                 { "description": regex },
-                { "startDateTime": regex },
-                { "endDateTime": regex }
+                { "startDateTime": regex }
             ]
         }
     }
@@ -35,10 +34,31 @@ router.get('/:currPage?', function(req, res, next) {
     }
     Event.paginate(query, options, function(err, data) {
         if (err) {
-            res.status(500).json({ "status": "500", "message": "Could not retrieve events", "error": err })
-        } else {
-            res.status(200).json({ "status": "200", "message": "List of events", "data": data})
+            return res.status(500).json({ "status": "500", "message": "Could not retrieve events", "error": err })
         }
+        return res.status(200).json({ "status": "200", "message": "List of events", "data": data })
+    })
+})
+
+// Set current event to active and set all other to inactive.
+router.put('/disableOthers/:currEventId', function(req, res, next) {
+    Event.update({ "active": true, _id: { $ne: req.params.currEventId } }, { $set: { "active": false } }, function(err, data) {
+        if (err) {
+            console.error("Problem setting current event active")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Problem setting other events to non-active", "error": err })
+        }
+        return next()
+    })
+},
+function(req, res, next) {
+    Event.update({ _id: req.params.currEventId }, { $set: { "active": true } }, function(err, data) {
+        if (err) {
+            console.error("Problem setting current event active")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Problem setting current event active", "error": err })
+        }
+        return res.status(201).json({ "status" : "201", "message" : "Event is now the current event" })
     })
 })
 

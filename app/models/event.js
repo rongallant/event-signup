@@ -18,7 +18,7 @@ var EventSchema = new Schema({
     endDateTime: { type: Date },
     address: { type: Address.schema }, // This embeded doc works
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
-    active: { type: Boolean, default: true }
+    active: { type: Boolean, default: false }
 }, {
     strict: true,
     toObject: {

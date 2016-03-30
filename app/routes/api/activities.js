@@ -24,8 +24,7 @@ router.get('/:currPage?', function(req, res, next) {
                 $or: [
                     { "name": regex },
                     { "description": regex },
-                    { "startTime": regex },
-                    { "endTime": regex }
+                    { "startTime": regex }
                 ]
             }
         }
@@ -57,6 +56,16 @@ router.get('/byEvent/:eventId', function(req, res, next) {
                 return res.status(500).json({ "status": "500", "message": "Could not retrieve activities", "error": err })
             }
             return res.status(200).json({ "status": "200", "message": "Retrieved activities", "data": data })
+        })
+    }
+})
+
+/* GET Returns count of activities by event ID. */
+router.get('/byEventCount/:eventId', function(req, res, next) {
+    if (req.params.eventId) {
+        Activity.find({ "_event": req.params.eventId }).count(function(err, count) {
+            if (err) { return res.send(String(0)) }
+            return res.send(String(count))
         })
     }
 })

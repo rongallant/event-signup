@@ -13,12 +13,12 @@ var URL_BASE = "/admin/activities"
 router.post('/', function(req, res, next) {
     new Activity({
         _contact: mongoose.Types.ObjectId(req.body._contact),
+        _event: mongoose.Types.ObjectId(req.body._event),
         name: req.body.name,
         description: req.body.description,
         startDate: req.body.startDate,
         startTime: req.body.startTime,
-        endDate: req.body.endDate,
-        endTime: req.body.endTime
+        duration: req.body.duration
     }).save(function(err, data) {
         if (err) {
             return res.status(501).json({ "status": "501", "message": "Could not create activity", "error": err })

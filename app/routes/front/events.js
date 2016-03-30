@@ -97,7 +97,6 @@ function createNewReservation(req, res, next) {
             startTime: req.body.startTime,
             endTime: req.body.endTime
         })
-        // console.log("Created Reservation")
         return next()
     } catch(err) {
         console.log("Error creating reservation")
@@ -110,8 +109,8 @@ function createNewReservation(req, res, next) {
 // Render Reservation Page
 router.get('/signup', getPersonId, getUserReservation, getCurrentEvent, createNewReservation, function(req, res, next) {
     console.log('Render Reservation Page')
-    // console.log(req.reservation)
-     
+    console.log(req.reservation)
+
     res.render("front/events/signup", {
         title: "Event Signup",
         user: req.user,

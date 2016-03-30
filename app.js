@@ -146,7 +146,7 @@ app.use(sitePaths, function(req, res, next) {
 
 // Set auth header
 app.use(function(req, res, next) {
-    console.log("Set auth header")
+    // console.log("Set auth header")
     if (isNull(res.getHeader("x-access-token")) && !isNull(req.session) && !isNull(req.session.authToken)) {
         res.locals.authToken = req.session.authToken
         res.setHeader("x-access-token", req.session.authToken)
@@ -156,12 +156,12 @@ app.use(function(req, res, next) {
 
 // API Authorization
 app.use(apiPaths, function(req, res, next) {
-    console.log("API Authorization")
+    // console.log("API Authorization")
     // Debug
-    if (notNull(req.headers['x-access-token']))  console.log('x-access-token = ' + req.headers['x-access-token'])
-    if (notNull(req.body.token))  console.log('req.body.token = ' + req.body.token)
-    if (notNull(req.query.token))  console.log('req.query.token = ' + req.query.token)
-    if (notNull(res.locals.authToken))  console.log('res.locals.authToken = ' + res.locals.authToken)
+    // if (notNull(req.headers['x-access-token']))  console.log('x-access-token = ' + req.headers['x-access-token'])
+    // if (notNull(req.body.token))  console.log('req.body.token = ' + req.body.token)
+    // if (notNull(req.query.token))  console.log('req.query.token = ' + req.query.token)
+    // if (notNull(res.locals.authToken))  console.log('res.locals.authToken = ' + res.locals.authToken)
     // Auth
     var token = req.body.token || req.query.token || req.headers['x-access-token'] || res.locals.authToken
     if (token) {
@@ -176,7 +176,7 @@ app.use(apiPaths, function(req, res, next) {
                 // console.log('req.decoded = ' + req.decoded)
                 // Person.js Schema enum. ["USER", "ADMIN"]
                 if (authorization.isUser(req.decoded.roles)) {
-                    console.log("200 : Authorized to access " + req.originalUrl)
+                    // console.log("200 : Authorized to access " + req.originalUrl)
                     return next()
                 }
                 console.error("401 : Failed to authenticate token.  " + req.originalUrl)

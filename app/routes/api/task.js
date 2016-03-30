@@ -11,6 +11,7 @@ var URL_BASE = "/admin/meals"
 
 /* POST New item created. */
 router.post('/', function(req, res, next) {
+    console.log('POST New item created.')
     var data = new Task({
         _contact: mongoose.Types.ObjectId(req.body._contact),
         _event: mongoose.Types.ObjectId(req.body._event),
@@ -21,15 +22,19 @@ router.post('/', function(req, res, next) {
         personsRequired: req.body.personsRequired,
         startDate: req.body.startDate,
         startTime: req.body.startTime,
-        endDate: req.body.endDate,
-        endTime: req.body.endTime
+        duration: req.body.duration
     })
     data.save(function(err, data) {
         if (err) {
-            res.status(501).json({ "status" : "error", "error" : JSON.stringify(err) })
-        } else {
-            res.status(201).json({ "status" : "success", data })
+            console.error("Could not save task")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Could not save task", "error": err })
         }
+        console.log('form body')
+        console.log(req.body)
+        console.log('data')
+        console.log(data)
+        return res.status(201).json({ "status": "201", "message": "Task created", "data": data })
     })
 })
 
@@ -38,14 +43,12 @@ router.get('/:id', function(req, res, next) {
     Task.findById(req.params.id)
         .populate('_contact')
         .exec(function(err, data) {
-
-            console.table(data)
-
             if (err) {
-                res.status(404).json({ "status" : "error", "error" : JSON.stringify(err) })
-            } else {
-                res.status(200).json({ "status" : "success", data })
+                console.error("Could not find task")
+                console.error(err)
+                return res.status(404).json({ "status": "404", "message": "Could not find task", "error": err })
             }
+            return res.status(200).json({ "status": "200", "data" : data })
         }
     )
 })
@@ -56,10 +59,11 @@ router.put('/', function(req, res, next) {
         .populate('_contact')
         .exec(function(err, data) {
             if (err) {
-                res.status(501).json({ "status" : "error", "error" : JSON.stringify(err) })
-            } else {
-                res.status(201).json({ "status" : "success", "data" : {"id" : req.body.id} })
+                console.error("Could not update task")
+                console.error(err)
+                return res.status(500).json({ "status": "500", "message": "Could not update task", "error": err })
             }
+            return res.status(201).json({ "status" : 201, "data" : { "id" : req.body.id } })
         }
     )
 })
@@ -68,10 +72,11 @@ router.put('/', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
     Task.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
-            res.status(501).json({ "status" : "error", "error" : JSON.stringify(err) })
-        } else {
-            res.status(204).json({ "status" : "success" })
+            console.error("Could not delete meal")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Could not delete task", "error": err })
         }
+        return res.status(204).json({ "status" : "204", "message" : "Deleted Successfully" })
     })
 })
 

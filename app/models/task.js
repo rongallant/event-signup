@@ -9,7 +9,7 @@ var TaskSchema = new Schema({
     name: { type: String, maxlength: 70 },
     description: { type: String, maxlength: 2000 },
     startDateTime: { type: Date },
-    endDateTime: { type: Date },
+    duration: { type: Number },
     location: { type: String },
     effort: Number, // Scale of 1-5
     personsRequired: Number
@@ -64,28 +64,6 @@ TaskSchema.virtual('startTime')
     .set(function(startTimeTo) {
         if (startTimeTo) {
             this.set('startDateTime', timeToDate(startTimeTo, this.startDateTime))
-        }
-    }
-)
-
-TaskSchema.virtual('endDate')
-    .get(function() {
-        return moment(this.endDateTime).format(global.viewPatternDate)
-    })
-    .set(function(endDate) {
-        if (endDate) {
-            this.set('endDateTime', stringToDate(endDate, this.endDateTime))
-        }
-    }
-)
-
-TaskSchema.virtual('endTime')
-    .get(function() {
-        return moment(this.endDateTime).format(global.viewPatternTime)
-    })
-    .set(function(endTimeTo) {
-        if (endTimeTo) {
-            this.set('endDateTime', timeToDate(endTimeTo, this.endDateTime))
         }
     }
 )

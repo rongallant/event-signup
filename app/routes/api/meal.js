@@ -16,23 +16,26 @@ router.post('/', function(req, res, next) {
             _contact: mongoose.Types.ObjectId(req.body._contact),
             _event: mongoose.Types.ObjectId(req.body._event),
             _task: mongoose.Types.ObjectId(req.body._task),
-            name: req.bodyTaskSchema.name,
-            description: req.bodyTaskSchema.description,
-            location: req.bodyTaskSchema.location,
+            name: req.body.name,
+            description: req.body.description,
+            location: req.body.location,
             allergins: req.body.allergins, // Array
             startDate: req.body.startDate,
             startTime: req.body.startTime,
-            endDate: req.body.endDate,
-            endTime: req.body.endTime
+            duration: req.body.duration
         })
         data.save(function(err, data) {
             if (err) {
-                return res.status(500).json({ "status" : 500, "message" : err.message })
+                console.error("Could not save meal")
+                console.error(err)
+                return res.status(500).json({ "status": "500", "message": "Could not save meal", "error": err })
             }
-            return res.status(201).json({ "status" : 201, "data" : data })
+            return res.status(201).json({ "status": "201", "message": "Meal created", "data": data })
         })
     } catch(err) {
-        return res.status(500).json({ "status" : 500, "message" : err.message })
+        console.error("Could not create meal")
+        console.error(err)
+        return res.status(500).json({ "status": "500", "message": "Could not create meal", "error": err })
     }
 })
 
@@ -42,10 +45,11 @@ router.get('/:id', function(req, res, next) {
         .populate('_contact')
         .exec(function(err, data) {
             if (err) {
-                res.status(404).json({ "status" : 404, "message" : err.message, "error" : JSON.stringify(err) })
-            } else {
-                res.status(200).json({ "status" : 200, "data" : data })
+                console.error("Could not find meal")
+                console.error(err)
+                return res.status(404).json({ "status": "404", "message": "Could not find meal", "error": err })
             }
+            return res.status(200).json({ "status": "200", "data" : data })
         }
     )
 })
@@ -54,10 +58,11 @@ router.get('/:id', function(req, res, next) {
 router.put('/', function(req, res, next) {
     Meal.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
         if (err) {
-            res.status(500).json({ "status" : 500, "error" : err.message })
-        } else {
-            res.status(201).json({ "status" : 201, "data" : { "id" : req.body.id } })
+            console.error("Could not update meal")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Could not update meal", "error": err })
         }
+        return res.status(201).json({ "status" : 201, "data" : { "id" : req.body.id } })
     })
 })
 
@@ -65,10 +70,11 @@ router.put('/', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
     Meal.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
-            res.status(500).json({ "status" : 500, "message" : err.message })
-        } else {
-            res.status(204).json({ "status" : 204, "message" : "Deleted Successfully" })
+            console.error("Could not delete meal")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Could not delete meal", "error": err })
         }
+        return res.status(204).json({ "status" : "204", "message" : "Deleted Successfully" })
     })
 })
 

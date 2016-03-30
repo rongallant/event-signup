@@ -1,0 +1,115 @@
+include ../includes/listToolbar
+
+extend ../layout
+
+append javascripts
+    script.
+        $(function(){
+            $('.contact.ui.button').popup({
+                    inline   : true,
+                    hoverable: true,
+                    position : 'bottom left',
+                    delay: {
+                    show: 300,
+                    hide: 800
+                }
+            })
+
+            // Get Event counts
+            var counter = function(caller, apiUri) {
+                $.ajax({
+                    type: 'get', url: apiUri + $(caller).data("event-id")
+                }).success(function(response) {
+                    $(caller).text(response)
+                }).error(function(response) {
+                    console.error(response)
+                    $(caller).text('?')
+                })
+                return false
+            }
+
+            $(".peopleCount").each(function(){
+                counter(this, '#{apiUri.secure.persons.byEventCount}')
+            })
+            $(".activityCount").each(function(){
+                counter(this, '#{apiUri.secure.activities.byEventCount}')
+            })
+            $(".mealCount").each(function(){
+                counter(this, '#{apiUri.secure.meals.byEventCount}')
+            })
+        })
+
+block toolbar
+    +listToolbar
+
+block appContent
+
+    .column
+        if !data || !data.docs.length
+            .center.aligned(colspan='3')
+            .ui.basic.icon.button
+                a(href=createAction)
+                    i.plus.icon
+                    | Add First Event
+
+        else
+            #eventCards.ui.stackable.two.cards
+                each row in data.docs
+                    .ui.card
+                        if row.active
+                            .ui.green.right.corner.label(title="Active Event")
+                                i.check.icon
+
+                        .content
+                            a#row1Link.header(href=editAction + row.id)= row.name
+                            .meta
+                                span.date
+                                    = moment(row.startDateTime).format('M/D/YY')
+                                    | &nbsp;
+                                    i.long.right.arrow.icon
+                                    | &nbsp;
+                                    = moment(row.endDateTime).format('M/D/YY')
+
+                            .description
+                                p= row.description
+
+                                if row.active
+                                    .ui.label
+                                        i.users.icon
+                                        span.peopleCount(data-event-id=row.id)
+                                            .ui.active.mini.inline.loader
+                                        | &nbsp; Attending
+
+
+                                    .ui.orange.label
+                                        i.compass.icon
+                                        span.activityCount(data-event-id=row.id)
+                                            .ui.active.mini.inline.loader
+                                        | &nbsp; Activities
+
+                                    .ui.green.label
+                                        i.food.icon
+                                        span.mealCount(data-event-id=row.id)
+                                            .ui.active.mini.inline.loader
+                                        | &nbsp; Meals
+
+                        .extra.content
+
+                            if row._contact
+                                a.ui.icon.button.very.basic.contact
+                                    i.user.icon
+                                    | Main Contact
+                                .ui.flowing.popup.left.transition
+                                    .ui.left.aligned
+                                        .column
+                                            h4.ui.header #{row._contact.username} (#{row._contact.fullName})
+
+                                        if row._contact.email
+                                            a.ui.button.basic(href='mailto:'  + row._contact.email)
+                                               i.mail.outline.icon
+                                               = row._contact.email
+
+                                        if row._contact.phone
+                                            a.ui.button.basic(href='tel:'  + row._contact.phone)
+                                               i.phone.icon
+                                               = row._contact.phone

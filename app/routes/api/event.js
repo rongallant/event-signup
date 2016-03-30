@@ -32,8 +32,7 @@ function addActivities(activities, eventId) {
 
             // startDate: req.body.startDate,
             // startTime: req.body.startTime,
-            // endDate: req.body.endDate,
-            // endTime: req.body.endTime,
+            // duration: req.body.duration
 
             activity._event = mongoose.Types.ObjectId(eventId)
             activity.save(function(err, activity) {
@@ -80,8 +79,7 @@ router.post('/', function(req, res, next) {
         description: req.body['description'],
         startDate: req.body.startDate,
         startTime: req.body.startTime,
-        endDate: req.body.endDate,
-        endTime: req.body.endTime,
+        duration: req.body.duration,
         _contact: mongoose.Types.ObjectId(req.body._contact),
         address: req.body.address // This is an embedded doc working
     }).save(function(err, data) {
@@ -140,23 +138,31 @@ function dateTimeToDate(strDate, strTime) {
 /* UPDATE Event. */
 router.put('/', function(req, res, next) {
     req.body.startDateTime = dateTimeToDate(req.body.startDate, req.body.startTime)
-    req.body.endDateTime = dateTimeToDate(req.body.endDate, req.body.endTime)
     return next()
 },
 function(req, res, next) {
-    console.log("update event")
-    console.log(req.body)
     Event.findByIdAndUpdate(req.body.id, { $set: req.body, upsert: true }, function(err, data) {
             if (err) {
                 console.error("Could not update event")
                 console.error(err)
-                return res.status(500).json({ "status" : "500", "message" : "Could not update event" })
+                return res.status(500).json({ "status": "500", "message": "Could not update event" })
             }
             addMeals(req.body.mealArray, req.body.id)
             addActivities(req.body.activityArray, req.body.id)
-            return res.status(201).json({ "status" : "201", "message" : "Event updated", "data" : { "id" : req.body.id } })
+            return res.status(201).json({ "status": "201", "message": "Event updated", "data": { "id" : req.body.id } })
         }
     )
+})
+
+router.put('/deactivate/:id', function(req, res, next) {
+    Event.update({ _id: req.params.id }, { $set: { 'active': false }}, function(err, data) {
+        if (err) {
+            console.error("Could not update event")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Could not deactivated event" })
+        }
+        return res.status(201).json({ "status": "201", "message": "Event deactivated" })
+    })
 })
 
 /* DELETE Deletes an item. */

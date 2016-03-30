@@ -10,7 +10,7 @@
     *           rowsGlobalVariableName - Global variable name representing the
     *           JSON array of objects that from database.
     */
-mixin selectorJs(selectorId, maxLength, formRules, displayValue, rowsGlobalVariableName)
+mixin selectorJs(selectorId, maxLength, formRules, displayValue, rowsGlobalVariableName, apiUri)
     if typeof hash == 'undefined'
         script(src='/javascripts/selector.js')
         - hash = '#' // global
@@ -23,7 +23,7 @@ mixin selectorJs(selectorId, maxLength, formRules, displayValue, rowsGlobalVaria
             var maxLength = #{maxLength?maxLength:'5'}
             var formRules = !{formRules?formRules:'null'}
             var displayValue = function(i,fields){ return '<div class="item">' + #{displayValue} + '<div class="right floated content"><i class="trash icon link"></i></div></div>' }
-            initSelector('#{hash+selectorId}', maxLength, displayValue, #{rowsGlobalVariableName}, formRules)
+            initSelector('#{hash+selectorId}', maxLength, displayValue, #{rowsGlobalVariableName}, formRules, '#{apiUri}')
         })
 
 mixin selectorListPanel(selectorId, items, itemName, iconClass, segmentClass)

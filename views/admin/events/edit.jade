@@ -27,8 +27,9 @@ append javascripts
         // Global Vars
         var activityListContainer = !{ activities ? JSON.stringify(activities) : '[]' }
         var mealListContainer = !{ meals ? JSON.stringify(meals) : '[]' }
+        var taskListContainer = !{ tasks ? JSON.stringify(tasks) : '[]' }
 
-        function customValidators($form, fields, activities, meals, formErrors) {
+        function customValidators($form, fields, activities, meals, tasks, formErrors) {
             if (typeof formErrors == 'undefined') {
                 formErrors = []
             }
@@ -37,6 +38,9 @@ append javascripts
             }
             if (fields['mealArray'].length > 25) {
                 formErrors.push('No more than 25 meals')
+            }
+            if (fields['taskArray'].length > 50) {
+                formErrors.push('No more than 50 tasks')
             }
             console.log(formErrors)
             if (formErrors.length > 0) {
@@ -66,12 +70,14 @@ append javascripts
                     console.log(formErrors)
                     fields['activityArray'] = activityListContainer
                     fields['mealArray'] = mealListContainer
+                    fields['taskArray'] = taskListContainer
                     customValidators($form, fields, formErrors)
                     return false
                 },
                 onSuccess: function(event, fields) {
                     fields['activityArray'] = activityListContainer
                     fields['mealArray'] = mealListContainer
+                    fields['taskArray'] = taskListContainer
                     if (customValidators($form, fields)) { // has errors
                         return false
                     }
@@ -134,32 +140,67 @@ append javascripts
             $form.find('#endDate').pickadate()
             $form.find('#endTime').pickatime()
 
+            var setActiveState = function(apiUri, eventId) {
+                $.ajax({
+                    type: 'put',
+                    url: apiUri,
+                    dataType: 'JSON',
+                    statusCode: {
+                        201: function(data) {
+                            console.log('201 Success')
+                            toaster('success', data.message)
+                        },
+                        500: function(data) {
+                            console.log('500 Error')
+                            toaster('error', data.message)
+                        }
+                    }
+                })
+            }
+
+            // onChecked
+            $('#activeCheck').checkbox({
+                onChecked: function() {
+                    console.log('onChecked called')
+                    setActiveState('#{apiUri.secure.events.disableOthers + data.id}')
+                },
+                onUnchecked: function() {
+                    console.log('onUnchecked called')
+                    setActiveState('#{apiUri.secure.event.deactivate + data.id}')
+                }
+            })
+
             // Meal Form
             var $mealsSelectForm = $('form[name=mealsSelectForm]')
             $mealsSelectForm.find('.personSelector').search(localPersonSearch)
             $mealsSelectForm.find('#startDate').pickadate()
             $mealsSelectForm.find('#startTime').pickatime()
-            $mealsSelectForm.find('#endDate').pickadate()
-            $mealsSelectForm.find('#endTime').pickatime()
-
 
             // Activity Form
             var $activitiesSelectForm = $('form[name=activitiesSelectForm]')
             $activitiesSelectForm.find('.personSelector').search(localPersonSearch)
             $activitiesSelectForm.find('#startDate').pickadate()
             $activitiesSelectForm.find('#startTime').pickatime()
-            $activitiesSelectForm.find('#endDate').pickadate()
-            $activitiesSelectForm.find('#endTime').pickatime()
+
+            // Task Form
+            var $tasksSelectForm = $('form[name=tasksSelectForm]')
+            $tasksSelectForm.find('.personSelector').search(localPersonSearch)
+            $tasksSelectForm.find('#startDate').pickadate()
+            $tasksSelectForm.find('#startTime').pickatime()
 
         })
 
-    -var activityFormRules = "{name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},endTime:{rules:[{type:'empty'}]}}"
-    -var activityRowItem = "fields.name + ' - ' + fields.startTime + ' to ' + fields.startTime"
-    +selectorJs('activities', 25, activityFormRules, activityRowItem, 'activityListContainer')
+    -var activityFormRules = "{name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},duration:{rules:[{type:'empty'}]}}"
+    -var activityRowItem = "fields.name + ' - ' + fields.startTime"
+    +selectorJs('activities', 25, activityFormRules, activityRowItem, 'activityListContainer', apiUri.secure.activity)
 
-    -var mealFormRules = "{name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},endTime:{rules:[{type:'empty'}]}}"
-    -var mealRowItem = "fields.name + ' - ' + fields.startTime + ' to ' + fields.startTime"
-    +selectorJs('meals', 25, mealFormRules, mealRowItem, 'mealListContainer')
+    -var mealFormRules = "{name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},duration:{rules:[{type:'empty'}]}}"
+    -var mealRowItem = "fields.name + ' - ' + fields.startTime"
+    +selectorJs('meals', 25, mealFormRules, mealRowItem, 'mealListContainer', apiUri.secure.meal)
+
+    -var taskFormRules = "{name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},duration:{rules:[{type:'empty'}]}}"
+    -var taskRowItem = "fields.name + ' - ' + fields.startTime"
+    +selectorJs('tasks', 50, taskFormRules, taskRowItem, 'taskListContainer', apiUri.secure.task)
 
 append appContent
 
@@ -188,6 +229,17 @@ append appContent
                 .field.required
                     label(for='_contact') Main Contact
                     +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+
+                .ui.horizontal.divider
+
+                pre data.active
+                pre= data.active
+
+                .field
+                    label(for='active') Is the current event?
+                    #activeCheck.ui.toggle.checkbox
+                        input(type="checkbox", name="active", id="active", checked=data.active)
+                        label(for="active") Other events will be set to false.
 
             +formSegment(isIncomplete(formMode))
 
@@ -227,11 +279,15 @@ append appContent
             .ui.relaxed.stackable.grid
                 .eight.wide.column
                     +formSegment(isIncomplete(formMode))
-                        +selectorListPanel('meals', mealArray, 'Meal', '', '')
+                        +selectorListPanel('meals', mealArray, 'Meal', 'green food', 'green')
 
                 .eight.wide.column
                     +formSegment(isIncomplete(formMode))
-                        +selectorListPanel('activities', activityArray, 'Activity', '', '')
+                        +selectorListPanel('activities', activityArray, 'Activity', 'orange map', 'orange')
+
+                .eight.wide.column
+                    +formSegment(isIncomplete(formMode))
+                        +selectorListPanel('tasks', taskArray, 'Task', 'blue heart', 'blue')
 
             div(style='display: none;')
                 input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
@@ -239,33 +295,10 @@ append appContent
 
         +messageContainer
 
-    // Activity Form
-    +selectorModal('activities', 'Activity', '', '')
-        .field.required
-            label(for='name') Activity Name
-            input(type='text', name='name', id='name')
+    //- Meals Form
+    +selectorModal('meals', 'Meal', 'green food', 'green')
+        input(type='hidden', name="_event", id="_event", value=data.id)
 
-        .field.required.textarea
-            label(for='description') Activity Description
-            +textarea('description', 'description', '2000')
-
-        .two.fields
-
-            .field.required
-                label(for="startTime") Start Time
-                input(type="text", name="startTime", id="startTime")
-
-            .field.required#endTimeField
-                label(for="endTime") End Time
-                input(type="text", name="endTime", id="endTime")
-
-        .field.required
-            label(for='_contact') Main Contact
-            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
-
-
-    // Meals Form
-    +selectorModal('meals', 'Meal', '', '')
         .field.required
             label(for='name') Meal Name
             input(type='text', name='name', id='name')
@@ -274,15 +307,107 @@ append appContent
             label(for='description') Meal Description
             +textarea('description', 'description', '2000')
 
-        .two.fields
+        .fields
 
-            .field.required
-                label(for="startTime") Start Time
-                input(type="text", name="startTime", id="startTime")
+            .field.ten.wide.required
+                label(for="startDate") Start Date
+                input(type='text', name="startDate", id="startDate", value=data.startDate, placeholder='Date')
 
-            .field.required#endTimeField
-                label(for="endTime") End Time
-                input(type="text", name="endTime", id="endTime")
+            .field.six.wide.required
+                label(for="startDate") Start Time
+                input(type='text', name="startTime", id="startTime", value=data.startTime, placeholder='Time')
+
+            .field.ten.wide.required
+                label(for="duration") Duration
+                input(type='text', name="duration", id="duration", value=data.duration, placeholder='Duration')
+
+        .field.required
+            label(for='_contact') Main Contact
+            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+
+
+    //- Activity Form
+    +selectorModal('activities', 'Activity', 'orange map', 'orange')
+        input(type='hidden', name="_event", id="_event", value=data.id)
+
+        .field.required
+            label(for='name') Activity Name
+            input(type='text', name='name', id='name')
+
+        .field.required.textarea
+            label(for='description') Activity Description
+            +textarea('description', 'description', '2000')
+
+        .fields
+
+            .field.ten.wide.required
+                label(for="startDate") Start Date
+                input(type='text', name="startDate", id="startDate", value=data.startDate, placeholder='Date')
+
+            .field.six.wide.required
+                label(for="startDate") Start Time
+                input(type='text', name="startTime", id="startTime", value=data.startTime, placeholder='Time')
+
+            .field.ten.wide.required
+                label(for="duration") Duration
+                input(type='text', name="duration", id="duration", value=data.duration, placeholder='Duration')
+
+        .field.required
+            label(for='_contact') Main Contact
+            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+
+    //- Tasks Form
+    +selectorModal('tasks', 'Task', 'blue heart', 'blue')
+        input(type='hidden', name="_event", id="_event", value=data.id)
+
+        .field.required
+            label(for='name') Task Name
+            input(type='text', name='name', id='name')
+
+        .field.required.textarea
+            label(for='description') Task Description
+            +textarea('description', 'description', '2000')
+
+
+        .field.required
+            label(for="location") Location
+            input(type='text', name="location", id="location", value=data.location, placeholder='Location')
+
+        .fields
+
+            .field.eight.wide.required
+                label(for="effort") Effort
+                select.ui.search.dropdown(name="effort", id="effort")
+                    option Select
+                    option(value=1) Easy
+                    option(value=2) Moderate
+                    option(value=3) Difficult
+                    option(value=4) Something
+                    option(value=5) Heavy Lifting
+
+            .field.eight.wide.required
+                label(for="personsRequired") Persons Required
+                select.ui.search.dropdown(name="personsRequired", id="personsRequired")
+                    option Select
+                    option(value=1) 1
+                    option(value=2) 2
+                    option(value=3) 3
+                    option(value=4) 4
+                    option(value=5) 5+
+
+        .fields
+
+            .field.ten.wide.required
+                label(for="startDate") Start Date
+                input(type='text', name="startDate", id="startDate", value=data.startDate, placeholder='Date')
+
+            .field.six.wide.required
+                label(for="startDate") Start Time
+                input(type='text', name="startTime", id="startTime", value=data.startTime, placeholder='Time')
+
+            .field.ten.wide.required
+                label(for="duration") Duration
+                input(type='text', name="duration", id="duration", value=data.duration, placeholder='Duration')
 
         .field.required
             label(for='_contact') Main Contact

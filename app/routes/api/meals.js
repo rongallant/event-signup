@@ -20,31 +20,32 @@ router.get('/:currPage?', function(req, res, next) {
             var regex = new RegExp(req.query.q, 'i')
             query = {
                 $or: [
-                    { "_task.name": regex },
-                    { "_task.description": regex },
-                    { "_task.location": regex },
-                    { "allergins": regex },
-                    { "s_task.tartTime": regex },
-                    { "_task.endTime": regex }
+                    { "name": regex },
+                    { "description": regex },
+                    { "location": regex },
+                    { "startTime": regex }
                 ]
             }
         }
         var options = {
             sort: { updatedAt: -1 },
-            populate: '_task._contact',
+            populate: '_contact',
             lean: false, // False enables virtual params
             page: req.params.currPage,
             limit: req.app.locals.resultsPerPage
         }
         Meal.paginate(query, options, function(err, data) {
             if (err) {
-                res.status(500).json({ "status" : 500, "message" : err.message })
-            } else {
-                res.status(200).json({ "status" : 200, "data" : data })
+                console.error("Error listing meals")
+                console.error(err)
+                return res.status(500).json({ "status": "500", "message": "Error listing meals", "error": err })
             }
+            return res.status(200).json({ "status": "200", "data" : data })
         })
     } catch(err) {
-        res.status(500).json({ "status" : 500, "message" : err.message })
+        console.error("Error searching meals")
+        console.error(err)
+        return res.status(500).json({ "status": "500", "message": "Error searching meals", "error": err })
     }
 })
 
@@ -57,11 +58,23 @@ router.get('/byEvent/:eventId', function(req, res, next) {
             .populate('_task')
             .exec(function(err, data) {
                 if (err) {
+                    console.error("Could not retrieve meals")
+                    console.error(err)
                     return res.status(500).json({ "status": "500", "message": "Could not retrieve meals", "error": err })
                 }
                 return res.status(200).json({ "status": "200", "message": "Retrieved meals", "data": data })
             }
         )
+    }
+})
+
+/* GET Returns count of meals by event ID. */
+router.get('/byEventCount/:eventId', function(req, res, next) {
+    if (req.params.eventId) {
+        Meal.find({ "_event": req.params.eventId }).count(function(err, count) {
+            if (err) { return res.send(String(0)) }
+            return res.send(String(count))
+        })
     }
 })
 

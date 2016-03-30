@@ -37,6 +37,9 @@ function isJSON(testVar) {
 // Save Contact
 function insertContactsEmergencyContact(req, res, next) {
     console.log('POST - reservation.js - Save Emergency Contact to user')
+
+    console.log(req.body)
+
      var fullName = req.body.emergencyContact.fullName.split(' '),
             firstName = fullName[0],
             lastName = fullName[fullName.length - 1]
@@ -52,7 +55,7 @@ function insertContactsEmergencyContact(req, res, next) {
             console.error("Error saving emergency contact")
             console.error(err)
             return res.json({ "status": "500", "message": "Could not save emergency contact", "error": JSON.stringify(err) })
-        } else if (data.ok === 0) {  
+        } else if (data.ok === 0) {
             console.error("Did not save emergency contact " + data)
             return next()
         }
@@ -75,6 +78,10 @@ function createReservation(req, res, next) {
             pets: req.body.pets
         })
         req.newReservation = reservation
+
+        console.log('new reservation')
+        console.log(reservation)
+
         return next()
     } catch(err) {
         console.error("Error creating reservation")
@@ -104,9 +111,9 @@ router.get('/:id', function(req, res, next) {
         .exec(function(err, data) {
             if (err) {
                 console.error(err)
-                return res.status(404).json({ "status" : 404, "message" : err.message })
+                return res.status(404).json({ "status": "404", "message": "Could not find reservation", "error": err })
             }
-            return res.status(200).json({ "status" : 200, "data" : data })
+            res.status(201).json({ "status": "201", "data" : {"id" : req.body.id} })
         }
     )
 })
@@ -116,9 +123,9 @@ router.put('/', function(req, res, next) {
     Reservation.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
         if (err) {
             console.error(err)
-            return res.status(500).json({ "status" : 500, "message" : err.message })
+            return res.status(500).json({ "status": "500", "message": "Could not update reservation", "error": err })
         }
-        res.status(201).json({ "status" : 201, "data" : {"id" : req.body.id} })
+        res.status(201).json({ "status": "201", "data" : {"id" : req.body.id} })
     })
 })
 

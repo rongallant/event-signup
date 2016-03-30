@@ -21,8 +21,7 @@ router.get('/:currPage?', function(req, res, next) {
                 { "name": regex },
                 { "description": regex },
                 { "location": regex },
-                { "startTime": regex },
-                { "endTime": regex }
+                { "startTime": regex }
             ]
         }
     }
@@ -39,6 +38,35 @@ router.get('/:currPage?', function(req, res, next) {
         }
         return res.status(200).json({ "status": "200", "data" : data })
     })
+})
+
+/* GET Returns all tasks by event ID. */
+router.get('/byEvent/:eventId', function(req, res, next) {
+    if (!req.params.eventId) {
+        return res.status(404).json({ "status": "404", "message": "Event id not provided" })
+    } else {
+        Task.find({ "_event": req.params.eventId })
+            .populate('_task')
+            .exec(function(err, data) {
+                if (err) {
+                    console.error("Could not retrieve meals")
+                    console.error(err)
+                    return res.status(500).json({ "status": "500", "message": "Could not retrieve meals", "error": err })
+                }
+                return res.status(200).json({ "status": "200", "message": "Retrieved meals", "data": data })
+            }
+        )
+    }
+})
+
+/* GET Returns task count by event ID. */
+router.get('/byEventCount/:eventId', function(req, res, next) {
+    if (req.params.eventId) {
+        Task.find({ "_event": req.params.eventId }).count(function(err, count) {
+            if (err) { return res.send(String(0)) }
+            return res.send(String(count))
+        })
+    }
 })
 
 module.exports = router
