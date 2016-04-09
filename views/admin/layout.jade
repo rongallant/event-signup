@@ -1,69 +1,36 @@
 extends ../layout
 
 append stylesheets
-    link(rel="stylesheet", type="text/css", href="/javascripts/daterangepicker.min.css")
+    link(rel="stylesheet", type="text/css", href="/lib/daterangepicker.min.css")
     link(rel="stylesheet", type="text/css", href="/stylesheets/admin.css")
     style.
         body {
             margin-top: 70px
         }
 
+        body {
+            margin-top:100px
+        }
+        @media only screen and (min-width: 1200px) {
+            .ui.container {
+                width: 951px;
+            }
+        }
+
 append javascripts
-    script(src="/jquery_timepicker/jquery.timepicker.js")
-    script(src="/javascripts/moment.min.js")
-    script(src="/javascripts/daterangepicker.min.js")
-    script(src="/datepair/dist/datepair.min.js")
-    script(src="/datepair/dist/jquery.datepair.min.js")
-    script(src='/javascripts/jquery-maxlength.js')
+    script(src="/lib/jquery_timepicker/jquery.timepicker.js")
+    script(src="/lib/moment.min.js")
+    script(src="/lib/daterangepicker.min.js")
+    script(src="/lib/datepair/dist/datepair.min.js")
+    script(src="/lib/datepair/dist/jquery.datepair.min.js")
     script(src="/javascripts/searchAPIs.js")
-    script(src="/javascripts/admin.js")
+    script(src="/javascripts/adminScripts.js")
 
 block content
     body.admin
 
-        #mainMenuTop.ui.primary.pointing.menu.fixed
-            .ui.container
-        
-                +menuHeaderItem
-        
-                .right.menu
-        
-                    .ui.right.dropdown.item
-                        | Admin Menu
-                        i.dropdown.icon
-                        .menu
-                            .header
-                                i.newspaper.icon
-                                | Current Event
-                            a.item(href='#') Reservations
-                            a.item(href='/admin/persons/') People
-                            // a.item(href='/admin/addresses/') Addresses
-        
-                            .divider
-        
-                            .header
-                                i.edit.icon
-                                | Event Management
-                            a.item(href='/admin/events/') Events
-                            a.item(href='/admin/activities/')  Activities
-                            a.item(href='/admin/meals/') Meals
-                            a.item(href='/admin/tasks/') Tasks
-        
-                            .divider
-        
-                            a.item(href='/admin/')
-                                i.home.icon
-                                | Admin Home
-                            a.item(href='/guest')
-                                i.user.icon
-                                | Guest View
-                            if user
-                                a.item(href=pageAccountLogout)
-                                    i.sign.out.icon
-                                    | Sign Out
-    
         block toolbar
-    
+
         .ui.main.container
-    
+
             block appContent

@@ -5,7 +5,7 @@
 
 module.exports = function(app) {
 
-    app.use(function(req, res, next){
+    app.use(function(req, res, next) {
 
         // Site
         res.locals.fullUrl = 'https://' + req.get('host')
@@ -31,12 +31,13 @@ module.exports = function(app) {
 
         // Admin
         res.locals.pageAdmin = '/admin'
-        res.locals.pageAdminEvents = '/admin/events'
-        res.locals.pageAdminPersons = '/admin/persons'
-        res.locals.pageAdminAddresses = '/admin/addresses'
         res.locals.pageAdminActivities = '/admin/activities'
-        res.locals.pageAdminTasks = '/admin/tasks'
+        res.locals.pageAdminAddresses = '/admin/addresses'
+        res.locals.pageAdminEvents = '/admin/events'
         res.locals.pageAdminMeals = '/admin/tasks/meals'
+        res.locals.pageAdminPersons = '/admin/persons'
+        res.locals.pageAdminReservations = '/admin/reservations'
+        res.locals.pageAdminTasks = '/admin/tasks'
 
         // API
         res.locals.apiUri = {
@@ -80,6 +81,10 @@ module.exports = function(app) {
                 },
                 reservation : {
                     base: res.locals.fullUrl + '/api/reservation/'
+                },
+                reservations : {
+                    base: res.locals.fullUrl + '/api/reservations/',
+                    byEvent: res.locals.fullUrl + '/api/reservations/byEvent/'
                 },
                 task : res.locals.fullUrl + '/api/task/',
                 tasks : {

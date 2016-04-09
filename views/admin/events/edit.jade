@@ -3,25 +3,24 @@ include ../../mixins/scheduleDatesSelector
 include ../../mixins/selector
 include ../addresses/parts/addressFields
 include ../addresses/parts/addressSelector
-include ../scheduleDates/parts/form
 include ../includes/formToolbar
 include ../includes/formElements
 
 extend ../layout
 
 append stylesheets
-    link(rel="stylesheet", type="text/css", href="/pickadate/themes/classic.css")
-    link(rel="stylesheet", type="text/css", href="/pickadate/themes/classic.date.css")
-    link(rel="stylesheet", type="text/css", href="/pickadate/themes/classic.time.css")
+    link(rel="stylesheet", type="text/css", href="/lib/pickadate/themes/classic.css")
+    link(rel="stylesheet", type="text/css", href="/lib/pickadate/themes/classic.date.css")
+    link(rel="stylesheet", type="text/css", href="/lib/pickadate/themes/classic.time.css")
 
 block toolbar
     +formToolbar
 
 append javascripts
     script(src="/javascripts/scheduleDayForm.js")
-    script(src="/pickadate/picker.js")
-    script(src="/pickadate/picker.date.js")
-    script(src="/pickadate/picker.time.js")
+    script(src="/lib/pickadate/picker.js")
+    script(src="/lib/pickadate/picker.date.js")
+    script(src="/lib/pickadate/picker.time.js")
     // Local Form Scripts
     script.
         // Global Vars
@@ -109,28 +108,9 @@ append javascripts
             // CREATE / SAVE
             $form.form(validationRules)
 
-            $deleteModal = $('.ui.delete.modal')
-            $deleteModal.modal({
-                onApprove: function(){
-                    $.ajax({
-                        type: 'delete',
-                        data:  $form.form('get values'),
-                        url: '#{apiItem}#{data.id}',
-                        dataType: 'JSON',
-                        statusCode: {
-                            501: function() {
-                                $.get('/message/error/Error deleting')
-                            }
-                        }
-                    })
-                    .done(function(response) {
-                        location.replace('#{listAction}')
-                    })
-                }
-            })
-            $('.delete.button').click(function(){
-                $deleteModal.modal('show')
-            })
+            var deleteComplete = function(){location.replace('#{listAction}') }
+            deleteConfirmation('#{apiItem}#{data.id}', $form.form('get values'), deleteComplete)
+
             $form.find('.personSelector').search(localPersonSearch)
             $form.find('#addressSearch').search(googleAddressSearchAndPopulate)
             $form.find('select.dropdown, .selection.dropdown').dropdown()
@@ -228,12 +208,9 @@ append appContent
 
                 .field.required
                     label(for='_contact') Main Contact
-                    +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+                    +personSelector('_contact', '_contact.id', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
 
                 .ui.horizontal.divider
-
-                pre data.active
-                pre= data.active
 
                 .field
                     label(for='active') Is the current event?
@@ -273,7 +250,7 @@ append appContent
                         input(type='text', name="endDate", id="endDate", value=data.endDate, placeholder='Date')
 
                     .field.six.wide.required
-                        label(for="endDate") End Time
+                        label(for="endTime") End Time
                         input(type='text', name="endTime", id="endTime", value=data.endTime, placeholder='Time')
 
             .ui.relaxed.stackable.grid
@@ -287,7 +264,7 @@ append appContent
 
                 .eight.wide.column
                     +formSegment(isIncomplete(formMode))
-                        +selectorListPanel('tasks', taskArray, 'Task', 'blue heart', 'blue')
+                        +selectorListPanel('tasks', taskArray, 'Task', 'yellow heart', 'yellow')
 
             div(style='display: none;')
                 input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
@@ -305,7 +282,7 @@ append appContent
 
         .field.required.textarea
             label(for='description') Meal Description
-            +textarea('description', 'description', '2000')
+            +textarea('description', 'mealDescription', '2000')
 
         .fields
 
@@ -336,7 +313,7 @@ append appContent
 
         .field.required.textarea
             label(for='description') Activity Description
-            +textarea('description', 'description', '2000')
+            +textarea('description', 'activityDescription', '2000')
 
         .fields
 
@@ -357,7 +334,7 @@ append appContent
             +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
 
     //- Tasks Form
-    +selectorModal('tasks', 'Task', 'blue heart', 'blue')
+    +selectorModal('tasks', 'Task', 'yellow heart', 'yellow')
         input(type='hidden', name="_event", id="_event", value=data.id)
 
         .field.required
@@ -366,7 +343,7 @@ append appContent
 
         .field.required.textarea
             label(for='description') Task Description
-            +textarea('description', 'description', '2000')
+            +textarea('description', 'taskDescription', '2000')
 
 
         .field.required

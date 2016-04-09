@@ -11,42 +11,8 @@ append stylesheets
             }
         }
 
-mixin menuHeaderItem
-    .header.item
-        a(href=pageHome)
-            img.ui.small.image(src="/images/hangcon-h-logo.png", height="60", alt='HANGCON Homepage')
-
-mixin menuItems
-    if user
-        a.item(href=pageEventSignup) Signup for Event
-        a.item(href=pageAdmin) Admin
-        a.item(href=pageAbout) About
-        a.item(href=pageAccountLogout) Log Out
-    else
-        a.item(href=pageAbout) About
-        a.item(href=pageAccountLogin) Log In
-
-block header
-
-    .ui.grid
-        .mobile.tablet.only.row
-
-            .ui.primary.pointing.menu.fixed
-                .ui.container
-                    +menuHeaderItem
-                    .ui.simple.dropdown.right.item
-                        i.ellipsis.vertical.icon
-                        .right.menu
-                            +menuItems
-
-        .computer.only.row
-
-            .ui.primary.pointing.menu.fixed
-                .ui.container
-                    +menuHeaderItem
-                    .right.menu
-                        +menuItems
-
 block content
+    .ui.container
+        block guestContent
 
-    block frontContent
+            block frontContent

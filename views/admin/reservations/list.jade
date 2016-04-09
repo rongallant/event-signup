@@ -1,0 +1,78 @@
+include ../includes/listToolbar
+
+extend ../layout
+
+append javascripts
+	script.
+		$(function(){
+			$('.contact.ui.button').popup({
+					inline   : true,
+					hoverable: true,
+					position : 'bottom left',
+					delay: {
+					show: 300,
+					hide: 800
+				}
+			})
+		})
+
+block toolbar
+	+listToolbar
+
+block appContent
+
+	table.ui.padded.fixed.selectable.table
+		thead
+			tr
+				th Contact
+				th From
+				th.center.aligned Guests
+				th.center.aligned Pets
+				th.right.aligned Emergency
+		tbody
+			if !data.docs.length
+				tr
+					td.center.aligned(colspan='5')
+						.ui.basic.icon.button
+							a(href=createAction)
+								i.plus.icon
+								| Add First Reservation
+
+			else
+				each row in data.docs
+					tr
+
+						td(data-label="Contact")
+							a(href=readOnlyAction + row.id)
+								= row._contact ? row._contact.fullName : 'NO NAME'
+
+						td(data-label="From")
+							if row._contact && row._contact.address
+								| #{row._contact.address.city}, #{row._contact.address.state}
+
+						td.center.aligned(data-label="Guests")
+							=row.guests.length
+
+						td.center.aligned(data-label="Pets")
+							=row.pets.length
+
+						td.right.aligned(data-label="Emergency")
+							if row._contact
+								a.ui.icon.button.very.basic.contact
+									i.large.red.phone.square.icon
+								.ui.large.popup.left.transition
+
+									h5.ui.header Emergency Contact
+										.sub.header= row._contact.emergencyContact.firstName +' ' + row._contact.emergencyContact.lastName
+
+									.two.ui.buttons
+
+										if row._contact.emai
+											a.ui.button(href='mailto:'  + row._contact.emergencyContact.email)
+												i.mail.outline.icon
+												= row._contact.email
+
+										if row._contact.phone
+											a.ui.button.basic(href='tel:'  + row._contact.emergencyContact.phone)
+												i.phone.icon
+												= row._contact.phone

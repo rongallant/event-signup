@@ -1,20 +1,7 @@
 var exports = module.exports = {}
 
 exports.hasRole = function(userRoles, allowedRoles) {
-    // console.log('\n')
-    
-    // console.log('userRoles')
-    // console.log(userRoles)
-    // console.log(Array.isArray(userRoles))
-    // console.log(userRoles.length)
-    
-    // console.log('allowedRoles')
-    // console.log(allowedRoles)
-    // console.log(Array.isArray(allowedRoles))
-    // console.log(allowedRoles.length)
-
     for (var i = 0, len = userRoles.length; i < len; i++) {
-        // console.log('Rule: ' + userRoles[i].toUpperCase() +' in '+ userRoles +': '+(allowedRoles.indexOf(userRoles[i].toUpperCase()) >= 0))
         if (allowedRoles.indexOf(userRoles[i].toUpperCase()) >= 0) {
             return true
         }

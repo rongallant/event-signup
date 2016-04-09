@@ -3,7 +3,7 @@
  * Author: Ron Gallant (rongallant.com)
  * USAGE: $("input[data-maxsize], textarea[data-maxsize]").maxLength()
  */
-
+/* global  */
 $.fn.maxLengthCounter = function(options) {
 
     var $fields = $(this)

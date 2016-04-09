@@ -18,10 +18,10 @@ mixin menuHeaderItem
 
 mixin menuItems
     if user
-        a.item(href=pageEventSignup) Signup for Event
-        a.item(href=pageAdmin) Admin
+        a.item(href=pageEventSignup) Reserve Spot
         a.item(href=pageAbout) About
-        a.item(href=pageAccountLogout) Log Out
+        if !isAdmin
+            a.item(href=pageAccountLogout) Sign Out
     else
         a.item(href=pageAbout) About
         a.item(href=pageAccountLogin) Log In
@@ -30,22 +30,31 @@ block header
 
     .ui.grid
         .mobile.tablet.only.row
-
-            .ui.primary.pointing.menu.fixed
+            .ui.primary.menu.fixed
                 .ui.container
                     +menuHeaderItem
-                    .ui.simple.dropdown.right.item
-                        i.ellipsis.vertical.icon
-                        .right.menu
-                            +menuItems
+                    .right.menu
+                        .ui.simple.dropdown.item(title='Guest Menu')
+                            i.user.icon
+                            .menu
+                                +menuItems
+                        if isAdmin
+                            .ui.simple.dropdown.item(title='Admin Menu')
+                                i.settings.icon
+                                include ./admin/includes/adminMenu
 
         .computer.only.row
-
-            .ui.primary.pointing.menu.fixed
+            .ui.primary.menu.fixed
                 .ui.container
                     +menuHeaderItem
                     .right.menu
                         +menuItems
+                        if isAdmin
+                            .ui.simple.dropdown.item(title='Admin Menu')
+                                i.settings.icon
+                                | Admin
+                                i.dropdown.icon
+                                include ./admin/includes/adminMenu
 
 block content
 

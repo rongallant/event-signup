@@ -1,0 +1,62 @@
+
+
+mixin activity(activity)
+    .item
+        .ui.image
+             i.grey.rocket.icon.big
+        .top.aligned.content
+            .meta.ui.right.floated
+                div.
+                    #{moment(activity.startDateTime).format('h:MM a')}
+                    -
+                    #{moment(activity.startDateTime).add(activity.duration, 'hours').format('h:MM a')}
+            .header= activity.name
+            .content
+                p= activity.description
+                .extra
+
+
+mixin task(activity)
+    .item
+        .ui.image
+            i.grey.fire.icon.big
+        .top.aligned.content
+            .meta.ui.right.floated
+                div.
+                    #{moment(activity.startDateTime).format('h:MM a')}
+                    -
+                    #{moment(activity.startDateTime).add(activity.duration, 'hours').format('h:MM a')}
+            .header= activity.name
+            .content
+                p= activity.description
+                .extra
+
+
+mixin meal(activity)
+    .item
+        .ui.image
+            i.grey.food.icon.big
+        .top.aligned.content
+            .meta.ui.right.floated
+                div.
+                    #{moment(activity.startDateTime).format('h:MM a')}
+                    -
+                    #{moment(activity.startDateTime).add(activity.duration, 'hours').format('h:MM a')}
+            .header= activity.name
+            .content
+                p= activity.description
+                .extra
+
+
+.ui.relaxed.divided.items
+
+    each item, i in data
+
+        if item.activity == 'task'
+            + task(item)
+
+        if item.activity == 'meal'
+            + meal(item)
+
+        if item.activity == 'activity'
+            + activity(item)

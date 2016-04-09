@@ -1,7 +1,6 @@
-extends layout
+extends ../layout
 
 append stylesheets
-    // script(src="/fullcalendar/fullcalendar.min.css")
     style.
         .ui.items .item {
             position: relative;
@@ -11,7 +10,6 @@ append stylesheets
         }
 
 append javascripts
-    // script(src="/fullcalendar/fullcalendar.min.js")
     script(src="/javascripts/searchAPIs.js")
     script.
         $(function(){
@@ -21,7 +19,7 @@ append javascripts
 
 append guestContent
 
-    .ui.two.column.stackable.grid
+    .ui.stackable.grid
 
         .eleven.wide.column.row
             .sixteen.wide.column
@@ -84,7 +82,6 @@ append guestContent
                                                   .item Soy
                                                   .item Milk
                                                   .item Gluten
-
                                 .item
                                     .ui.image
                                         i.grey.rocket.icon.big

@@ -3,16 +3,16 @@ var express = require('express'),
     auth = require('../..//helpers/authorization.js'),
     moment = require("moment"),
     router = express.Router(),
-    Event = require("../../models/event"),
+    Reservation = require("../../models/reservation"),
     appSettings = require('../utils/appSettings'),
     appDesc = []
 
-appDesc['apiSingle'] = '/event'
-appDesc['apiCollection'] = '/events'
-appDesc['folder'] = '/events'
-appDesc['singularName'] = "Event"
-appDesc['pluralName'] = "Events"
-appDesc['newObject'] = new Event()
+appDesc['apiSingle'] = '/reservation'
+appDesc['apiCollection'] = '/reservations'
+appDesc['folder'] = '/reservations'
+appDesc['singularName'] = 'Reservations'
+appDesc['pluralName'] = 'Reservations'
+appDesc['newObject'] = new Reservation()
 
 router.use(function(req, res, next) {
     appSettings.appPaths(req, res, appDesc)
@@ -84,20 +84,23 @@ var getTasks = function(req, res, next) {
     })
 }
 
-router.get('/edit/:eventId', auth.needsRole('ADMIN'), getActivities, getMeals, getTasks, function(req, res, next) {
-    var apiUri =  res.locals.apiUri.secure.event.base + req.params.eventId
+/**
+ * VIEW reservation
+ */
+router.get('/view/:id', auth.needsRole('ADMIN'), getActivities, getMeals, getTasks, function(req, res, next) {
+    var apiUri =  res.locals.apiUri.secure.reservation.base + req.params.id
     var auth = { "x-access-token": req.session.authToken }
     try {
         request({ "uri": apiUri, "headers": auth }, function (err, data){
             if (err) { return next(err) }
-            res.render(res.locals.editView, {
+            res.render(res.locals.readOnlyView, {
                 title: "Editing " + appDesc['singularName'],
                 user: req.user,
                 data: JSON.parse(data.body).data,
                 meals: req.mealsArray,
                 activities: req.activitiesArray,
                 tasks: req.tasksArray,
-                formMode: 'edit',
+                formMode: 'view',
                 formMethod: 'PUT',
                 formAction: res.locals.apiUri.secure.event.base
             })
@@ -107,6 +110,36 @@ router.get('/edit/:eventId', auth.needsRole('ADMIN'), getActivities, getMeals, g
     }
 })
 
+/**
+ * EDIT reservation
+ */
+router.get('/edit/:id', auth.needsRole('ADMIN'), getActivities, getMeals, getTasks, function(req, res, next) {
+    var apiUri =  res.locals.apiUri.secure.reservation.base + req.params.id
+    var auth = { "x-access-token": req.session.authToken }
+    try {
+        request({ "uri": apiUri, "headers": auth }, function (err, data){
+            if (err) { return next(err) }
+            res.render(res.locals.editView, { // TODO Rename to View and create edit form.
+                title: "Editing " + appDesc['singularName'],
+                user: req.user,
+                data: JSON.parse(data.body).data,
+                meals: req.mealsArray,
+                activities: req.activitiesArray,
+                tasks: req.tasksArray,
+                formMode: 'edit',
+                formMethod: 'PUT',
+                formAction: res.locals.apiUri.secure.reservation.base,
+                formComplete: res.locals.viewAction
+            })
+        })
+    } catch(err) {
+        return next(err)
+    }
+})
+
+/**
+ * CREATE new reservation
+ */
 router.get('/create', auth.needsRole('ADMIN'), function(req, res) {
     req.session.redirectTo = res.locals.editView
     res.render(res.locals.editView, {
@@ -119,44 +152,20 @@ router.get('/create', auth.needsRole('ADMIN'), function(req, res) {
     })
 })
 
-// Default list view
+/**
+ * VIEW Table list view
+ */
 router.get('/:currPage?', auth.needsRole('ADMIN'), function(req, res, next){
     res.locals.moment = moment
-    var apiUri = res.locals.apiUri.secure.events.base
+    var apiUri = res.locals.apiUri.secure.reservations.base
     if (hasVal(req.params.currPage))
         apiUri += req.params.currPage
     else
         apiUri += 1
     if (hasVal(req.query.q))
         apiUri += '?q=' + req.query.q
-
-    console.log('res.locals.listView')
-    console.log(res.locals.listView)
-
     request({uri: apiUri, headers: {"x-access-token":req.session.authToken} }, function (err, data) {
         if (err) { return next(err) }
-        res.render("admin/events/listPanels", {
-            title: appDesc['pluralName'],
-            user: req.user,
-            data: JSON.parse(data.body).data
-        })
-    })
-})
-
-// Table list view
-router.get('/list/:currPage?', auth.needsRole('ADMIN'), function(req, res, next){
-    res.locals.moment = moment
-    var apiUri = res.locals.apiUri.secure.events.base
-    if (hasVal(req.params.currPage))
-        apiUri += req.params.currPage
-    else
-        apiUri += 1
-    if (hasVal(req.query.q))
-        apiUri += '?q=' + req.query.q
-
-    request({uri: apiUri, headers: {"x-access-token":req.session.authToken} }, function (err, data) {
-        if (err) { return next(err) }
-
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
             user: req.user,

@@ -6,6 +6,8 @@ var express = require('express'),
     Event = require("../../models/event"),
     Meal = require("../../models/meal")
 
+/* global jQuery */
+
 /************************************************************
  * REST API
  ************************************************************/
@@ -24,20 +26,14 @@ function isJson(jsonString) {
 }
 
 // Update activities
-// TODO Use API Call??
 function addActivities(activities, eventId) {
     if (activities !== 'undefined' && activities) {
         for (var i in activities) {
             var activity = new Activity(activities[i])
-
-            // startDate: req.body.startDate,
-            // startTime: req.body.startTime,
-            // duration: req.body.duration
-
             activity._event = mongoose.Types.ObjectId(eventId)
             activity.save(function(err, activity) {
                     if (err) { console.error(err) }
-                    console.log('Added activity')
+                    console.log('Saved activity')
                 }
             )
         }
@@ -45,33 +41,20 @@ function addActivities(activities, eventId) {
 }
 
 // Update meals
-// TODO Use API Call??
 function addMeals(meals, eventId) {
     if (meals !== 'undefined' && meals) {
         for (var i in meals) {
             new Meal({
-                _event: mongoose.Types.ObjectId(eventId),
-                _contact: mongoose.Types.ObjectId(meals[i]._contact),
-                _task: mongoose.Types.ObjectId(meals[i]._task),
-                name: meals[i].name,
-                description: meals[i].description,
-
-                startDate: meals[i].startDate,
-                startTime: meals[i].startTime,
-                endDate: meals[i].endDate,
-                endTime: meals[i].endTime,
-
-                location: meals[i].location,
-                allergins: meals[i].allergins
+                _event: mongoose.Types.ObjectId(eventId)
             }).save(function(err, activity) {
                 if (err) { console.error(err) }
-                console.log('Added activity')
+                console.log('Saved meal')
             })
         }
     }
 }
 
-/* POST New item created. */
+/* CREATE */
 router.post('/', function(req, res, next) {
     console.log("Create new event")
     var newEvent = new Event({
@@ -94,10 +77,10 @@ router.post('/', function(req, res, next) {
     })
 })
 
-/* GET Returns single item. */
+/* GET Single Event. */
 router.get('/:id', function(req, res, next) {
     Event.findById(req.params.id)
-        .populate('_contact')
+        .populate('_contact _event tasks activities')
         .exec(function(err, data) {
             if (err) {
                 console.error("Could not find event")
@@ -138,20 +121,20 @@ function dateTimeToDate(strDate, strTime) {
 /* UPDATE Event. */
 router.put('/', function(req, res, next) {
     req.body.startDateTime = dateTimeToDate(req.body.startDate, req.body.startTime)
+    req.body.endDateTime = dateTimeToDate(req.body.endDate, req.body.endTime)
     return next()
 },
 function(req, res, next) {
     Event.findByIdAndUpdate(req.body.id, { $set: req.body, upsert: true }, function(err, data) {
-            if (err) {
-                console.error("Could not update event")
-                console.error(err)
-                return res.status(500).json({ "status": "500", "message": "Could not update event" })
-            }
-            addMeals(req.body.mealArray, req.body.id)
-            addActivities(req.body.activityArray, req.body.id)
-            return res.status(201).json({ "status": "201", "message": "Event updated", "data": { "id" : req.body.id } })
+        if (err) {
+            console.error("Could not update event")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Could not update event" })
         }
-    )
+        addMeals(req.body.mealArray, req.body.id)
+        addActivities(req.body.activityArray, req.body.id)
+        return res.status(201).json({ "status": "201", "message": "Event updated", "data": { "id" : req.body.id } })
+    })
 })
 
 router.put('/deactivate/:id', function(req, res, next) {

@@ -1,3 +1,5 @@
+/* global location,$ */
+
 function toaster(type, text) {
     /* global noty */
     return noty({
@@ -29,3 +31,22 @@ function ajaxRequest(fieldData, formMethod, apiUri, successMsg, successRelocate)
         location.replace(successRelocate)
     })
 }
+
+$.fn.formatPhone = function() {
+    $(this).each(function(index) {
+        $(this).html($(this).text().replace(/(\d{3})\-?(\d{3})\-?(\d{4})/, '$1-$2-$3'))
+    })
+}
+
+$(function(){
+    $('.ui.dropdown').dropdown()
+    $('.tel').formatPhone()
+    $('[data-content], [data-title]').popup()
+    
+    
+    var maxLengthCounterOptions = {
+        optoutputdiv: ''
+    }
+    
+    $('textarea[data-maxsize]').maxLengthCounter()
+})

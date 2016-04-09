@@ -50,30 +50,9 @@ append javascripts
                 }
             })
 
-            $('.ui.delete.modal').modal({
-                onApprove: function(){
-                    $.ajax({
-                        type: 'delete',
-                        data:  $form.form('get values'),
-                        url: '#{apiItem}#{data.id}',
-                        dataType: 'JSON',
-                        statusCode: {
-                            204: function() {
-                                $.get('/message/success/Deleted successfully')
-                            },
-                            501: function() {
-                                $.get('/message/error/Error deleting')
-                            }
-                        }
-                    })
-                    .done(function(response) {
-                        location.replace('#{listAction}')
-                    })
-                }
-            })
-            $form.find('.delete.button').click(function(){
-                $('.ui.delete.modal').modal('show')
-            })
+            var deleteComplete = function(){location.replace('#{listAction}') }
+            deleteConfirmation('#{apiItem}#{data.id}', $form.form('get values'), deleteComplete)
+
             $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
             $form.find('.ui.checkbox').checkbox()
             $form.find('select.dropdown, .selection.dropdown').dropdown()

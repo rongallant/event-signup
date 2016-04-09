@@ -78,11 +78,11 @@ app.use(flash())
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/themes', express.static(path.join(__dirname, 'node_modules', 'semantic-ui-less', 'themes')))
-app.use('/javascripts', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
-app.use('/javascripts', express.static(path.join(__dirname, 'node_modules', 'semantic-ui-daterangepicker')))
-app.use('/javascripts', express.static(path.join(__dirname, 'semantic', 'dist')))
-app.use('/pickadate', express.static(path.join(__dirname, 'node_modules', 'pickadate', 'lib', 'compressed')))
-app.use('/moment', express.static(path.join(__dirname, 'node_modules', 'moment', 'min')))
+app.use('/lib', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
+app.use('/lib', express.static(path.join(__dirname, 'node_modules', 'semantic-ui-daterangepicker')))
+app.use('/lib', express.static(path.join(__dirname, 'semantic', 'dist')))
+app.use('/lib/pickadate', express.static(path.join(__dirname, 'node_modules', 'pickadate', 'lib', 'compressed')))
+app.use('/lib/moment', express.static(path.join(__dirname, 'node_modules', 'moment', 'min')))
 
 /************************************************************
  * Database
@@ -101,13 +101,11 @@ require('./app/routes/appUrls')(app)
 require('./config/passport')(app, passport); // pass passport for configuration
 
 var apiPaths = ["/api*"]
-// var publicApiPaths = ["/public_api*"]
 var sitePaths = ["/admin*", "/guest*", "/events*", "/accounts*"]
 var adminPaths = ["/admin*"]
 
 // ADMIN Authorization
 app.use(adminPaths, function(req, res, next) {
-    console.log("ADMIN Authorization")
     if (req.isAuthenticated() && authorization.isAdmin(req.user.roles)) {
         console.log("200 : Authorized to access admin area " + req.path)
         return next()
@@ -120,7 +118,6 @@ app.use(adminPaths, function(req, res, next) {
 
 // SITE Authorization
 app.use(sitePaths, function(req, res, next) {
-    console.log("SITE Authorization")
     if (req.isAuthenticated() && authorization.isUser(req.user.roles)) {
         var getUserUri = res.locals.apiUri.public.hasprofile  + req.user.username
         var headers = { "x-access-token":req.session.authToken }
@@ -128,11 +125,14 @@ app.use(sitePaths, function(req, res, next) {
             if (err) {
                 console.log('Error checking for profile')
                 console.error(err)
-            } else if (!JSON.parse(data.body)._person) {
+                var error = new Error('Not Authorized to access ' + req.path)
+                error.statusCode = 401
+                return next(error)
+            } else if (data.body === 'false') {
                 console.log("No person found associated with account.")
                 return res.redirect(res.locals.pageAccountComplete)
             } else {
-                console.info("200 : Authorized to access " + req.path)
+                res.locals.isAdmin = authorization.isAdmin(req.user.roles)
                 return next()
             }
         })
@@ -146,7 +146,6 @@ app.use(sitePaths, function(req, res, next) {
 
 // Set auth header
 app.use(function(req, res, next) {
-    // console.log("Set auth header")
     if (isNull(res.getHeader("x-access-token")) && !isNull(req.session) && !isNull(req.session.authToken)) {
         res.locals.authToken = req.session.authToken
         res.setHeader("x-access-token", req.session.authToken)
@@ -168,24 +167,22 @@ app.use(apiPaths, function(req, res, next) {
         res.setHeader("x-access-token", token)
         jwt.verify(token, req.app.get('authToken'), function(err, decoded) {
             if (err) {
-                console.error("401 : Failed to authenticate token.  " + req.originalUrl)
+                console.error("401 : Failed to authenticate token: " + req.originalUrl)
                 console.error(err)
-                return res.status(401).json({ "status": "401", "message": "Failed to authenticate token.", "error" : JSON.stringify(err) })
+                return res.status(401).json({ "status": "401", "message": "Failed to authenticate token", "error": err })
             } else {
                 req.decoded = decoded.encTokenData
-                // console.log('req.decoded = ' + req.decoded)
                 // Person.js Schema enum. ["USER", "ADMIN"]
                 if (authorization.isUser(req.decoded.roles)) {
-                    // console.log("200 : Authorized to access " + req.originalUrl)
                     return next()
                 }
                 console.error("401 : Failed to authenticate token.  " + req.originalUrl)
-                return res.status(401).json({ "status": "401", "message": "Does not have privileges." })
+                return res.status(401).json({ "status": "401", "message": "Does not have privileges" })
             }
         })
     } else {
-        console.error('403: No token provided.')
-        res.status(403).json({ "status": "403", "message": "No token provided." })
+        console.error('403: No token provided')
+        res.status(403).json({ "status": "403", "message": "No token provided" })
     }
 })
 
@@ -256,14 +253,13 @@ app.use(sitePaths, function (err, req, res, next)
 {
     console.error('SITE Error Handler')
     if (app.get('env') === 'development') {
-        //console.error('SITE Error Handler')
         console.log(err)
     }
+
     // SITE - Not Authorized
     if (err.statusCode == 401) {
         console.error('Not Authorized : ' + req.originalUrl)
         req.flash('warning', "You have been logged out")
-        // return res.render('front/account/login')
         return res.redirect('/account/login')
     }
 
@@ -291,7 +287,7 @@ app.use(sitePaths, function (err, req, res, next)
     // SITE - Ensure error reported
     err = new Error('System Error')
     err.statusCode = 500
-    res.render('error', {
+    return res.render('error', {
         title: '500 : System Error',
         message: '500 : System Error',
         error:  (app.get('env') === 'development') ? err : res.statusMessage

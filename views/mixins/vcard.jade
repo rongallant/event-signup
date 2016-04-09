@@ -1,0 +1,20 @@
+mixin vcard(address)
+	.vcard
+		p.adr
+			.street-address= address.address1
+			div= address.address2
+			.locality #{address.city}, &nbsp;
+				span.region #{address.state} &nbsp; &nbsp;
+				span.postal-code= address.postalCode
+			span.country-name= address.country
+
+mixin vcardLink(address)
+	a.vcard(href='http://www.google.com/maps/place/' + address.delimitedAddress, target='_blan')
+		.adr
+			.street-address= address.address1
+			div= address.address2
+			.locality #{address.city}, &nbsp;
+				span.region #{address.state} &nbsp; &nbsp;
+				span.postal-code= address.postalCode
+			span.country-name= address.country
+

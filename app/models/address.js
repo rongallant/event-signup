@@ -60,7 +60,20 @@ AddressSchema.virtual('shortAddress').get(function () {
     }
 })
 
-// Formated Address
+// Delimited Address
+AddressSchema.virtual('delimitedAddress').get(function () {
+    try {
+        return (this.address1.length > 0 ? googleizeStr(this.address1) : '') +
+            (this.city.length > 0 ?  ',' + googleizeStr(this.city) : '') +
+            (this.state.length > 0 ?  ',' + this.state.toUpperCase() : '') +
+            (this.postalCode.length > 0 ? ',' + this.postalCode : '') +
+            (this.country.length > 0 ? ',' + countries.alpha2ToAlpha3(this.country.toUpperCase()) : '')
+    } catch(err) {
+        return ''
+    }
+})
+
+// vcard Address
 AddressSchema.virtual('delimitedAddress').get(function () {
     try {
         return (this.address1.length > 0 ? googleizeStr(this.address1) : '') +

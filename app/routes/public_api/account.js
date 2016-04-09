@@ -11,7 +11,6 @@ var express = require('express'),
  ************************************************************/
 
 router.post('/login', function(req, res, next) {
-    console.log('\nGET /account/login/')
     passport.authenticate('local', function(err, user, info) {
         if (err) {
             console.error("Could not log in")
@@ -28,7 +27,7 @@ router.post('/login', function(req, res, next) {
                 return res.status(401).json({ "status": "401", "message": "Could not log in", "error": JSON.stringify(err) })
             }
             var payload = { encTokenData: {"username" : user.username, "roles" : user.roles } },
-                options = { "expiresIn" : "2h" },
+                options = { "expiresIn" : "24h" },
                 token = jwt.sign(payload, res.app.get('authToken'), options)
             req.session.authToken = token
             return res.status(200).json({ "status": "200", "message": "You have logged in", "data": user, "token" : token })
@@ -44,7 +43,7 @@ router.post('/', function(req, res, next) {
             username: req.body.username,
             email: req.body.email,
             roles: ['USER', 'ADMIN']
-            
+
         })
         Account.register(data, req.body.password, function(err, account) {
             if (err) {
@@ -98,19 +97,20 @@ router.get('/:username', function(req, res, next) {
 
 /* Check if account has person associated.  Account incomplete. */
 router.get('/hasprofile/:username', function(req, res, next) {
-    console.log('\nGET /account/' + req.params.id)
     Account.findOne({ username:req.params.username })
         .select("_person")
+        .populate("_person")
         .exec(function(err, data) {
             if (err) {
                 console.error("Could not look up account profile")
                 console.error(err)
-                return res.status(500).json({ "status": "500", "message": "Could not look up account profile", "error": JSON.stringify(err) })
+                return res.send(false)
             }
-            if (data) {
-                return res.send(data)
+            if (data && data._person) {
+                return res.send(true)
             }
-            return res.status(404).json({ "status": "404", "message": 'Could not find account' })
+            console.log('Profile not found')
+            return res.send(false)
         }
     )
 })

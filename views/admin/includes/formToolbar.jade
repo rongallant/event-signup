@@ -5,60 +5,51 @@ mixin formToolbar
         a.item.launch.medium.icon.show-mobile
             i.content.icon
 
-        .hide-mobile.item
-            -var subBtn = formMode == 'edit' ? 'Update' : 'Save'
-            a.ui.primary.submit.medium.button(title=subBtn)
-                i.checkmark.icon
-                = subBtn
-
-        a.show-mobile.ui.primary.submit.medium.item.green(title=subBtn)
-            = subBtn
-
-        a.hide-mobile.item.ui.secondary.reset
-            | Reset
-
-        .show-mobile.item.ui.secondary.reset
-            | Reset
+        a.item(href=listAction, title='Back to list')
+            i.list.icon
+            span.hide-mobile Back to list
 
         .right.menu
 
-            if formMode != 'edit'
+            .item
+                .ui.reset.button(title=subBtn)
+                    | Reset
 
-                a.item(href=listAction, title='Back to list')
-                    i.list.icon
-                    | Back to list
+            .item
+                -var subBtn = formMode == 'edit' ? 'Update' : 'Save'
+                .ui.primary.submit.button(title=subBtn)
+                    i.checkmark.icon
+                    = subBtn
 
-            else
+            .item.ui.dropdown.link.icon
+                | &nbsp;&nbsp;
+                i.ellipsis.vertical.icon
+                | &nbsp;&nbsp;
 
-                .ui.dropdown.link.item.icon
-                    | &nbsp;&nbsp;
-                    i.ellipsis.vertical.icon
-                    | &nbsp;&nbsp;
+                .menu
 
-                    .menu
+                    .header Actions
 
-                        .header Actions
+                    a.item(href=readOnlyAction + data.id, title='View')
+                        i.eye.icon
+                        | View
 
-                        a.item(href=createAction, title='New')
-                            i.plus.icon
-                            | New
+                    a.item(href=createAction, title='New')
+                        i.plus.icon
+                        | New
 
-                        a.item.delete.button.medium(href="#", title='Delete')
-                            i.trash.outline.icon
-                            | Delete now...
+                    a.item.delete.button.medium(href="#", title='Delete')
+                        i.trash.outline.icon
+                        | Delete now...
 
-                        .ui.small.basic.delete.modal.center
-                            .header
-                                | Delete
-                            .description
-                                | Are you sure you want to delete this item?
-                            .actions
-                                .ui.negative.button
-                                    | Cancel
-                                .ui.positive.labeled.icon.button
-                                    i.checkmark.icon
-                                    | Delete Now
-
-                        a.item(href=listAction, title='Back to list')
-                            i.list.icon
-                            | Back to list
+                    .ui.small.basic.delete.modal.center
+                        .header
+                            | Delete
+                        .description
+                            | Are you sure you want to delete this item?
+                        .actions
+                            .ui.negative.button
+                                | Cancel
+                            .ui.positive.labeled.icon.button
+                                i.checkmark.icon
+                                | Delete Now

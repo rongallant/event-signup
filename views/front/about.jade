@@ -1,7 +1,7 @@
 extends layout
 
 append javascripts
-    script(src="/javascripts/jquery.singlePageNav.min.js")
+    script(src="/lib/jquery.singlePageNav.min.js")
     script.
         $(function(){
             $('.ui.sticky').sticky({
@@ -14,39 +14,34 @@ append javascripts
             });
         })
 
-block content
+append guestContent
 
-    .ui.text.container
+    .ui.stackable.grid
 
-        .ui.basic.segment
-
-            .ui.right.rail
-
-                .ui.sticky
-
-                    .ui.basic.segment
-
-                        #pointingMenu.ui.vertical.following.fluid.text.menu
-                            a.item(href='#top') Introduction
-                            a.item(href='#activities') Activities
-                            a.item(href='#cost') Cost
-                            a.item(href='#funds') Funds
-                            a.item(href='#tickets') Raffle Tickets
-                            a.item(href='#vendors') Vendors
-                            a.item(href='#rules') Rules
-                            a.item(href='#parking') Parking
-
-                    .ui.basic.segment.grey
-                        .ui.vertical.fluid.text.menu
-                            h5.ui.item
-                                | More Information
-                            a.item(href='http://www.recreation.gov/camping/doe-lake-group-site/r/campgroundDetails.do?contractCode=NRSO&parkId=75493', target='_blank')
-                                | Doe Lake Group Site
-                            a.item(href='http://www.fs.usda.gov/recarea/ocala/recarea/?recid=40231', target='_blank')
-                                | Site Info & Directions
-                            a.item(href='http://www.fs.usda.gov/main/ocala/maps-pubs', target='_blank')
-                                | Trail Maps
-
+        .twelve.wide.large.screen.sixteen.wide.column
             #about
-
                 include parts/about
+
+        .four.wide.column.large.screen.only
+
+            .ui.sticky
+                .ui.basic.segment
+                    #pointingMenu.ui.vertical.following.fluid.text.menu
+                        a.item(href='#top') Introduction
+                        a.item(href='#activities') Activities
+                        a.item(href='#cost') Cost
+                        a.item(href='#funds') Funds
+                        a.item(href='#tickets') Raffle Tickets
+                        a.item(href='#vendors') Vendors
+                        a.item(href='#rules') Rules
+                        a.item(href='#parking') Parking
+                .ui.basic.segment.grey
+                    .ui.vertical.fluid.text.menu
+                        h5.ui.item
+                            | More Information
+                        a.item(href='http://www.recreation.gov/camping/doe-lake-group-site/r/campgroundDetails.do?contractCode=NRSO&parkId=75493', target='_blank')
+                            | Doe Lake Group Site
+                        a.item(href='http://www.fs.usda.gov/recarea/ocala/recarea/?recid=40231', target='_blank')
+                            | Site Info & Directions
+                        a.item(href='http://www.fs.usda.gov/main/ocala/maps-pubs', target='_blank')
+                            | Trail Maps

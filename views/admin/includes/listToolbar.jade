@@ -55,35 +55,6 @@ mixin listToolbar
 
         .right.menu
 
-            if formMode != 'edit'
-
-                a.item(href=createAction, title='New')
-                    i.plus.icon
-                    | New
-
-            else
-
-                .ui.dropdown.link.item.icon
-                    | &nbsp;&nbsp;
-                    i.ellipsis.vertical.icon
-                    | &nbsp;&nbsp;
-
-                    a.item(href=createAction, title='New')
-                        i.plus.icon
-                        | New
-
-                    a.item.delete.button.medium(href="#", title='Delete')
-                        i.trash.outline.icon
-                        | Delete now...
-
-                    .ui.small.basic.delete.modal.center
-                        .header
-                            | Delete
-                        .description
-                            | Are you sure you want to delete this item?
-                        .actions
-                            .ui.negative.button
-                                | Cancel
-                            .ui.positive.labeled.icon.button
-                                i.checkmark.icon
-                                | Delete Now
+            a.item(href=createAction, title='New')
+                i.plus.icon
+                | New

@@ -1,0 +1,26 @@
+mixin viewToolbar
+
+    #toolbar.ui.menu.container
+
+
+        a.item(href=listAction, title='Back to list')
+            i.list.icon
+            span.hide-mobile Back to list
+
+        .right.menu
+
+            .ui.dropdown.link.item.icon
+                | &nbsp;&nbsp;
+                i.ellipsis.vertical.icon
+                | &nbsp;&nbsp;
+
+                .menu
+                    .header Actions
+
+                    a.item(href=editAction + data.id, title='Edit')
+                        i.edit.icon
+                        | Edit
+
+                    a.item(href=createAction, title='New')
+                        i.plus.icon
+                        | New

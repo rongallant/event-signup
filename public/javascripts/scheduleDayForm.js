@@ -50,5 +50,4 @@ function scheduleEventFormScripts(dataId, apiUrl) {
     //     }
     // )
     endTime.timepicker(timePickerDefaults)
-    $('select.dropdown').dropdown()
 }

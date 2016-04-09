@@ -29,7 +29,7 @@ html
             // meta(name='msapplication-TileColor', content='#3372DF')
             // link(rel='shortcut icon', href='images/favicon.png')
 
-        link(rel='stylesheet', href='/semantic/dist/semantic.min.css')
+        link(rel='stylesheet', href='/lib/semantic/dist/semantic.min.css')
         block stylesheets
         link(rel='stylesheet', href='/stylesheets/style.css')
 
@@ -38,10 +38,11 @@ html
         block content
         block footer
         block javascripts
-            script(src="/javascripts/jquery.min.js")
-            script(src="/semantic/dist/semantic.min.js")
-            script(src="/noty/js/noty/packaged/jquery.noty.packaged.min.js")
-            script(src="/javascripts/javascripts.js")
+            script(src="/lib/jquery.min.js")
+            script(src="/lib/semantic/dist/semantic.min.js")
+            script(src="/lib/noty/js/noty/packaged/jquery.noty.packaged.min.js")
+            script(src='/lib/jquery-maxlength.js')
+            script(src="/javascripts/globalScripts.js")
 
         //- Message Handling
         if error && error.length > 0

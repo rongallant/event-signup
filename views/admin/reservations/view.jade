@@ -1,0 +1,156 @@
+include ../includes/formElements
+include ../includes/viewToolbar
+include ../../mixins/vcard
+
+extend ../layout
+
+append javascripts
+    script.
+        $(function(){
+            var deleteComplete = function(){location.replace('#{listAction}') }
+            deleteConfirmation('#{apiItem}#{data.id}', '', deleteComplete)
+        })
+
+block toolbar
+    +viewToolbar
+
+append appContent
+
+    +formSegment
+
+        h3.ui.header= data._event.name
+            .sub.header #{data._event.startDate} -> #{data._event.endDate}
+
+    .ui.stackable.grid
+
+        .ten.wide.column
+
+            +formSegment
+
+                h5= data._contact ? data._contact.fullName : 'NO NAME'
+
+                if data.arrivingDate
+                    h5 Arriving Date
+                    p= data.arrivingDate
+
+                if data.additionalInformation
+                    h5 additionalInformation
+                    p= data.additionalInformation
+
+                if data._contact
+
+                    .ui.relaxed.list
+                        if data._contact
+                            .item
+                                i.user.icon
+                                .content
+                                    = data._contact.fullName
+
+                        if data._contact.address
+                            .item
+                                i.marker.icon
+                                .content
+                                    +vcardLink(data._contact.address)
+
+                        if data._contact.phone
+                            .item
+                                i.phone.icon
+                                .content
+                                    a.tel(href='tel:'+data._contact.phone)= data._contact.phone
+
+                        if data._contact.email
+                            .item
+                                i.mail.icon
+                                .content
+                                    a(href='mailto:' + data._contact.email)= data._contact.email
+
+        .six.wide.column
+
+            .ui.segments
+                .ui.segment
+
+                    h5
+                        i.blue.user.icon
+                        | Guests
+                    if data.guests.length
+                        each guest in data.guests
+                            .ui.list
+                                .item
+                                    i.user.icon
+                                    | #{ guest.firstName +' '+ guest.lastName }
+                    else
+                        | No guests
+                .ui.segment
+
+                    h5
+                        i.brown.paw.icon
+                        | Pets
+                    if data.pets.length
+                        each pets in data.petss
+                            .ui.list
+                                .item
+                                    i.paw.icon
+                                    | #{ pets.name +' '+ pets.weight }
+                    else
+                        | No pets
+                .ui.segment
+
+                    h5
+                        i.green.food.icon
+                        | Meals
+                    .ui.list
+                        .item [5 meals]
+                .ui.segment
+
+                    h5
+                        i.orange.map.icon
+                        | Activities
+                    if data.activities.length
+                        each activity in data.activities
+                            .ui.list
+                                .item
+                                    i.compass.icon
+                                    | #{ activity.name }
+                    else
+                        | No activities
+                .ui.segment
+
+                    h5
+                        i.blue.heart.icon
+                        | Tasks
+                    if data.tasks.length
+                        each task in data.tasks
+                            a.ui.basic.image.label
+                                i.paw.icon
+                                | #{ task.name }
+                    else
+                        | No tasks
+
+            .ui.segments
+
+                .ui.top.attached.segment
+                    h5
+                        i.plus.red.icon
+                        | Emergency Contact
+
+                .ui.red.segment
+
+                    if !data._contact
+                        a(href="#") add
+                    else
+
+                        -var ec = data._contact.emergencyContact
+
+                        .ui.list
+                            .item
+                                h5.ui.header #{ec.firstName + ' ' + ec.lastName}
+
+                            .item
+                                i.mail.icon
+                                .content
+                                    a(href='mailto:#{ec.email}')= ec.email
+
+                            .item
+                                i.phone.icon
+                                .content
+                                    a(href='tel:#{ec.phone}')= ec.phone

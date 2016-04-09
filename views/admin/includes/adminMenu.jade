@@ -1,0 +1,40 @@
+.left.menu
+
+    a.item(href='/admin/')
+        i.home.icon
+        | Admin Home
+    a.item(href='/guest')
+        i.world.icon
+        | Guest Home
+    if user
+        a.item(href=pageAccountLogout)
+            i.sign.out.icon
+            | Sign Out
+
+    .divider
+
+    .header
+        | Current Event
+    a.item(href='/admin/reservations/')
+        i.ticket.icon
+        | Reservations
+    a.item(href='/admin/persons/')
+        i.user.icon
+        | People
+
+    .divider
+
+    .header
+        | Event Management
+    a.item(href='/admin/events/')
+        i.calendar.outline.icon
+        | Events
+    a.item(href='/admin/activities/')
+        i.compass.icon
+        | Activities
+    a.item(href='/admin/meals/')
+        i.food.icon
+        | Meals
+    a.item(href='/admin/tasks/')
+        i.heart.icon
+        | Tasks

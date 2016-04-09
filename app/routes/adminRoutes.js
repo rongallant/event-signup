@@ -4,22 +4,22 @@
  ***********************************************************/
 
 module.exports = function(app) {
-
     var admin = require('./admin/index'),
-        adminEvents = require('./admin/events'),
-        adminPersons = require('./admin/persons'),
-        adminAddresses = require('./admin/addresses'),
         adminActivities = require('./admin/activities'),
-        adminTasks = require('./admin/tasks'),
-        adminMeals = require('./admin/meals')
+        adminAddresses = require('./admin/addresses'),
+        adminEvents = require('./admin/events'),
+        adminMeals = require('./admin/meals'),
+        adminPersons = require('./admin/persons'),
+        adminReservations = require('./admin/reservations'),
+        adminTasks = require('./admin/tasks')
 
     // Admin Section
     app.use('/admin', admin)
-    app.use('/admin/events', adminEvents)
-    app.use('/admin/persons', adminPersons)
-    app.use('/admin/addresses', adminAddresses)
     app.use('/admin/activities', adminActivities)
-    app.use('/admin/tasks', adminTasks)
+    app.use('/admin/addresses', adminAddresses)
+    app.use('/admin/events', adminEvents)
     app.use('/admin/meals', adminMeals)
-
+    app.use('/admin/persons', adminPersons)
+    app.use('/admin/reservations', adminReservations)
+    app.use('/admin/tasks', adminTasks)
 }

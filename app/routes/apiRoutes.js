@@ -21,6 +21,7 @@ module.exports = function(app) {
         apiPersons = require('./api/persons'),
 
         apiReservation = require('./api/reservation'),
+        apiReservations = require('./api/reservations'),
 
         apiTask = require('./api/task'),
         apiTasks = require('./api/tasks')
@@ -42,8 +43,8 @@ module.exports = function(app) {
     app.use('/api/persons', apiPersons)
 
     app.use('/api/reservation', apiReservation)
+    app.use('/api/reservations', apiReservations)
 
     app.use('/api/task', apiTask)
     app.use('/api/tasks', apiTasks)
-
 }

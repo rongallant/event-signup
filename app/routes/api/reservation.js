@@ -1,8 +1,6 @@
 var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'),
-    Account = require("../../models/account"),
-    EmergencyContact = require("../../models/emergencyContact"),
     Person = require("../../models/person"),
     Reservation = require("../../models/reservation")
 
@@ -19,20 +17,6 @@ function isJSON(testVar) {
        return false
     }
 }
-
-// function getPersonId(req, res, next) {
-//     Account.findOne({ "username" : req.user.username },  "_person", function(err, data){
-//         if (err) {
-//             console.error(err)
-//             return next(err)
-//         }
-//         req.personId = data._person._id
-//         console.log('_person' + req.body._contact)
-//         console.log('data._person' + data._person)
-//         console.log('data._person._id' + data._person._id)
-//         return next()
-//     })
-// }
 
 // Save Contact
 function insertContactsEmergencyContact(req, res, next) {
@@ -59,8 +43,6 @@ function insertContactsEmergencyContact(req, res, next) {
             console.error("Did not save emergency contact " + data)
             return next()
         }
-        console.log("Emergency contact saved")
-        console.log(data)
         return next()
     })
 }
@@ -107,13 +89,13 @@ router.post('/', insertContactsEmergencyContact, createReservation, function(req
 /* GET Returns single item. */
 router.get('/:id', function(req, res, next) {
     Reservation.findById(req.params.id)
-        .populate('_event _contact guests pets activities tasks')
+        .populate('_event _contact _contact.address guests pets activities tasks')
         .exec(function(err, data) {
             if (err) {
                 console.error(err)
                 return res.status(404).json({ "status": "404", "message": "Could not find reservation", "error": err })
             }
-            res.status(201).json({ "status": "201", "data" : {"id" : req.body.id} })
+            res.status(201).json({ "status": "201", "data": data })
         }
     )
 })

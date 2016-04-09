@@ -6,14 +6,16 @@ include ../includes/formElements
 
 extend ../layout
 
-block toolbar
-    +formToolbar
-
 append javascripts
     script.
         $(function(){
+            $.fn.stripNonDigits = function() {
+                 this.blur(function() {
+                    $(this).val($(this).val().replace(/[^0-9\.]+/g, ''))
+                })
+            }
+            $('#phone').stripNonDigits()
             var validationRules = {
-                // username: {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
                 firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},
                 lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'},{type:'doesntContain[a-zA-Z]'}]},
                 email: {rules:[{type:'empty'}, {type:'maxLength[254]'},{type:'email'}]},
@@ -36,7 +38,7 @@ append javascripts
                 }
             }
 
-            var $form =  $('form[name=mainForm]')
+            var $form = $('form[name=mainForm]')
 
             // CREATE / SAVE
             $form.form({
@@ -66,30 +68,8 @@ append javascripts
                 }
             })
 
-            $('.ui.delete.modal').modal({
-                onApprove: function(){
-                    $.ajax({
-                        type: 'delete',
-                        data:  $form.form('get values'),
-                        url: '#{apiItem}#{data.id}',
-                        dataType: 'JSON',
-                        statusCode: {
-                            204: function() {
-                                $.get('/message/success/Deleted successfully')
-                            },
-                            501: function() {
-                                $.get('/message/error/Error deleting')
-                            }
-                        }
-                    })
-                    .done(function(response) {
-                        location.replace('#{listAction}')
-                    })
-                }
-            })
-            $form.find('.delete.button').click(function(){
-                $('.ui.delete.modal').modal('show')
-            })
+            var deleteComplete = function(){location.replace('#{listAction}') }
+            deleteConfirmation('#{apiItem}#{data.id}', $form.form('get values'), deleteComplete)
 
             // Is a child fields.
             var childAge = $form.find("#childAge")
@@ -108,7 +88,11 @@ append javascripts
             $form.find('.ui.checkbox').checkbox()
             $form.find('.personSelector').search(localPersonSearch)
             $form.find('#addressSearch').search(googleAddressSearchAndPopulate)
+            $form.find('select.dropdown, .selection.dropdown').dropdown()
         })
+
+block toolbar
+    +formToolbar
 
 append appContent
 
@@ -122,10 +106,6 @@ append appContent
 
                 +formSegmentIntro
 
-                // .field.required
-                //     label(for='username') Username/Nickname
-                //     input(type="text", name='username', id='username', value=data.username)
-
                 .two.fields
 
                     .field.required
@@ -136,15 +116,9 @@ append appContent
                         label(for='lastName') Last Name
                         input(type="text", name='lastName', id='lastName', value=data.lastName)
 
-                .two.fields
-
-                    // .field.required
-                    //     label(for='email') Email
-                    //     input(type="email", name='email', id='email', value=data.email)
-
-                    .field.required
-                        label(for='phone') Phone
-                        input(type="text", name='phone', id='phone', value=data.phone)
+                .field.required
+                    label(for='phone') Phone
+                    input(type="text", name='phone', id='phone', value=data.phone)
 
                 .field
                     label(for='isChild') Is Child

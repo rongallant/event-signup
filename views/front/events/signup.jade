@@ -2,6 +2,100 @@ include ../../mixins/selector
 
 extends ../layout
 
+append frontContent
+
+    h1.ui.header Signup for #{data._event.name}
+    .ui.hidden.divider
+    .ui.hidden.divider
+
+    form.ui.form(name='mainForm')
+
+        input(type='hidden', name='_event', value=data._event)
+        input(type='hidden', name='_contact', value=data._contact)
+
+        .ui.relaxed.stackable.grid
+
+            .eight.wide.column
+
+                +selectorListPanel('guests', data.guests, 'Guest', 'blue user', 'blue')
+
+                +selectorListPanel('pets', data.pets, 'Pet', 'brown paw', 'brown')
+
+            .eight.wide.column
+
+                h5.ui.heading Emergency Contact
+                .ui.basic.red.segment
+
+                    .field.required
+                        label(for='emergencyContact_fullName') Full Name
+                        input(type='text', id='emergencyContact_fullName', name='emergencyContact[fullName]',
+                            value=data._contact.emergencyContact?data._contact.emergencyContact.firstName +' '+ data._contact.emergencyContact.lastName:'')
+
+                    .field.required
+                        label(for='emergencyContact_phone') Phone Number
+                        input(type='text', id='emergencyContact_phone', name='emergencyContact[phone]',
+                            value=data._contact.emergencyContact?data._contact.emergencyContact.phone:'')
+
+                    .field.required
+                        label(for='emergencyContact_email') Email Address
+                        input(type='text', id='emergencyContact_email', name='emergencyContact[email]',
+                            value=data._contact.emergencyContact?data._contact.emergencyContact.email:'')
+
+        include parts/eventDayFields
+
+        .ui.container
+            .ui.grid
+                .sixteen.wide.right.aligned.column
+                    .ui.big.primary.submit.button
+                        | Reserve Your Spot!
+
+        .ui.hidden.clearing.divider
+        .ui.error.message
+        .ui.hidden.clearing.divider
+
+append footer
+p &nbsp;
+p &nbsp;
++selectorModal('guests', 'Guest', 'user blue', 'blue')
+    .two.fields.required
+        .field
+            label(for='firstName') First Name
+            input(type='text', name='firstName', id='firstName', maxlength='3')
+        .field
+            label(for='lastName') Last Name
+            input(type='text', name='lastName', id='lastName', maxlength='3')
+    .two.fields
+        .field.required
+            label(for='phone') Phone
+            .ui.left.icon.input
+                input(type='text', name='phone', id='phone', maxlength='15')
+                i.phone.icon
+        .field
+            label(for='email') Email
+            .ui.left.icon.input
+                input(type='text', name='email', id='email', maxlength='255')
+                i.mail.icon
+
++selectorModal('pets', 'Pet', 'paw brown', 'brown')
+    .two.fields
+        .field
+            label(for='petType') Pet Type
+                select.ui.dropdown(type='text', name='petType', id='petType')
+                    option Dog
+                    option Cat
+                    option Other
+
+        .field
+            label(for='petName') Pets Name
+            input(type='text', name='petName', id='petName', maxlength='35')
+
+        .field
+            label(for='petWeight') Pets Weight
+            .ui.right.labeled.input
+                input(type='number', name='petWeight', id='petWeight', maxlength='3')
+                .ui.basic.label
+                    | lb
+
 append javascripts
     script.
         var guestListContainer = !{ data.guests && data.guests.length ? JSON.stringify(data.guests) : '[]' }
@@ -24,9 +118,30 @@ append javascripts
             return (formErrors.length > 0)
         }
 
+        function scheduleForDay(dateTime) {
+             $.ajax({
+                type: 'get',
+                url: '/events/scheduleForDay/#{data._event.id}/' + dateTime,
+                dataType: 'JSON'
+            })
+            .error(function(response) {
+                toaster('error', 'Error: ' + JSON.parse(response.responseText).message)
+            })
+            .done(function(response) {
+                location.replace('#{editAction}' + response.data.id)
+            })
+        }
+
         $(function(){
             var $form =  $('form[name=mainForm]')
-            $('.tabular.menu .item').tab()
+
+            $('.tabular.menu .item')
+                .tab({
+                    cache: false,
+                    context : 'parent',
+                    auto    : true,
+                    path    : '/events/eventDay/#{eventId}/'
+                })
 
             var validationRules = {
                 emergencyContact_fullName : {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
@@ -40,7 +155,6 @@ append javascripts
                 fields: validationRules,
                 keyboardShortcuts: false,
                 onFailure: function(formErrors, fields) {
-
                     console.log(formErrors)
                     fields['guests'] = guestListContainer
                     fields['pets'] = petListContainer
@@ -101,98 +215,3 @@ append javascripts
     -var petFormRules = "{petName:{rules:[{type:'empty'}, {type:'maxLength[35]'}]},petWeight:{rules:[{type:'empty'}, {type:'maxLength[3]'}]}}"
     -var petRowItem = "fields.petName + ' - ' + fields.petWeight + ' lb'"
     +selectorJs('pets', 2, petFormRules, petRowItem, 'petListContainer')
-
-append frontContent
-
-    .ui.text.container
-        h1.ui.header Signup for #{data._event.name}
-        .ui.hidden.divider
-        .ui.hidden.divider
-
-        form.ui.form(name='mainForm')
-
-            input(type='hidden', name='_event', value=data._event)
-            input(type='hidden', name='_contact', value=data._contact)
-
-            .ui.relaxed.stackable.grid
-
-                .eight.wide.column
-
-                    +selectorListPanel('guests', data.guests, 'Guest', 'blue user', 'blue')
-
-                    +selectorListPanel('pets', data.pets, 'Pet', 'brown paw', 'brown')
-
-                .eight.wide.column
-
-                    h5.ui.heading Emergency Contact
-                    .ui.basic.red.segment
-
-                        .field.required
-                            label(for='emergencyContact_fullName') Full Name
-                            input(type='text', id='emergencyContact_fullName', name='emergencyContact[fullName]',
-                                value=data._contact.emergencyContact?data._contact.emergencyContact.firstName +' '+ data._contact.emergencyContact.lastName:'')
-
-                        .field.required
-                            label(for='emergencyContact_phone') Phone Number
-                            input(type='text', id='emergencyContact_phone', name='emergencyContact[phone]',
-                                value=data._contact.emergencyContact?data._contact.emergencyContact.phone:'')
-
-                        .field.required
-                            label(for='emergencyContact_email') Email Address
-                            input(type='text', id='emergencyContact_email', name='emergencyContact[email]',
-                                value=data._contact.emergencyContact?data._contact.emergencyContact.email:'')
-
-            // include parts/eventDayFields
-
-            .ui.container
-                .ui.grid
-                    .sixteen.wide.right.aligned.column
-                        .ui.big.primary.submit.button
-                            | Reserve Your Spot!
-
-            .ui.hidden.clearing.divider
-            .ui.error.message
-            .ui.hidden.clearing.divider
-
-append footer
-    p &nbsp;
-    p &nbsp;
-    +selectorModal('guests', 'Guest', 'user blue', 'blue')
-        .two.fields.required
-            .field
-                label(for='firstName') First Name
-                input(type='text', name='firstName', id='firstName', maxlength='3')
-            .field
-                label(for='lastName') Last Name
-                input(type='text', name='lastName', id='lastName', maxlength='3')
-        .two.fields
-            .field.required
-                label(for='phone') Phone
-                .ui.left.icon.input
-                    input(type='text', name='phone', id='phone', maxlength='15')
-                    i.phone.icon
-            .field
-                label(for='email') Email
-                .ui.left.icon.input
-                    input(type='text', name='email', id='email', maxlength='255')
-                    i.mail.icon
-
-    +selectorModal('pets', 'Pet', 'paw brown', 'brown')
-        .two.fields
-            .field
-                label(for='petType') Pet Type
-                    select.ui.dropdown(type='text', name='petType', id='petType')
-                        option Dog
-                        option Cat
-                        option Other
-
-            .field
-                label(for='petName') Pets Name
-                input(type='text', name='petName', id='petName', maxlength='35')
-
-            .field
-                label(for='petWeight') Pets Weight
-                .ui.right.labeled.input
-                    input(type='number', name='petWeight', id='petWeight', maxlength='3')
-                    .ui.basic.label
-                        | lb

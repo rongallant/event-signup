@@ -46,63 +46,9 @@ append javascripts
                 }
             })
 
-            $('.ui.delete.modal').modal({
-                onApprove: function(){
-                    $.ajax({
-                        type: 'delete',
-                        data:  $form.form('get values'),
-                        url: '#{apiItem}#{data.id}',
-                        dataType: 'JSON',
-                        statusCode: {
-                            204: function() {
-                                $.get('/message/success/Deleted successfully')
-                            },
-                            501: function() {
-                                $.get('/message/error/Error deleting')
-                            }
-                        }
-                    })
-                    .done(function(response) {
-                        location.replace('#{listAction}')
-                    })
-                }
-            })
-            $form.find('.delete.button').click(function(){
-                $('.ui.delete.modal').modal('show')
-            })
+            var deleteComplete = function(){location.replace('#{listAction}') }
+            deleteConfirmation('#{apiItem}#{data.id}', $form.form('get values'), deleteComplete)
 
-            // Timepicker
-            // $form.find('#startTime').timepicker({
-            //     minTime: '5:00am',
-            //     maxTime: '12:00am',
-            //     match: 'text',
-            //     useSelect: true,
-            //     noneOption: ' ',
-            //     className: 'ui selection dropdown'
-            // })
-            // var endTimeField = $form.find('#endTimeField')
-            // endTimeField.find('#endTime').timepicker({
-            //     minTime: '5:00am',
-            //     maxTime: '12:00am',
-            //     match: 'text',
-            //     useSelect: true,
-            //     noneOption: ' ',
-            //     className: 'ui selection dropdown',
-            //     showDuration: true
-            // })
-            // $('#startTime').on('changeTime', function() {
-            //     // Get selected time
-            //     var out = moment($(this).timepicker('getTime')).add(1, 'h').format('h:mma')
-            //     // Set hidden field
-            //     endTimeField.find('#endTime').val(out)
-
-            //     endTimeField.find('#endTime').timepicker('setTime', out)
-
-            //     endTimeField.find('#endTime').timepicker('option', { minTime: $(this).timepicker('getTime') })
-
-            //     endTimeField.find('.ui-timepicker-select').dropdown()
-            // })
-            // $form.find('.ui-timepicker-select').dropdown()
             $form.find('.ui.checkbox').checkbox()
             $form.find('.personSelector').search(localPersonSearch)
         })

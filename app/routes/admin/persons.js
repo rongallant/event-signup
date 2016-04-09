@@ -23,17 +23,13 @@ router.use(function(req, res, next) {
  * PAGES
  ************************************************************/
 
-function hasVal(variable){
-    return (typeof variable !== 'undefined')
+function hasVal(variable) {
+    return (variable !== 'undefined' && variable)
 }
 
 router.get('/edit/:id', auth.needsRole('ADMIN'), function(req, res, next) {
     request({"uri":res.locals.apiUri.secure.person.base + req.params.id, "headers":{'x-access-token':req.session.authToken}}, function (err, data){
         if (err) { return next(err) }
-        
-        console.log("Person")
-        console.log(data.body)
-        
         res.render(path.join(res.locals.editView), {
             title: "Editing " + appDesc['singularName'],
             user: req.user,
@@ -59,7 +55,7 @@ router.get('/create', auth.needsRole('ADMIN'), function(req, res) {
 
 router.get('/:currPage?', auth.needsRole('ADMIN'), function(req, res, next){
     try {
-        var apiUri = res.locals.apiUri.secure.persons
+        var apiUri = res.locals.apiUri.secure.persons.base
         if (hasVal(req.params.currPage))
             apiUri += req.params.currPage
         else

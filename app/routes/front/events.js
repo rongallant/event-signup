@@ -1,10 +1,15 @@
-var express = require('express'),
+var async = require("async"),
+    express = require("express"),
     router = express.Router(),
-    mongoose = require('mongoose'),
+    moment = require("moment"),
+    mongoose = require("mongoose"),
     Account = require("../../models/account"),
+    Activity = require("../../models/activity"),
+    Task = require("../../models/task"),
+    Meal = require("../../models/meal"),
     Event = require("../../models/event"),
     Reservation = require("../../models/reservation"),
-    appSettings = require('../utils/appSettings'),
+    appSettings = require("../utils/appSettings"),
     appDesc = []
 
 appDesc['apiSingle'] = '/reservation'
@@ -18,6 +23,43 @@ router.use(function(req, res, next) {
 /************************************************************
  * VIEWS
  ************************************************************/
+
+function dynamicSort(property) {
+    var sortOrder = 1;
+    if(property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
+    }
+    return function (a,b) {
+        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result * sortOrder;
+    }
+}
+
+(function(){
+  if (typeof Object.defineProperty === 'function'){
+    try{Object.defineProperty(Array.prototype,'sortBy',{value:sb}); }catch(e){}
+  }
+  if (!Array.prototype.sortBy) Array.prototype.sortBy = sb;
+
+  function sb(f){
+    for (var i=this.length;i;){
+      var o = this[--i];
+      this[i] = [].concat(f.call(o,o,i),o);
+    }
+    this.sort(function(a,b){
+      for (var i=0,len=a.length;i<len;++i){
+        if (a[i]!=b[i]) return a[i]<b[i]?-1:1;
+      }
+      return 0;
+    });
+    for (var i=this.length;i;){
+      this[--i]=this[i][this[i].length-1];
+    }
+    return this;
+  }
+})();
+
 
 function hasVal(varName) {
     return (varName !== undefined) && (varName !== null)  && varName
@@ -106,18 +148,81 @@ function createNewReservation(req, res, next) {
     }
 }
 
-// Render Reservation Page
+// VIEW Signup Page
 router.get('/signup', getPersonId, getUserReservation, getCurrentEvent, createNewReservation, function(req, res, next) {
-    console.log('Render Reservation Page')
-    console.log(req.reservation)
-
     res.render("front/events/signup", {
         title: "Event Signup",
         user: req.user,
         data: req.reservation,
         formMethod: 'POST',
         formAction: res.locals.apiUri.secure.reservation.base,
-        formComplete: res.locals.pageAccountHome
+        formComplete: res.locals.pageAccountHome,
+        moment: moment
+    })
+})
+
+var getScheduleForDay = function (userInput, callback) {
+    var start = moment(userInput.eventDay, 'x').startOf('day'),
+        end = moment(userInput.eventDay, 'x').endOf('day'),
+        query = { _event:userInput.eventId, startDateTime: { "$gte": start, "$lt": end }}
+    async.parallel({
+        modelAFind: function(cb) {
+            Activity.find(query)
+                .select("_contact name description startDateTime duration")
+                .populate("_contact")
+                .exec(cb)
+        },
+        modelBFind: function(cb) {
+            modelAFind: Task.find(query)
+                .select("_contact name description startDateTime duration")
+                .populate("_contact")
+                .exec(cb)
+        },
+        modelCFind: function(cb) {
+            Meal.find(query)
+                .select("_contact name description startDateTime duration")
+                .populate("_contact")
+                .exec(cb)
+        }
+    }, function(err, result) {
+        var activities = []
+        var tasks = []
+        var meals = []
+        for (var i in result.modelAFind) {
+            var obj = JSON.stringify(result.modelAFind[i])
+            var obj2 = JSON.parse(obj)
+            obj2.activity = 'activity'
+            activities.push(obj2)
+        }
+        for (var i in result.modelBFind) {
+            var obj = JSON.stringify(result.modelBFind[i])
+            var obj2 = JSON.parse(obj)
+            obj2.activity = 'task'
+            tasks.push(obj2)
+        }
+        for (var i in result.modelCFind) {
+            var obj = JSON.stringify(result.modelCFind[i])
+            var obj2 = JSON.parse(obj)
+            obj2.activity = 'meal'
+            meals.push(obj2)
+        }
+        var ret = activities.concat(tasks, meals)
+        // sort by time
+        // ret.sort(dynamicSort("-startDateTime"));
+        ret.sortBy(function(o){ return o.startDateTime });
+        callback(err, ret);
+  })
+}
+
+// Event Day Part
+router.get('/eventDay/:eventId/:eventDay', function(req, res, next) {
+    getScheduleForDay({ eventId: req.params.eventId, eventDay: req.params.eventDay }, function(err, data) {
+        if (err) console.error(err)
+        res.render("front/events/parts/eventDay", {
+            user: req.user,
+            data: data,
+            moment: moment
+        })
     })
 })
 

@@ -1,0 +1,395 @@
+include ../includes/formElements
+include ../includes/formToolbar
+include ../../mixins/personSelector
+include ../../mixins/selector
+include ../../mixins/vcard
+
+extends ../layout
+
+block toolbar
+    +formToolbar
+
+append appContent
+
+    form.ui.form(name='mainForm')
+
+        input(type='hidden', name='_event', value=data._event)
+        input(type='hidden', name='_contact', value=data._contact)
+
+        +mainFormWrapper
+
+            +formSegment
+                h4.ui.dividing.header Reservation for #{data._contact.fullName}
+                    .sub.header #{data._event.name}: #{data._event.startDate} -> #{data._event.endDate}
+                +formSegmentIntro
+                    p Before you start, make sure you have created the person in the person section you wish to be the main contact for this event.
+
+            .ui.relaxed.stackable.grid
+
+                .ten.wide.column
+
+                    +formSegment
+                        h5
+                            .content
+                                i.icon.blue.user
+                                | Primary Guest
+                        .ui.basic.segment.blue
+                            if data._contact
+                                .ui.relaxed.list
+                                    if data._contact
+                                        .item
+                                            i.user.icon
+                                            .content
+                                                = data._contact.fullName
+
+                                    if data._contact.address
+                                        .item
+                                            i.marker.icon
+                                            .content
+                                                +vcardLink(data._contact.address)
+
+                                    if data._contact.phone
+                                        .item
+                                            i.phone.icon
+                                            .content
+                                                a.tel(href='tel:'+data._contact.phone)= data._contact.phone
+
+                                    if data._contact.email
+                                        .item
+                                            i.mail.icon
+                                            .content
+                                                a(href='mailto:' + data._contact.email)= data._contact.email
+
+                    +formSegment
+                        h5
+                            i.plus.red.icon
+                            | Emergency Contact
+                        .ui.basic.segment.red
+                            if !data._contact
+                                a(href="#") add
+                            else
+                                -var ec = data._contact.emergencyContact
+                                .ui.relaxed.list
+                                    .item
+                                        h5.ui.header #{ec.firstName + ' ' + ec.lastName}
+                                    .item
+                                        i.phone.icon
+                                        .content
+                                            a(href='tel:#{ec.phone}')= ec.phone
+                                    .item
+                                        i.mail.icon
+                                        .content
+                                            a(href='mailto:#{ec.email}')= ec.email
+
+                .six.wide.column
+
+                    +formSegment
+                        +selectorListPanel('guests', data.guests, 'Guest', 'blue users', 'blue')
+
+                    +formSegment
+                        +selectorListPanel('pets', data.pets, 'Pet', 'brown paw', 'brown')
+
+                    +formSegment
+                        +selectorListPanel('meals', data.meals, 'Meal', 'green food', 'green')
+
+                    +formSegment
+                        +selectorListPanel('activities', data.activities, 'Activity', 'orange compass', 'orange')
+
+                    +formSegment
+                        +selectorListPanel('tasks', data.tasks, 'Task', 'yellow heart', 'yellow')
+
+            // include parts/eventDayFields
+
+            .ui.hidden.clearing.divider
+            .ui.error.message
+            .ui.hidden.clearing.divider
+
+append footer
+    p &nbsp;
+    p &nbsp;
+    +selectorModal('guests', 'Guest', 'user blue', 'blue')
+        .two.fields.required
+            .field
+                label(for='firstName') First Name
+                input(type='text', name='firstName', id='firstName', maxlength='3')
+            .field
+                label(for='lastName') Last Name
+                input(type='text', name='lastName', id='lastName', maxlength='3')
+        .two.fields
+            .field.required
+                label(for='phone') Phone
+                .ui.left.icon.input
+                    input(type='text', name='phone', id='phone', maxlength='15')
+                    i.phone.icon
+            .field
+                label(for='email') Email
+                .ui.left.icon.input
+                    input(type='text', name='email', id='email', maxlength='255')
+                    i.mail.icon
+
+    +selectorModal('pets', 'Pet', 'paw brown', 'brown')
+        .two.fields
+            .field
+                label(for='petType') Pet Type
+                    select.ui.dropdown(type='text', name='petType', id='petType')
+                        option Dog
+                        option Cat
+                        option Other
+
+            .field
+                label(for='petName') Pets Name
+                input(type='text', name='petName', id='petName', maxlength='35')
+
+            .field
+                label(for='petWeight') Pets Weight
+                .ui.right.labeled.input
+                    input(type='number', name='petWeight', id='petWeight', maxlength='3')
+                    .ui.basic.label
+                        | lb
+
+    //- Meals Form
+    +selectorModal('meals', 'Meal', 'green food', 'green')
+        input(type='hidden', name="_event", id="_event", value=data.id)
+
+        .field.required
+            label(for='name') Meal Name
+            input(type='text', name='name', id='name')
+
+        .field.required.textarea
+            label(for='description') Meal Description
+            +textarea('description', 'mealDescription', '2000')
+
+        .fields
+
+            .field.ten.wide.required
+                label(for="startDate") Start Date
+                input(type='text', name="startDate", id="startDate", value=data.startDate, placeholder='Date')
+
+            .field.six.wide.required
+                label(for="startDate") Start Time
+                input(type='text', name="startTime", id="startTime", value=data.startTime, placeholder='Time')
+
+            .field.ten.wide.required
+                label(for="duration") Duration
+                input(type='text', name="duration", id="duration", value=data.duration, placeholder='Duration')
+
+        .field.required
+            label(for='_contact') Main Contact
+            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+
+    //- Activity Form
+    +selectorModal('activities', 'Activity', 'orange map', 'orange')
+        input(type='hidden', name="_event", id="_event", value=data.id)
+
+        .field.required
+            label(for='name') Activity Name
+            input(type='text', name='name', id='name')
+
+        .field.required.textarea
+            label(for='description') Activity Description
+            +textarea('description', 'activityDescription', '2000')
+
+        .fields
+
+            .field.ten.wide.required
+                label(for="startDate") Start Date
+                input(type='text', name="startDate", id="startDate", value=data.startDate, placeholder='Date')
+
+            .field.six.wide.required
+                label(for="startDate") Start Time
+                input(type='text', name="startTime", id="startTime", value=data.startTime, placeholder='Time')
+
+            .field.ten.wide.required
+                label(for="duration") Duration
+                input(type='text', name="duration", id="duration", value=data.duration, placeholder='Duration')
+
+        .field.required
+            label(for='_contact') Main Contact
+            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+
+    //- Tasks Form
+    +selectorModal('tasks', 'Task', 'yellow heart', 'yellow')
+        input(type='hidden', name="_event", id="_event", value=data.id)
+
+        .field.required
+            label(for='name') Task Name
+            input(type='text', name='name', id='name')
+
+        .field.required.textarea
+            label(for='description') Task Description
+            +textarea('description', 'taskDescription', '2000')
+
+
+        .field.required
+            label(for="location") Location
+            input(type='text', name="location", id="location", value=data.location, placeholder='Location')
+
+        .fields
+
+            .field.eight.wide.required
+                label(for="effort") Effort
+                select.ui.search.dropdown(name="effort", id="effort")
+                    option Select
+                    option(value=1) Easy
+                    option(value=2) Moderate
+                    option(value=3) Difficult
+                    option(value=4) Something
+                    option(value=5) Heavy Lifting
+
+            .field.eight.wide.required
+                label(for="personsRequired") Persons Required
+                select.ui.search.dropdown(name="personsRequired", id="personsRequired")
+                    option Select
+                    option(value=1) 1
+                    option(value=2) 2
+                    option(value=3) 3
+                    option(value=4) 4
+                    option(value=5) 5+
+
+        .fields
+
+            .field.ten.wide.required
+                label(for="startDate") Start Date
+                input(type='text', name="startDate", id="startDate", value=data.startDate, placeholder='Date')
+
+            .field.six.wide.required
+                label(for="startDate") Start Time
+                input(type='text', name="startTime", id="startTime", value=data.startTime, placeholder='Time')
+
+            .field.ten.wide.required
+                label(for="duration") Duration
+                input(type='text', name="duration", id="duration", value=data.duration, placeholder='Duration')
+
+        .field.required
+            label(for='_contact') Main Contact
+            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+
+append javascripts
+    script.
+        var guestListContainer = !{ data.guests && data.guests.length ? JSON.stringify(data.guests) : '[]' }
+        var petListContainer = !{ data.pets && data.pets.length ? JSON.stringify(data.pets) : '[]' }
+        var mealListContainer = !{ data.meals && data.meals.length ? JSON.stringify(data.meals) : '[]' }
+        var taskListContainer = !{ data.tasks && data.tasks.length ? JSON.stringify(data.tasks) : '[]' }
+        var activityListContainer = !{ data.activities && data.activities.length ? JSON.stringify(data.activities) : '[]' }
+
+        function customValidators($form, fields, guests, pets, formErrors) {
+            if (typeof formErrors == 'undefined') {
+                formErrors = []
+            }
+            if (fields['guests'].length > 5) {
+                formErrors.push('No more than 5 guests')
+            }
+            if (fields['pets'].length > 2) {
+                formErrors.push('No more than 2 pets')
+            }
+
+            if (fields['meals'].length > 25) {
+                formErrors.push('No more than 25 meals')
+            }
+            if (fields['tasks'].length > 25) {
+                formErrors.push('No more than 10 tasks')
+            }
+            if (fields['activities'].length > 50) {
+                formErrors.push('No more than 10 activities')
+            }
+
+            console.log(formErrors)
+            if (formErrors.length > 0) {
+                $form.form('add errors', formErrors)
+            }
+            return (formErrors.length > 0)
+        }
+
+        $(function(){
+            var $form =  $('form[name=mainForm]')
+            $('.tabular.menu .item').tab()
+
+            var validationRules = {
+                // emergencyContact_fullName : {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
+                // emergencyContact_phone : {rules:[{type:'empty'}, {type:'maxLength[15]'}]},
+                // emergencyContact_email : {rules:[{type:'maxLength[254]'}, {type:'email'}]}
+            }
+
+            // CREATE / SAVE
+            $form.form({
+                debug: false,
+                fields: validationRules,
+                keyboardShortcuts: false,
+                onFailure: function(formErrors, fields) {
+                    fields['guests'] = guestListContainer
+                    fields['pets'] = petListContainer
+                    fields['meals'] = mealListContainer
+                    fields['tasks'] = taskListContainer
+                    fields['activities'] = activityListContainer
+                    customValidators($form, fields, formErrors)
+                    return false
+                },
+                onSuccess: function(event, fields) {
+                    fields['guests'] = guestListContainer
+                    fields['pets'] = petListContainer
+                    fields['meals'] = mealListContainer
+                    fields['tasks'] = taskListContainer
+                    fields['activities'] = activityListContainer
+                    if (customValidators($form, fields)) { // has errors
+                        return false
+                    }
+                    console.log('Attemping to save into #{formAction} via #{formMethod}' )
+                    $.ajax({
+                        type: '#{formMethod}',
+                        url: '#{apiItem}',
+                        data: fields,
+                        dataType: 'JSON',
+                        headers: {
+                            "x-access-token":"#{authToken}"
+                        },
+                        statusCode: {
+                            201: function(data, textStatus, jqXHR) {
+                                $.get('/message/success/Saved successfully')
+                            }
+                        }
+                    })
+                    .error(function(response) {
+                        console.error('AJAX ERROR')
+                        console.error(JSON.parse(response.responseText).message)
+                        var formErrors = []
+                        var p = JSON.parse(response.responseText).errors
+                        for (var key in p) {
+                            if (p.hasOwnProperty(key)) {
+                                formErrors.push(p[key].message)
+                            }
+                        }
+                        if (formErrors.length > 0) {
+                            $form.form('add errors', formErrors)
+                        }
+                        toaster('error', JSON.parse(response.responseText).message)
+                        return false
+                    })
+                    .done(function(response) {
+                        console.log('SUCCESS')
+                        console.log(response)
+                        location.replace('#{formComplete}')
+                    })
+                    return false
+                }
+            })
+        })
+
+    -var guestFormRules = "{firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]}}"
+    -var guestRowItem = "fields.firstName + ' ' + fields.lastName"
+    +selectorJs('guests', 5, guestFormRules, guestRowItem, 'guestListContainer')
+
+    -var petFormRules = "{petName:{rules:[{type:'empty'}, {type:'maxLength[35]'}]},petWeight:{rules:[{type:'empty'}, {type:'maxLength[3]'}]}}"
+    -var petRowItem = "fields.petName + ' - ' + fields.petWeight + ' lb'"
+    +selectorJs('pets', 2, petFormRules, petRowItem, 'petListContainer')
+
+    -var activityFormRules = "{name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},duration:{rules:[{type:'empty'}]}}"
+    -var activityRowItem = "fields.name + ' - ' + fields.startTime"
+    +selectorJs('activities', 25, activityFormRules, activityRowItem, 'activityListContainer', apiUri.secure.activity)
+
+    -var mealFormRules = "{name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},duration:{rules:[{type:'empty'}]}}"
+    -var mealRowItem = "fields.name + ' - ' + fields.startTime"
+    +selectorJs('meals', 25, mealFormRules, mealRowItem, 'mealListContainer', apiUri.secure.meal)
+
+    -var taskFormRules = "{name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},duration:{rules:[{type:'empty'}]}}"
+    -var taskRowItem = "fields.name + ' - ' + fields.startTime"
+    +selectorJs('tasks', 50, taskFormRules, taskRowItem, 'taskListContainer', apiUri.secure.task)
