@@ -175,7 +175,7 @@ append footer
 
         .field.required
             label(for='_contact') Main Contact
-            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+            +personSelector('_contact', '_contact', data._contact?data._contact.id:'')
 
     //- Activity Form
     +selectorModal('activities', 'Activity', 'orange map', 'orange')
@@ -205,7 +205,7 @@ append footer
 
         .field.required
             label(for='_contact') Main Contact
-            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+            +personSelector('_contact', '_contact', data._contact?data._contact.id:'')
 
     //- Tasks Form
     +selectorModal('tasks', 'Task', 'yellow heart', 'yellow')
@@ -262,7 +262,7 @@ append footer
 
         .field.required
             label(for='_contact') Main Contact
-            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+            +personSelector('_contact', '_contact', data._contact?data._contact.id:'')
 
 append javascripts
     script.

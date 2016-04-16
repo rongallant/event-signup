@@ -27,6 +27,30 @@ function hasVal(variable){
     return (typeof variable !== 'undefined')
 }
 
+/**
+ * I am the EDIT modal field content for editing inline activities.
+ */
+router.get('/modal', auth.needsRole('ADMIN'), function(req, res, next) {
+    res.render('admin/activities/modal', {
+        user: req.user,
+        data: new Activity()
+    })
+})
+
+/**
+ * I am the modal field content for editing inline activities.
+ */
+router.get('/modal/:id', auth.needsRole('ADMIN'), function(req, res, next) {
+    request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
+        if (err) { return next(err) }
+        else if (!data) { data = new Activity() }
+        res.render('admin/activities/modal', {
+            user: req.user,
+            data: JSON.parse(data.body).data
+        })
+    })
+})
+
 router.get('/edit/:id', auth.needsRole('ADMIN'), function(req, res, next) {
         console.log('Activity')
     request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){

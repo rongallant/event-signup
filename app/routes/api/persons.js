@@ -1,5 +1,8 @@
+/* global emit */
+
 var express = require('express'),
     router = express.Router(),
+    mongoose = require('mongoose'),
     Person = require("../../models/person"),
     Reservation = require("../../models/reservation")
 
@@ -38,6 +41,27 @@ router.get('/:currPage?', function(req, res, next) {
         }
         return res.status(200).json({ "status": "200", "message": "Returned results",  "data" : data })
     })
+})
+
+/* GET Returns all item. */
+router.get('/dropdown/results/', function(req, res, next) {
+    console.log('/dropdown')
+    Person.find()
+        .select("firstName lastName fullName")
+        .exec(function(err, data) {
+            if (err) {
+                console.error("Could not retrieve list of people.")
+                console.error(err)
+                return res.status(500).json({ "status": "500", "message": "Could not retrieve list of people.", "error": JSON.stringify(err) })
+            }
+            var dropDownFields = { success: true, results: [] }
+            dropDownFields.results = data.map(function(value, i) {
+                return { name: value.fullName, value: value.id }
+            })
+            console.log(JSON.stringify(dropDownFields))
+            return res.status(200).json(dropDownFields)
+        }
+    )
 })
 
 /* GET Returns count of people going to and event by event ID. */

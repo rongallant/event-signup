@@ -29,8 +29,9 @@ router.post('/', function(req, res, next) {
 
 /* GET Returns single item. */
 router.get('/:id', function(req, res, next) {
+    var populate = !req.query.simple ? '' : '_contact'
     Pet.findById(req.params.id)
-        .populate('_contact')
+        .populate(populate)
         .exec(function(err, data) {
             if (err) {
                 res.status(404).json({ "status" : 404, "message" : err.message })
@@ -54,12 +55,15 @@ router.put('/', function(req, res, next) {
 
 /* DELETE Deletes an item. */
 router.delete('/:id', function(req, res, next) {
-    Pet.findByIdAndRemove(req.params.id, function (err) {
+    Pet.findByIdAndRemove(req.params.id, function (err, data) {
         if (err) {
-            res.status(500).json({ "status" : 500, "message" : err.message })
-        } else {
-            res.status(204).json({ "status" : 204, "message" : "Successfully Deleted" })
+            console.error("Could not delete meal")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Could not delete pet", "error": err })
+        } else if (data === null) {
+            return res.status(404).json({ "status": "404", "message": "Pet not found" })
         }
+        return res.status(200).json({ "status": "200", "message": "Pet deleted" })
     })
 })
 

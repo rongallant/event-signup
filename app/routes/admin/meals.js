@@ -41,6 +41,29 @@ router.get('/edit/:id', auth.needsRole('ADMIN'), function(req, res, next) {
     })
 })
 
+/**
+ * I am the EDIT modal field content for editing inline meals.
+ */
+router.get('/modal', auth.needsRole('ADMIN'), function(req, res, next) {
+    res.render('admin/meals/modal', {
+        user: req.user,
+        data: new Meal()
+    })
+})
+
+/**
+ * I am the EDIT modal field content for editing inline meals.
+ */
+router.get('/modal/:id', auth.needsRole('ADMIN'), function(req, res, next) {
+    request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
+        if (err) { return next(err) }
+        res.render('admin/meals/modal', {
+            user: req.user,
+            data: JSON.parse(data.body).data
+        })
+    })
+})
+
 router.get('/create', auth.needsRole('ADMIN'), function(req, res) {
     req.session.redirectTo = res.locals.editView
     res.render(res.locals.editView, {

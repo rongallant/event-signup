@@ -26,7 +26,7 @@ router.get('/:currPage?', function(req, res, next) {
         }
     }
     var options = {
-        sort: { updatedAt: -1 },
+        sort: { active: -1, updatedAt: -1 },
         populate: '_contact',
         lean: false, // False enables virtual params
         page: req.params.currPage,

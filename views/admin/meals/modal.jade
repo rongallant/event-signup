@@ -1,0 +1,37 @@
+include ../includes/formElements
+include ../../mixins/personSelector
+include ../../mixins/selector
+include ../../mixins/scheduleDatesSelector
+
+input(type='hidden', name="_id", id="_id", value=data.id)
+input(type='hidden', name="_event", id="_event", value=data._event)
+
+.field.required
+    label(for='name') Meal Name
+    input(type='text', name='name', id='name', value=data.name)
+
+.field
+    label(for='description') Meal Description
+    +textareaEditor('description', 'mealDescription', '2000')
+        =data.description
+
+.field.required
+    label(for="location") Meetup Location
+    input(type='text', name="location", id="location", value=data.location, placeholder='Location')
+
+.fields
+    .field.ten.wide.required
+        label(for="startDate") Start Date
+        input(type='text', name="startDate", id="startDate", value=data.startDate, placeholder='Date')
+
+    .field.six.wide.required
+        label(for="startDate") Start Time
+        input(type='text', name="startTime", id="startTime", value=data.startTime, placeholder='Time')
+
+    .field.ten.wide.required
+        label(for="duration") Duration
+        input(type='text', name="duration", id="duration", value=data.duration, placeholder='Duration')
+
+.field.required
+    label(for='_contact') Main Contact
+    +personSelector('_contact', '_contact', data._contact)

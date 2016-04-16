@@ -1,33 +1,8 @@
-//-
-   /*
-    * Initilize Selector JS.
-    *
-    * selectorId - String id that will be used to make this selector unique.
-    * maxLength - Max length list can take.
-    * formRules - Form field rules for Semantic UI form validator.
-    * rowItem - function(index, fields) { return item } representing each row
-    *           outputed. "fields" vars based on what is passed into rowItem.
-    *           rowsGlobalVariableName - Global variable name representing the
-    *           JSON array of objects that from database.
-    */
-mixin selectorJs(selectorId, maxLength, formRules, displayValue, rowsGlobalVariableName, apiUri)
-    if typeof hash == 'undefined'
-        script(src='/javascripts/selector.js')
-        - hash = '#' // global
-    | <!-- #{selectorId} scripts -->
-    script.
-        // Global List Object
-        var #{selectorId}SelectorItemArray = []
-        $(function() {
-            #{selectorId}SelectorItemArray = !{currentRows?JSON.stringify(currentRows):'[]'} // Items Global Variable Name
-            var maxLength = #{maxLength?maxLength:'5'}
-            var formRules = !{formRules?formRules:'null'}
-            var displayValue = function(i,fields){ return '<div class="item">' + #{displayValue} + '<div class="right floated content"><i class="trash icon link"></i></div></div>' }
-            initSelector('#{hash+selectorId}', maxLength, displayValue, #{rowsGlobalVariableName}, formRules, '#{apiUri}')
-        })
 
 mixin selectorListPanel(selectorId, items, itemName, iconClass, segmentClass)
     .field: div(id=selectorId)
+        .ui.inverted.dimmer
+            .ui.text.loader
         h5.ui.header
             .addEntry.basic.ui.button.right.floated
                 i.add.icon
@@ -41,14 +16,34 @@ mixin selectorListPanel(selectorId, items, itemName, iconClass, segmentClass)
             .ui.hidden.divider
 
 mixin selectorModal(selectorId, itemName, iconClass, segmentClass)
-    .ui.small.modal(id='#{selectorId}Modal')
+    .ui.small.first.coupled.modal(id='#{selectorId}Modal')
         .header
             i.icon(class=iconClass)
-            | Add #{itemName}
+            | Edit #{itemName}
         .content(class=segmentClass)
             form.ui.form(name='#{selectorId}SelectForm', id='#{selectorId}SelectForm')
                 block
+                .formFields
                 .ui.error.message
         .actions
-          .ui.cancel.button Cancel
-          input.ui.submit.primary.button(type='submit', form='#{selectorId}SelectForm', value='Add #{itemName}')
+            .ui.cancel.button
+                | Cancel
+            .ui.red.delete.button
+                i.trash.icon
+                | Delete
+            .ui.green.approve.button
+                i.check.icon
+                | Save #{itemName}
+
+    .ui.second.coupled.small.modal(id='#{selectorId}DeleteModal')
+        .header
+            | Delete
+        .content
+            .description
+                p: strong Are you sure you want to delete this?
+        .actions
+            .ui.cancel.button
+                | No Thank You
+            .ui.red.approve.delete.button
+                i.trash.icon
+                | Delete Now

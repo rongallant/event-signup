@@ -27,4 +27,3 @@ mixin textarea(fieldName, fieldId, maxLength)
         | / #{maxLength}
     textarea(name=fieldName, id=fieldId, rows="2", placeholder='Limit is #{maxLength} characters.', data-maxsize=maxLength, data-output='#{fieldId}Count', wrap='virtual')
         block
-

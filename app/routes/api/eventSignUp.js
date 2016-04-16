@@ -25,7 +25,6 @@ function isJson(jsonString) {
     }
 }
 
-
 /* GET Latest Event. */
 router.get('/current', function(req, res, next) {
     Event.findOne({active:true})

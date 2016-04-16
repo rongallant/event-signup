@@ -12,51 +12,9 @@ var express = require('express'),
  * REST API
  ************************************************************/
 
-function hasVal(variable){
-    return (variable !== 'undefined' && variable)
-}
-
-function isJson(jsonString) {
-    try {
-        jQuery.parseJSON(jsonString)
-        return true
-    } catch(e) {
-        return false
-    }
-}
-
-// Update activities
-function addActivities(activities, eventId) {
-    if (activities !== 'undefined' && activities) {
-        for (var i in activities) {
-            var activity = new Activity(activities[i])
-            activity._event = mongoose.Types.ObjectId(eventId)
-            activity.save(function(err, activity) {
-                    if (err) { console.error(err) }
-                    console.log('Saved activity')
-                }
-            )
-        }
-    }
-}
-
-// Update meals
-function addMeals(meals, eventId) {
-    if (meals !== 'undefined' && meals) {
-        for (var i in meals) {
-            new Meal({
-                _event: mongoose.Types.ObjectId(eventId)
-            }).save(function(err, activity) {
-                if (err) { console.error(err) }
-                console.log('Saved meal')
-            })
-        }
-    }
-}
 
 /* CREATE */
 router.post('/', function(req, res, next) {
-    console.log("Create new event")
     var newEvent = new Event({
         name: req.body.name,
         description: req.body['description'],
@@ -71,7 +29,7 @@ router.post('/', function(req, res, next) {
             console.error(err)
             return res.status(500).json({ "status": "500", "message": "Error saving event", "error": err })
         } else {
-            addActivities(req.body.activityArray, newEvent._id)
+            // addActivities(req.body.activityArray, newEvent._id)
             return res.status(201).json({ "status": "201", "message": "Address added to event", "data": data })
         }
     })
@@ -131,8 +89,8 @@ function(req, res, next) {
             console.error(err)
             return res.status(500).json({ "status": "500", "message": "Could not update event" })
         }
-        addMeals(req.body.mealArray, req.body.id)
-        addActivities(req.body.activityArray, req.body.id)
+        // addMeals(req.body.mealArray, req.body.id)
+        // addActivities(req.body.activityArray, req.body.id)
         return res.status(201).json({ "status": "201", "message": "Event updated", "data": { "id" : req.body.id } })
     })
 })
@@ -152,9 +110,9 @@ router.put('/deactivate/:id', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
     Event.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
-            return res.status(500).json({ "status" : "500", "message" : "Could not delete event", "error" : JSON.stringify(err) })
+            return res.status(500).json({ "status": "500", "message": "Could not delete event", "error": err })
         }
-        return res.status(204).json({ "status" : "204", "message" : "Event deleted" })
+        return res.status(200).json({ "status": "200", "message": "Deleted Successfully" })
     })
 })
 

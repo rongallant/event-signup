@@ -3,7 +3,7 @@
 mixin activity(activity)
     .item
         .ui.image
-             i.grey.rocket.icon.big
+             i.orange.compass.icon.big
         .top.aligned.content
             .meta.ui.right.floated
                 div.
@@ -19,7 +19,7 @@ mixin activity(activity)
 mixin task(activity)
     .item
         .ui.image
-            i.grey.fire.icon.big
+            i.yellow.heart.icon.big
         .top.aligned.content
             .meta.ui.right.floated
                 div.
@@ -35,7 +35,7 @@ mixin task(activity)
 mixin meal(activity)
     .item
         .ui.image
-            i.grey.food.icon.big
+            i.green.food.icon.big
         .top.aligned.content
             .meta.ui.right.floated
                 div.
@@ -46,6 +46,10 @@ mixin meal(activity)
             .content
                 p= activity.description
                 .extra
+                    .ui.right.floated.toggle.checkbox
+                        input(type='checkbox', name='public')
+                        label(for='public') Going
+
 
 
 .ui.relaxed.divided.items

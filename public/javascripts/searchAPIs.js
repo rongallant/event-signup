@@ -1,3 +1,5 @@
+/* global $ */
+
 var debugMode = false
 
 var googleAddressSearch = {
@@ -74,7 +76,7 @@ var googleAddressSearchAndPopulate = {
     }
 }
 
-function updateMap(query) {
+var updateMap = function(query) {
     if (query) {
         var gMap = '//www.google.com/maps/embed/v1/place?key=AIzaSyCszYBdD5JzHMDPJcdcCR0R7HWTcykLPpE&q=' + query
         $('#gMap').attr('data-url', gMap).embed().closest('rail').removeClass('hidden')
@@ -83,12 +85,11 @@ function updateMap(query) {
     }
 }
 
-function partVal(val) {
+var partVal = function(val) {
     return (val === 'undefined') ? '' : val
 }
 
-// Check var exists
-function u(variabl) {
+var u = function(variabl) {
     if (typeof variabl === "undefined") {
         return ''
     } else if (variabl.length == 0) {
@@ -96,37 +97,6 @@ function u(variabl) {
     } else {
         return variabl
     }
-}
-
-var localPersonSearch = {
-    apiSettings: {
-        url: '/api/persons?q={query}',
-        onResponse: function(qResponse) {
-            if (!qResponse) return
-            var response = {
-                results: []
-            }
-            $.each(qResponse.data.docs, function(index, value) {
-                var maxResults = 8
-                if (index >= maxResults) return false
-                var v = value
-                var desc = ''
-                desc = ( u(v.username) ? v.username + '<br>' : '') + ( u(v.email) ? v.email : '')
-                response.results.push({
-                    title: v.fullName,
-                    description: desc,
-                    id: v.id
-                })
-            })
-            return response;
-        }
-    },
-    onSelect: function(result, response) {
-        $(this).closest('.personSelector').find('input[type=hidden]').val(result.id)
-    },
-    minCharacters: 3,
-    debug: debugMode,
-    verbose: debugMode
 }
 
 var localAddressSearch = {

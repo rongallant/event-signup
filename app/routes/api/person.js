@@ -86,10 +86,9 @@ function(req, res, next) {
         if (err) {
             console.error("Could not delete account")
             console.error(err)
-            return res.status(500).json({ "status": "500", "message": "Could not delete account", "error": JSON.stringify(err) })
-        } else {
-            return res.status(204).json({ "status" : "204", "message" : "Successfully Deleted" })
+            return res.status(500).json({ "status": "500", "message": "Could not delete account", "error": err })
         }
+        return res.status(200).json({ "status": "200", "message": "Deleted Successfully" })
     })
 })
 

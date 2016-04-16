@@ -63,10 +63,9 @@ router.put('/', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
     Address.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
-            res.status(500).json({ "status" : 500, "message" : err.message, "error" : JSON.stringify(err) })
-        } else {
-            res.status(204).json({ "status" : 204 })
+            return res.status(500).json({ "status": "500", "message": "Could not delete address", "error": err })
         }
+        return res.status(200).json({ "status": "200", "message": "Deleted Successfully" })
     })
 })
 

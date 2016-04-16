@@ -39,8 +39,6 @@ var getActivities = function(req, res, next) {
             console.log(err)
             return next(err)
         }
-        console.log('getActivities')
-        console.log(JSON.parse(data.body).data)
         req.activitiesArray = JSON.parse(data.body).data
         return next()
     })
@@ -58,8 +56,6 @@ var getMeals = function(req, res, next) {
             console.log(err)
             return next(err)
         }
-        console.log('getMeals')
-        console.log(JSON.parse(data.body).data)
         req.mealsArray = JSON.parse(data.body).data
         return next()
     })

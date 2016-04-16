@@ -28,3 +28,7 @@ mixin textarea(fieldName, fieldId, maxLength)
         | / #{maxLength}
     textarea(name=fieldName, id=fieldId, rows="2", placeholder='Limit is #{maxLength} characters.', data-maxsize=maxLength, data-output='#{fieldId}Count', wrap='virtual')
         block
+
+mixin textareaEditor(fieldName, fieldId)
+    textarea.mde(name=fieldName, id=fieldId, rows="2", wrap='virtual')
+        block

@@ -1,3 +1,5 @@
+/* global $ */
+
 function scheduleEventFormScripts(dataId, apiUrl) {
     $('#editEvent')
         .form({

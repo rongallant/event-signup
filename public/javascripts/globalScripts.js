@@ -1,7 +1,6 @@
-/* global location,$ */
+/* global location $ noty */
 
 function toaster(type, text) {
-    /* global noty */
     return noty({
         type: type,
         text: text,
@@ -38,15 +37,13 @@ $.fn.formatPhone = function() {
     })
 }
 
-$(function(){
-    $('.ui.dropdown').dropdown()
+$(function() {
+    $.fn.modal.settings.allowMultiple = false
+    $.fn.modal.settings.transition = 'vertical flip'
     $('.tel').formatPhone()
     $('[data-content], [data-title]').popup()
-    
-    
     var maxLengthCounterOptions = {
         optoutputdiv: ''
     }
-    
     $('textarea[data-maxsize]').maxLengthCounter()
 })

@@ -33,10 +33,10 @@ mixin addressFields(address)
     .fields
         .field.ten.wide.required
             label(for='country') Country
-            #countryField.ui.search.selection.dropdown
+            .countries.ui.search.selection.dropdown
                 input(type='hidden', name='address[country]', id='country', value=address.country)
                 i.dropdown.icon
-                input.search(autocomplete='off', tabindex='0', value=address.country)
+                input.search(autocomplete='off', tabindex='0')
                 .default.text Select Country
                 .menu(tabindex='-1')
                    .item(data-value='AD')

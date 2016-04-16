@@ -115,9 +115,9 @@ router.put('/', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
     Reservation.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
-            return res.status(500).json({ "status": "500", "message": "Error deleting reservation", "error": err  })
+            return res.status(500).json({ "status": "500", "message": "Could not delete reservation", "error": err  })
         }
-        return res.status(204).json({ "status" : "204", "message" : "Successfully Deleted" })
+        return res.status(200).json({ "status": "200", "message": "Deleted Successfully" })
     })
 })
 

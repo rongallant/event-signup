@@ -74,6 +74,6 @@ append appContent
 
                 .field.required
                     label(for='_contact') Main Contact
-                    +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+                    +personSelector('_contact', '_contact', data._contact?data._contact.id:'')
 
         +messageContainer

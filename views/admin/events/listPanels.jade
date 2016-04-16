@@ -71,7 +71,7 @@ block appContent
                                     = moment(row.endDateTime).format('M/D/YY')
 
                             .description
-                                p= row.description
+                                p!= row.description
 
                                 if row.active
                                     .ui.label
@@ -102,7 +102,7 @@ block appContent
                                 .ui.flowing.popup.left.transition
                                     .ui.left.aligned
                                         .column
-                                            h4.ui.header #{row._contact.username} 
+                                            h4.ui.header #{row._contact.username}
 
                                         if row._contact.email
                                             a.ui.button.basic(href='mailto:'  + row._contact.email)

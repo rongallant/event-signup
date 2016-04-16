@@ -75,22 +75,15 @@ append javascripts
                 showDuration: true
             })
             $('#startTime').on('changeTime', function() {
-                // Get selected time
                 var out = moment($(this).timepicker('getTime')).add(1, 'h').format('h:mma')
-                // Set hidden field
                 endTimeField.find('#endTime').val(out)
-
                 endTimeField.find('#endTime').timepicker('setTime', out)
-
                 endTimeField.find('#endTime').timepicker('option', { minTime: $(this).timepicker('getTime') })
-
                 endTimeField.find('.ui-timepicker-select').dropdown()
             })
             $form.find('.ui-timepicker-select').dropdown()
-            $form.find('.ui.dropdown').dropdown()
             $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
             $form.find('.ui.checkbox').checkbox()
-            $form.find('.personSelector').search(localPersonSearch)
         })
 
 append appContent
@@ -148,7 +141,7 @@ append appContent
 
                         .field.ten.wide.required
                             label(for='_contact') Main Contact
-                            +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+                            +personSelector('_contact', '_contact', data._contact?data._contact.id:'')
 
                     .fields
 

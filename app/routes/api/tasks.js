@@ -49,11 +49,11 @@ router.get('/byEvent/:eventId', function(req, res, next) {
             .populate('_task')
             .exec(function(err, data) {
                 if (err) {
-                    console.error("Could not retrieve meals")
+                    console.error("Could not retrieve tasks")
                     console.error(err)
-                    return res.status(500).json({ "status": "500", "message": "Could not retrieve meals", "error": err })
+                    return res.status(500).json({ "status": "500", "message": "Could not retrieve tasks", "error": err })
                 }
-                return res.status(200).json({ "status": "200", "message": "Retrieved meals", "data": data })
+                return res.status(200).json({ "status": "200", "message": "Retrieved tasks", "data": data })
             }
         )
     }

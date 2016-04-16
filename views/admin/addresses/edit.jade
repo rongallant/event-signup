@@ -55,8 +55,8 @@ append javascripts
 
             $form.find('input[data-maxsize], textarea[data-maxsize]').maxLengthCounter()
             $form.find('.ui.checkbox').checkbox()
-            $form.find('select.dropdown, .selection.dropdown').dropdown()
-            $form.find('.personSelector').search(localPersonSearch)
+            // $form.find('select.dropdown, .selection.dropdown').dropdown()
+            // $form.find('.personSelector').search(localPersonSearch)
             $form.find('#addressSearch').search(googleAddressSearchAndPopulate)
             if (('#{data.id}').length > 0) {
                 updateMap('#{data.delimitedAddress)}')
@@ -89,7 +89,7 @@ append appContent
 
                             .field.ten.wide.required
                                 label(for='_contact') Main Contact
-                                +personSelector('_contact', '_contact', data._contact?data._contact.id:'', data._contact?data._contact.fullName:'')
+                                +personSelector('_contact', '_contact', data._contact?data._contact.id:'')
 
                     +formSegment
 
