@@ -1,6 +1,6 @@
 var express = require('express'),
     request = require('request'),
-    auth = require('../..//helpers/authorization.js'),
+    auth = require('../../helpers/authorization.js'),
     moment = require("moment"),
     router = express.Router(),
     Event = require("../../models/event"),
@@ -27,59 +27,28 @@ function hasVal(variable){
     return (variable !== 'undefined' && variable)
 }
 
-var getActivities = function(req, res, next) {
-    if (!hasVal(req.params.eventId)) {
-        req.activitiesArray = []
-        return next()
-    }
-    var apiUri = res.locals.apiUri.secure.activities.byEvent + req.params.eventId
+router.get('/current', auth.needsRole('ADMIN'), function(req, res, next) {
+    var apiUri =  res.locals.apiUri.secure.event.current
     var auth = { "x-access-token": req.session.authToken }
-    request({ "uri": apiUri, "headers": auth }, function (err, data) {
-        if (err) {
-            console.log(err)
-            return next(err)
-        }
-        req.activitiesArray = JSON.parse(data.body).data
-        return next()
-    })
-}
-
-var getMeals = function(req, res, next) {
-    if (!hasVal(req.params.eventId)) {
-        req.mealsArray = []
-        return next()
+    try {
+        request({ "uri": apiUri, "headers": auth }, function (err, data){
+            if (err) { return next(err) }
+            res.render(res.locals.editView, {
+                title: "Editing " + appDesc['singularName'],
+                user: req.user,
+                data: JSON.parse(data.body).data,
+                formMode: 'edit',
+                formMethod: 'PUT',
+                formAction: res.locals.apiUri.secure.event.base
+            })
+        })
+    } catch(err) {
+        return next(err)
     }
-    var apiUri = res.locals.apiUri.secure.meals.byEvent + req.params.eventId
-    var auth = { "x-access-token": req.session.authToken }
-    request({ "uri": apiUri, "headers": auth }, function (err, data) {
-        if (err) {
-            console.log(err)
-            return next(err)
-        }
-        req.mealsArray = JSON.parse(data.body).data
-        return next()
-    })
-}
-
-var getTasks = function(req, res, next) {
-    if (!hasVal(req.params.eventId)) {
-        req.tasksArray = []
-        return next()
-    }
-    var apiUri = res.locals.apiUri.secure.tasks.byEvent + req.params.eventId
-    var auth = { "x-access-token": req.session.authToken }
-    request({ "uri": apiUri, "headers": auth }, function (err, data) {
-        if (err) {
-            console.log(err)
-            return next(err)
-        }
-        req.tasksArray = JSON.parse(data.body).data
-        return next()
-    })
-}
+})
 
 router.get('/edit/:eventId', auth.needsRole('ADMIN'), function(req, res, next) {
-    var apiUri =  res.locals.apiUri.secure.event.base + req.params.eventId
+    var apiUri =  res.locals.apiUri.secure.event.base
     var auth = { "x-access-token": req.session.authToken }
     try {
         request({ "uri": apiUri, "headers": auth }, function (err, data){
@@ -135,16 +104,11 @@ router.get('/:currPage?', auth.needsRole('ADMIN'), function(req, res, next){
 router.get('/list/:currPage?', auth.needsRole('ADMIN'), function(req, res, next){
     res.locals.moment = moment
     var apiUri = res.locals.apiUri.secure.events.base
-    if (hasVal(req.params.currPage))
-        apiUri += req.params.currPage
-    else
-        apiUri += 1
-    if (hasVal(req.query.q))
-        apiUri += '?q=' + req.query.q
-
+    if (hasVal(req.params.currPage)) apiUri += req.params.currPage
+    else apiUri += 1
+    if (hasVal(req.query.q)) apiUri += '?q=' + req.query.q
     request({uri: apiUri, headers: {"x-access-token":req.session.authToken} }, function (err, data) {
         if (err) { return next(err) }
-
         res.render(res.locals.listView, {
             title: appDesc['pluralName'],
             user: req.user,

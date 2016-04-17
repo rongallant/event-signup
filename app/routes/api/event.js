@@ -12,6 +12,51 @@ var express = require('express'),
  * REST API
  ************************************************************/
 
+function dateTimeToDate(strDate, strTime) {
+    return moment(strDate + ' ' + strTime, global.viewPatternDate + ' '+ global.viewPatternTime).format()
+}
+
+/* GET current event. */
+router.get('/current', function(req, res, next) {
+    console.log('Get Current Event')
+    Event.findOne({ active: true })
+        .populate('_contact')
+        .exec(function(err, data) {
+            if (err) {
+                console.error("Could not find event")
+                console.error(err)
+                return res.status(500).json({ "status": "500", "message": "Could not find event", "error": err })
+            } else if (!data) {
+                return res.status(404).json({ "status": "404", "message": "Event not found" })
+            }
+            console.log('data')
+            console.log(data)
+            return res.status(200).json({ "status": "200", "message": "Found current event", "data": data })
+        }
+    )
+})
+
+/* GET Single Event. */
+router.get('/:id', function(req, res, next) {
+    console.log('Get Single Event.')
+    if (!req.params.id) {
+        return res.status(500).json({ "status": "500", "message": "Event id not supplied" })
+    }
+    Event.findById(req.params.id)
+        .populate('_contact')
+        // .populate('_contact _event tasks activities')
+        .exec(function(err, data) {
+            if (err) {
+                console.error("Could not find event")
+                console.error(err)
+                return res.status(500).json({ "status": "500", "message": "Could not find event", "error": err })
+            } else if (!data) {
+                return res.status(404).json({ "status": "404", "message": "Event not found" })
+            }
+            return res.status(200).json({ "status": "200", "data": data })
+        }
+    )
+})
 
 /* CREATE */
 router.post('/', function(req, res, next) {
@@ -35,47 +80,6 @@ router.post('/', function(req, res, next) {
     })
 })
 
-/* GET Single Event. */
-router.get('/:id', function(req, res, next) {
-    Event.findById(req.params.id)
-        .populate('_contact _event tasks activities')
-        .exec(function(err, data) {
-            if (err) {
-                console.error("Could not find event")
-                console.error(err)
-                return res.status(500).json({ "status": "500", "message": "Could not find event", "error": err })
-            } else if (!data) {
-                return res.status(404).json({ "status": "500", "message": "Event not found" })
-            } else {
-                return res.status(200).json({ "status": "200", "data": data })
-            }
-        }
-    )
-})
-
-/* GET Latest Event. */
-router.get('/current', function(req, res, next) {
-    Event.findOne({active:true})
-        .populate('_contact')
-        .sort('-createdAt')
-        .exec(function(err, data) {
-            if (err) {
-                console.error("Could not find event")
-                console.error(err)
-                return res.status(500).json({ "status": "500", "message": "Could not find event", "error": err })
-            } else if (!data) {
-                return res.status(404).json({ "status": "500", "message": "Event not found" })
-            } else {
-                return res.status(200).json({ "status": "200", "message": "Found current event", "data": data })
-            }
-        }
-    )
-})
-
-function dateTimeToDate(strDate, strTime) {
-    return moment(strDate + ' ' + strTime, global.viewPatternDate + ' '+ global.viewPatternTime).format()
-}
-
 /* UPDATE Event. */
 router.put('/', function(req, res, next) {
     req.body.startDateTime = dateTimeToDate(req.body.startDate, req.body.startTime)
@@ -89,8 +93,6 @@ function(req, res, next) {
             console.error(err)
             return res.status(500).json({ "status": "500", "message": "Could not update event" })
         }
-        // addMeals(req.body.mealArray, req.body.id)
-        // addActivities(req.body.activityArray, req.body.id)
         return res.status(201).json({ "status": "201", "message": "Event updated", "data": { "id" : req.body.id } })
     })
 })

@@ -57,7 +57,7 @@ module.exports = function(app) {
                 addresses : res.locals.fullUrl + '/api/addresses/',
                 event : {
                     base : res.locals.fullUrl + '/api/event/',
-                    latest : res.locals.fullUrl + '/api/event/latest/', // refactor to active
+                    current : res.locals.fullUrl + '/api/event/current/',
                     deactivate : res.locals.fullUrl + '/api/event/deactivate/'
                 },
                 events : {

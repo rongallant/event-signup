@@ -16,6 +16,109 @@ append stylesheets
 block toolbar
     +formToolbar
 
+append appContent
+
+    - var isIncomplete = function(formMode) { return formMode !== 'edit' }
+
+    form.ui.form(name='mainForm')
+
+        +mainFormWrapper
+
+            +formSegment
+
+                +formSegmentHeader('Event Details')
+
+                +formSegmentIntro
+                    p Before you start, make sure you have created the person in the person section you wish to be the main contact for this event.
+
+                .field.required
+                    label(for="eventName") Event Name
+                    input(type="text", name="name", id="eventName", value=data.name)
+
+                .field
+                    label(for='description') Activity Description
+                    +textareaEditor('description', 'description')
+                        = data.description
+
+                .field.required
+                    label(for='_contact') Main Contact
+                    +personSelector('_contact', '_contact', data._contact?data._contact.id:'')
+
+                .ui.horizontal.divider
+
+                .field
+                    label(for='active') Is the current event?
+                    #activeCheck.ui.toggle.checkbox
+                        input(type="checkbox", name="active", id="active", checked=data.active)
+                        label(for="active") Other events will be set to false.
+
+            +formSegment(isIncomplete(formMode))
+
+                +formSegmentHeader("Address")
+
+                +formSegmentIntro
+                p Your address is used to know where you are coming from and is another way to contact you in case we need to.
+
+                +addressFields(data.address?data.address:'')
+
+            +formSegment(isIncomplete(formMode))
+
+                +formSegmentHeader('Event Schedule')
+
+                +formSegmentIntro
+
+                .fields
+
+                    .field.ten.wide.required
+                        label(for="startDate") Start Date
+                        input(type='text', name="startDate", id="startDate", value=data.startDate, placeholder='Date')
+
+                    .field.six.wide.required
+                        label(for="startDate") Start Time
+                        input(type='text', name="startTime", id="startTime", value=data.startTime, placeholder='Time')
+
+                .fields
+
+                    .field.ten.wide.required
+                        label(for="endDate") End Date
+                        input(type='text', name="endDate", id="endDate", value=data.endDate, placeholder='Date')
+
+                    .field.six.wide.required
+                        label(for="endTime") End Time
+                        input(type='text', name="endTime", id="endTime", value=data.endTime, placeholder='Time')
+
+            .ui.relaxed.stackable.grid
+                .eight.wide.column
+                    +formSegment(isIncomplete(formMode))
+                        +selectorListPanel('meals', mealArray, 'Meal', 'green food', 'green')
+
+                .eight.wide.column
+                    +formSegment(isIncomplete(formMode))
+                        +selectorListPanel('activities', activityArray, 'Activity', 'orange map', 'orange')
+
+                .eight.wide.column
+                    +formSegment(isIncomplete(formMode))
+                        +selectorListPanel('tasks', taskArray, 'Task', 'yellow heart', 'yellow')
+
+            div(style='display: none;')
+                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
+                input(type="hidden", name="id", value=data.id)
+
+        +messageContainer
+
+    -// *************************************************
+    -// FORM MODALS
+    -// *************************************************
+
+    -// Meals Form
+    +selectorModal('meals', 'Meal', 'green food', 'green')
+
+    -// Activity Form
+    +selectorModal('activities', 'Activity', 'orange map', 'orange')
+
+    -// Tasks Form
+    +selectorModal('tasks', 'Task', 'yellow heart', 'yellow')
+
 append javascripts
     script(src="/javascripts/scheduleDayForm.js")
     script(src='/javascripts/selector.js')
@@ -210,106 +313,3 @@ append javascripts
             mainFormInit()
             selectorModalsConfigs()
         })
-
-append appContent
-
-    - var isIncomplete = function(formMode) { return formMode !== 'edit' }
-
-    form.ui.form(name='mainForm')
-
-        +mainFormWrapper
-
-            +formSegment
-
-                +formSegmentHeader('Event Details')
-
-                +formSegmentIntro
-                    p Before you start, make sure you have created the person in the person section you wish to be the main contact for this event.
-
-                .field.required
-                    label(for="eventName") Event Name
-                    input(type="text", name="name", id="eventName", value=data.name)
-
-                .field
-                    label(for='description') Activity Description
-                    +textareaEditor('description', 'description')
-                        = data.description
-
-                .field.required
-                    label(for='_contact') Main Contact
-                    +personSelector('_contact', '_contact', data._contact?data._contact.id:'')
-
-                .ui.horizontal.divider
-
-                .field
-                    label(for='active') Is the current event?
-                    #activeCheck.ui.toggle.checkbox
-                        input(type="checkbox", name="active", id="active", checked=data.active)
-                        label(for="active") Other events will be set to false.
-
-            +formSegment(isIncomplete(formMode))
-
-                +formSegmentHeader("Address")
-
-                +formSegmentIntro
-                p Your address is used to know where you are coming from and is another way to contact you in case we need to.
-
-                +addressFields(data.address?data.address:'')
-
-            +formSegment(isIncomplete(formMode))
-
-                +formSegmentHeader('Event Schedule')
-
-                +formSegmentIntro
-
-                .fields
-
-                    .field.ten.wide.required
-                        label(for="startDate") Start Date
-                        input(type='text', name="startDate", id="startDate", value=data.startDate, placeholder='Date')
-
-                    .field.six.wide.required
-                        label(for="startDate") Start Time
-                        input(type='text', name="startTime", id="startTime", value=data.startTime, placeholder='Time')
-
-                .fields
-
-                    .field.ten.wide.required
-                        label(for="endDate") End Date
-                        input(type='text', name="endDate", id="endDate", value=data.endDate, placeholder='Date')
-
-                    .field.six.wide.required
-                        label(for="endTime") End Time
-                        input(type='text', name="endTime", id="endTime", value=data.endTime, placeholder='Time')
-
-            .ui.relaxed.stackable.grid
-                .eight.wide.column
-                    +formSegment(isIncomplete(formMode))
-                        +selectorListPanel('meals', mealArray, 'Meal', 'green food', 'green')
-
-                .eight.wide.column
-                    +formSegment(isIncomplete(formMode))
-                        +selectorListPanel('activities', activityArray, 'Activity', 'orange map', 'orange')
-
-                .eight.wide.column
-                    +formSegment(isIncomplete(formMode))
-                        +selectorListPanel('tasks', taskArray, 'Task', 'yellow heart', 'yellow')
-
-            div(style='display: none;')
-                input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
-                input(type="hidden", name="id", value=data.id)
-
-        +messageContainer
-
-    -// *************************************************
-    -// FORM MODALS
-    -// *************************************************
-
-    -// Meals Form
-    +selectorModal('meals', 'Meal', 'green food', 'green')
-
-    -// Activity Form
-    +selectorModal('activities', 'Activity', 'orange map', 'orange')
-
-    -// Tasks Form
-    +selectorModal('tasks', 'Task', 'yellow heart', 'yellow')
