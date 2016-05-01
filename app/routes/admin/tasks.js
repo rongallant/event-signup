@@ -1,7 +1,8 @@
 var express = require('express'),
     request = require('request'),
-    auth = require('../../helpers/authorization.js'),
     path = require("path"),
+    moment = require('moment'),
+    auth = require('../../helpers/authorization.js'),
     router = express.Router(),
     Task = require("../../models/task"),
     appSettings = require('../utils/appSettings'),
@@ -33,7 +34,9 @@ function hasVal(variable){
 router.get('/modal', auth.needsRole('ADMIN'), function(req, res, next) {
     res.render('admin/tasks/modal', {
         user: req.user,
-        data: new Task()
+        data: new Task(),
+        isNew: 'true',
+        moment: moment
     })
 })
 
@@ -45,7 +48,9 @@ router.get('/modal/:id', auth.needsRole('ADMIN'), function(req, res, next) {
         if (err) { return next(err) }
         res.render('admin/tasks/modal', {
             user: req.user,
-            data: JSON.parse(data.body).data
+            data: JSON.parse(data.body).data,
+            isNew: 'false',
+            moment: moment
         })
     })
 })

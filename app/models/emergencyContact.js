@@ -2,13 +2,13 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema
 
 var EmergencyContactSchema = new Schema({
+    _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
     firstName: { type: String, maxlength: 35 },
     lastName: { type: String, maxlength: 35 },
     phone: { type: String, maxlength: 18 },
     email: { type: String, maxlength: 254 }
 }, {
     strict: true,
-    timestamps: false,
     toObject: {
         virtuals: true
     },

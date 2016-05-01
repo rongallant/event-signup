@@ -20,10 +20,9 @@ router.post('/', function(req, res, next) {
     })
     data.save(function(err, data) {
         if (err) {
-            res.status(500).json({ "status": 500, "message" : err.message })
-        } else {
-            res.status(201).json({ "status" : 201, "data" : data })
+            return res.status(500).json({ "status": "500", "message": "Could not save pet", "error": err })
         }
+        return res.status(200).json({ "status": "201", "data": data })
     })
 })
 
@@ -34,9 +33,9 @@ router.get('/:id', function(req, res, next) {
         .populate(populate)
         .exec(function(err, data) {
             if (err) {
-                res.status(404).json({ "status" : 404, "message" : err.message })
+                return res.status(404).json({ "status": "404", "message": "Could not find pet", "error": err })
             } else {
-                res.status(200).json({ "status" : 200, "data" : data })
+                res.status(200).json({ "status": "200", "data": data })
             }
         }
     )
@@ -46,10 +45,9 @@ router.get('/:id', function(req, res, next) {
 router.put('/', function(req, res, next) {
     Pet.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
         if (err) {
-            res.status(500).json({ "status" : 500, "message" : err.message })
-        } else {
-            res.status(201).json({ "status" : 201, "data" : {"id" : req.body.id} })
+            return res.status(404).json({ "status": "404", "message": "Could not update pet", "error": err })
         }
+        return res.status(200).json({ "status": "200", "message": "Pet updated" })
     })
 })
 

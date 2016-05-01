@@ -31,15 +31,20 @@ var app = express()
 var configDB = require('./config/database.js')
 var configAuth = require('./config/auth.js')
 var authorization = require('./app/helpers/authorization.js')
+var isDev = app.get('env') === 'development'
 
 // Global variables
 app.locals.apptitle = 'HANGCON'
 app.locals.url = 'hangcon.com'
 app.locals.email = 'ron@rongallant.com'
 app.locals.resultsPerPage = 10
+app.locals.isDev = isDev
 
-global.viewPatternDate = "D MMMM, YYYY"
+global.viewPatternDate = "D MMMM, YYYY" // Yuck
 global.viewPatternTime = "h:mm A"
+global.modalPatternDate = "YYYYMMDD"
+global.modalPatternTime = "HHmm"
+global.modalDatTimePattern = "YYYY-MM-DDTHH:mm"
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -47,7 +52,9 @@ app.set('view engine', 'jade')
 app.set('view options', { layout: false })
 
 // Loggers
-app.use(logger('dev'))
+if (isDev) {
+    app.use(logger('dev'))
+}
 
 app.use(bodyParser.json()) // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({extended:true})) // to support URL-encoded bodies
@@ -83,6 +90,7 @@ app.use('/lib', express.static(path.join(__dirname, 'node_modules', 'semantic-ui
 app.use('/lib', express.static(path.join(__dirname, 'semantic', 'dist')))
 app.use('/lib/pickadate', express.static(path.join(__dirname, 'node_modules', 'pickadate', 'lib', 'compressed')))
 app.use('/lib/moment', express.static(path.join(__dirname, 'node_modules', 'moment', 'min')))
+app.use('/lib/moment', express.static(path.join(__dirname, 'node_modules', 'moment-range', 'dist')))
 
 /************************************************************
  * Database
@@ -90,7 +98,7 @@ app.use('/lib/moment', express.static(path.join(__dirname, 'node_modules', 'mome
 
 // MongooseJS / MongoDB
 mongoose.connect(configDB.url)
-mongoose.set('debug', true)
+mongoose.set('debug', isDev)
 app.set('authToken', configDB.secret); // secret variable
 
 /************************************************************
@@ -206,7 +214,7 @@ require('./app/routes/adminRoutes')(app)
  * 5xx Server Error.
  ***********************************************************/
 
-if (app.get('env') === 'development') {
+if (isDev) {
     // ALL - Non Errors
     app.use(function (req, res, next) {
         console.log('\nNON ERRORS')
@@ -240,7 +248,7 @@ app.use(apiPaths, function (err, req, res, next)
 {
     console.log("API Error Handler")
     if (req.xhr) {
-        if (app.get('env') === 'development') {
+        if (isDev) {
             console.log('API Error Handler')
             console.log(err)
         }
@@ -252,7 +260,7 @@ app.use(apiPaths, function (err, req, res, next)
 app.use(sitePaths, function (err, req, res, next)
 {
     console.error('SITE Error Handler')
-    if (app.get('env') === 'development') {
+    if (isDev) {
         console.log(err)
     }
 
@@ -270,7 +278,7 @@ app.use(sitePaths, function (err, req, res, next)
         return res.render('error', {
             title: res.statusCode + ' : Error',
             message: res.statusCode + ' : Error',
-            error: (app.get('env') === 'development') ? err : res.statusMessage
+            error: isDev ? err : res.statusMessage
         })
     }
 
@@ -280,7 +288,7 @@ app.use(sitePaths, function (err, req, res, next)
         return res.render('error', {
             title: res.statusCode + ' : Error',
             message: res.statusCode + ' : Error',
-            error:  (app.get('env') === 'development') ? err : res.statusMessage
+            error:  isDev ? err : res.statusMessage
         })
     }
 
@@ -290,7 +298,7 @@ app.use(sitePaths, function (err, req, res, next)
     return res.render('error', {
         title: '500 : System Error',
         message: '500 : System Error',
-        error:  (app.get('env') === 'development') ? err : res.statusMessage
+        error:  isDev ? err : res.statusMessage
     })
 })
 

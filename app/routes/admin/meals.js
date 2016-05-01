@@ -1,7 +1,8 @@
 var express = require('express'),
     request = require('request'),
-    auth = require('../../helpers/authorization.js'),
+    moment = require('moment'),
     path = require("path"),
+    auth = require('../../helpers/authorization.js'),
     router = express.Router(),
     Meal = require("../../models/meal"),
     appSettings = require('../utils/appSettings'),
@@ -47,7 +48,8 @@ router.get('/edit/:id', auth.needsRole('ADMIN'), function(req, res, next) {
 router.get('/modal', auth.needsRole('ADMIN'), function(req, res, next) {
     res.render('admin/meals/modal', {
         user: req.user,
-        data: new Meal()
+        data: new Meal(),
+        isNew: 'true'
     })
 })
 
@@ -57,9 +59,12 @@ router.get('/modal', auth.needsRole('ADMIN'), function(req, res, next) {
 router.get('/modal/:id', auth.needsRole('ADMIN'), function(req, res, next) {
     request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
         if (err) { return next(err) }
+        console.log(data.body)
         res.render('admin/meals/modal', {
             user: req.user,
-            data: JSON.parse(data.body).data
+            data: JSON.parse(data.body).data,
+            isNew: 'false',
+            moment: moment
         })
     })
 })

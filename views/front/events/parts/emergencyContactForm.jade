@@ -1,0 +1,95 @@
+
+mixin emergencyContactAdd
+    .ecadd.ui.segment.center.aligned
+        .ui.add.button Add Emergency Contact
+
+mixin emergencyContactForm
+    .ecedit.ui.segment
+        form.ui.form(name='emergencyContactForm')
+
+            input(type='hidden', name='_event')
+            input(type='hidden', name='_contact')
+
+            .field.required
+                label(for='fullName') Full Name
+                input(type='text', id='fullName', name='fullName')
+
+            .field.required
+                label(for='phone') Phone Number
+                input(type='text', id='phone', name='phone')
+
+            .field.required
+                label(for='email') Email Address
+                input(type='text', id='email', name='email')
+
+            .right.aligned
+                .ui.cancel.button
+                    | Cancel
+
+                .ui.submit.button
+                    i.edit.icon
+                    | Save
+
+mixin emergencyContactView
+    .ecview.ui.segment
+        h5.heading(data-fullName)
+        .ui.right.floated.basic.icon.edit.button
+            i.edit.icon
+        .ui.list.relaxed
+            .item
+                i.mail.icon
+                .content
+                    a.emailLink(href='mailto:', data-email)
+            .item
+                i.phone.icon
+                .content
+                    a.phoneLink(href='tel:', data-phone)
+
+mixin emergencyContact(instanceId)
+    .emergencyContact.ui.segments(id=instanceId)
+        .ui.red.inverted.segment
+            h5 Emergency Contact
+
+        + emergencyContactAdd
+
+        + emergencyContactView()
+
+        + emergencyContactForm()
+
+mixin emergencyContactStyles(instanceId)
+    style.
+        ##{instanceId}.emergencyContact {
+            position: relative;
+        }
+         ##{instanceId}.emergencyContact .ecadd,
+         ##{instanceId}.emergencyContact .ecview,
+         ##{instanceId}.emergencyContact .ecedit {
+            display: none;
+        }
+
+mixin emergencyContactScripts(instanceId, contactId, emergencyContactJSON, uri)
+    // Emergency Contact Script
+    script(src='/javascripts/mixins/emergencyContact.js')
+    script.
+        $(function(){
+            var instanceId = '#{instanceId}'
+            var contactId = '#{contactId}'
+            var ecJSON = !{JSON.stringify(emergencyContactJSON)}
+            var ajaxCall = function(fields) {
+                return {
+                    type: 'post',
+                    url: '!{uri + contactId}',
+                    data: fields,
+                    headers: { "x-access-token":'!{authToken}' }
+                }}
+            if (ecJSON != undefined && ecJSON) {
+                ecJSON['_contact'] = contactId
+            } else {
+                ecJSON = { "fullName": "", "phone": "", "email": "", "_contact": contactId }
+            }
+            $('#' + instanceId)
+                .emergencyContactScripts(ecJSON)
+                .setAjaxCall(ajaxCall)
+                .init()
+        })
+

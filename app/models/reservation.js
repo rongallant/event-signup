@@ -5,18 +5,20 @@ var mongoose = require('mongoose'),
     mongoosePaginate = require('mongoose-paginate')
 
 var ReservationSchema = new Schema({
-    arrivingDate: Date,
-    additionalInformation: String,
-    guests: [ Guest ],
-    pets: [ Pet ],
-
     _contact: { type: Schema.Types.ObjectId, ref: 'Person', required: true },
     _event: { type: Schema.Types.ObjectId, ref: 'Event', required: true },
 
+    arrivingDate: Date,
+    additionalInformation: String,
+    
+    guests: [ Guest ],
+    pets: [ Pet ],
+
     tasks: [{ type: Schema.Types.ObjectId, ref: 'Task', limit: 10 }],
-    activities: [{ type: Schema.Types.ObjectId, ref: 'Activity', limit: 10 }]
+    activities: [{ type: Schema.Types.ObjectId, ref: 'Activity', limit: 25 }],
+    meals: [{ type: Schema.Types.ObjectId, ref: 'Meal', limit: 25 }]
 }, {
-    strict: true,
+    strict: false,
     timestamps: true,
     toObject: {
         virtuals: true

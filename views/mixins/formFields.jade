@@ -36,3 +36,10 @@ mixin field(field, label, value)
         label(for=field)= label
         if block
             block
+
+mixin textarea(fieldName, fieldId, maxLength)
+    span.counter
+        span(id='#{fieldId}Count')
+        | / #{maxLength}
+    textarea(name=fieldName, id=fieldId, rows="2", placeholder='Limit is #{maxLength} characters.', data-maxsize=maxLength, data-output='#{fieldId}Count', wrap='virtual')
+        block

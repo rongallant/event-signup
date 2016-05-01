@@ -1,5 +1,7 @@
 var async = require("async"),
+    auth = require('../../helpers/authorization.js'),
     express = require("express"),
+    request = require('request'),
     router = express.Router(),
     moment = require("moment"),
     mongoose = require("mongoose"),
@@ -7,6 +9,8 @@ var async = require("async"),
     Activity = require("../../models/activity"),
     Task = require("../../models/task"),
     Meal = require("../../models/meal"),
+    Pet = require("../../models/pet"),
+    Guest = require("../../models/guest"),
     Event = require("../../models/event"),
     Reservation = require("../../models/reservation"),
     appSettings = require("../utils/appSettings"),
@@ -70,6 +74,7 @@ function hasNoVal(varName) {
 }
 
 // Get User ID
+// TODO Move to API
 function getPersonId(req, res, next) {
     Account.findOne({ "username" : req.user.username },  "_person", function(err, data){
         if (err) {
@@ -82,10 +87,11 @@ function getPersonId(req, res, next) {
 }
 
 // Get Users Reservation
+// TODO Move to API
 function getUserReservation(req, res, next) {
     console.log({ "_contact" : mongoose.Types.ObjectId(req.personId) })
     Reservation.findOne({ "_contact" : mongoose.Types.ObjectId(req.personId) })
-        .populate('activities _contact _contact.emergencyContact _event pets tasks')
+        .populate(' _contact _contact.emergencyContact _event' ) //  pets guests tasks activities meals
         .exec(function(err, data){
             if (err) {
                 console.log('Issue finding users reservation')
@@ -105,11 +111,12 @@ function getUserReservation(req, res, next) {
 }
 
 // Get Event
+// TODO Use API
 function getCurrentEvent(req, res, next) {
     if (hasVal(req.reservation)) { return next() }
     Event.findOne({"active" : true})
         .sort({ 'createdAt' : -1 })
-        .select("_id")
+        .select("id")
         .exec(function(err, data) {
             if (err) {
                 console.error(err.message)
@@ -128,6 +135,7 @@ function getCurrentEvent(req, res, next) {
 }
 
 // Create new reservation
+// TODO Move to API
 function createNewReservation(req, res, next) {
     if (hasVal(req.reservation)) { return next() }
     try {
@@ -161,24 +169,77 @@ router.get('/signup', getPersonId, getUserReservation, getCurrentEvent, createNe
     })
 })
 
+
+/** ****************************************************************************
+ * Modal Forms
+ **************************************************************************** */
+
+
+/**
+ * I am the EDIT modal field content for editing inline guests.
+ */
+router.get('/guest/modal', function(req, res, next) {
+    res.render('front/events/parts/guestFormModal', {
+        user: req.user,
+        data: new Guest()
+    })
+})
+
+/**
+ * I am the EDIT modal field content for editing inline guests.
+ */
+router.get('/guest/modal/:id', function(req, res, next) {
+    request({"uri":res.locals.apiUri.public.guests.base + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
+        if (err) { return next(err) }
+        res.render('front/events/parts/guestFormModal', {
+            user: req.user,
+            data: JSON.parse(data.body).data
+        })
+    })
+})
+
+/**
+ * I am the EDIT modal field content for editing inline pets.
+ */
+router.get('/pet/modal', function(req, res, next) {
+    res.render('front/events/parts/petFormModal', {
+        user: req.user,
+        data: new Pet()
+    })
+})
+
+/**
+ * I am the EDIT modal field content for editing inline pets.
+ */
+router.get('/pet/modal/:id', function(req, res, next) {
+    request({"uri":res.locals.apiUri.public.pets.base + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
+        if (err) { return next(err) }
+        res.render('front/events/parts/petFormModal', {
+            user: req.user,
+            data: JSON.parse(data.body).data
+        })
+    })
+})
+
+// TODO Move to API
 var getScheduleForDay = function (userInput, callback) {
     var start = moment(userInput.eventDay, 'x').startOf('day'),
         end = moment(userInput.eventDay, 'x').endOf('day'),
         query = { _event:userInput.eventId, startDateTime: { "$gte": start, "$lt": end }}
     async.parallel({
-        modelAFind: function(cb) {
+        Activities: function(cb) {
             Activity.find(query)
                 .select("_contact name description startDateTime duration")
                 .populate("_contact")
                 .exec(cb)
         },
-        modelBFind: function(cb) {
+        Tasks: function(cb) {
             modelAFind: Task.find(query)
                 .select("_contact name description startDateTime duration")
                 .populate("_contact")
                 .exec(cb)
         },
-        modelCFind: function(cb) {
+        Meals: function(cb) {
             Meal.find(query)
                 .select("_contact name description startDateTime duration")
                 .populate("_contact")
@@ -188,20 +249,20 @@ var getScheduleForDay = function (userInput, callback) {
         var activities = []
         var tasks = []
         var meals = []
-        for (var i in result.modelAFind) {
-            var obj = JSON.stringify(result.modelAFind[i])
+        for (var i in result.Activities) {
+            var obj = JSON.stringify(result.Activities[i])
             var obj2 = JSON.parse(obj)
             obj2.activity = 'activity'
             activities.push(obj2)
         }
-        for (var i in result.modelBFind) {
-            var obj = JSON.stringify(result.modelBFind[i])
+        for (var i in result.Tasks) {
+            var obj = JSON.stringify(result.Tasks[i])
             var obj2 = JSON.parse(obj)
             obj2.activity = 'task'
             tasks.push(obj2)
         }
-        for (var i in result.modelCFind) {
-            var obj = JSON.stringify(result.modelCFind[i])
+        for (var i in result.Meals) {
+            var obj = JSON.stringify(result.Meals[i])
             var obj2 = JSON.parse(obj)
             obj2.activity = 'meal'
             meals.push(obj2)
@@ -215,11 +276,12 @@ var getScheduleForDay = function (userInput, callback) {
 }
 
 // Event Day Part
-router.get('/eventDay/:eventId/:eventDay', function(req, res, next) {
+router.get('/eventDay/:eventId/:reservationId/:eventDay', function(req, res, next) {
     getScheduleForDay({ eventId: req.params.eventId, eventDay: req.params.eventDay }, function(err, data) {
         if (err) console.error(err)
         res.render("front/events/parts/eventDay", {
             user: req.user,
+            reservationId: req.params.reservationId,
             data: data,
             moment: moment
         })

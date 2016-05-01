@@ -10,11 +10,11 @@
 *           outputed. "fields" vars based on what is passed into rowItem.
 *           rowsGlobalVariableName - Global variable name representing the
 *           JSON array of objects that from database.
-*
+* TODO Update this sample
 * var tasksSelectorSettings =
 * {
 *     selectorId: 'tasks',
-*     eventId: '#{data.id}',
+*     parentId: '#{data.id}',
 *     maxListLength: 50,
 *     listUri: '#{apiUri.secure.tasks.byEvent}',
 *     crudUri: '#{apiUri.secure.task}',
@@ -30,19 +30,24 @@
 var updateSelectorRowsFromModel = function(conf) {
     var $dimmer = $('#' + conf.selectorId).find('.dimmer')
     $dimmer.addClass('active')
-    $.ajax({ url: conf.listUri + conf.eventId }).done(function(response) {
-        conf.results = response.data
+    $.ajax({ url: conf.listUri }).done(function(response) {
+        conf.results = response.data ? response.data : []
         selectorPopulateRows(conf)
         $dimmer.removeClass('active')
+        return false
     })
     return false
 }
 
-// Ajax create/update Call
-var createItem = function(conf, fields) {
-    console.log('Try to create/update')
+var saveItem = function(conf, fields) {
+    console.log('isNew? ', fields.isNew)
+    console.log('conf.crudUri = ', conf.crudUri)
+    var requestType = 'put'
+    if (fields.isNew === 'true') {
+        requestType = 'post'
+    }
     $.ajax({
-        type: 'POST',
+        type: requestType,
         url: conf.crudUri,
         data: fields,
         dataType: 'JSON'
@@ -53,16 +58,17 @@ var createItem = function(conf, fields) {
         } else {
             toaster('error', response.statusText)
         }
+        return false
     })
-    .done(function(response) {
-        updateSelectorRowsFromModel(conf)
+    .success(function(response) {
         if (response.message) {
             toaster('success', response.message)
         } else {
             toaster('success', response.statusText)
         }
-
+        updateSelectorRowsFromModel(conf)
         $(conf.modalJQID).modal('hide')
+        return false
     })
     return false
 }
@@ -83,11 +89,13 @@ var deleteItem = function(conf, itemId) {
                 toaster('error', "Could not delete")
                 break;
         }
+        return false
     })
     .done(function(data, textStatus, jqXHR) {
         updateSelectorRowsFromModel(conf)
         $('.ui.modal').modal('hide')
         toaster('success', data.message)
+        return false
     })
     return false
 }
@@ -107,11 +115,11 @@ var initCreateNewItemButton = function(conf) {
             .done(function(formHtml) {
                 var $modal = $(conf.modalJQID)
                 $modal.find('.formFields').html(formHtml)
-                $modal.find('.formFields').find('input#_event').val(conf.eventId)
                 $modal.find('.delete.button').hide()
                 initMainModal(conf)
                 initModalForm(conf)
                 conf.formInitCallback(conf)
+                return false
             })
         })
     }
@@ -121,22 +129,27 @@ var initCreateNewItemButton = function(conf) {
 // Edit Item
 var initEditListItembuttons = function(conf) {
     var $listItems = $(conf.selectorJQID).find('.listOut .item .edit')
-    $listItems.click(function(index, value) {
+    $listItems.click(function() {
+        var rowIndex = $listItems.index(this)
+        var rowId = conf.results[rowIndex]['id']
         $.ajax({
-            url: conf.crudUri + conf.results[$listItems.index(this)]._id
+            url: conf.crudUri + rowId
         })
-        .done(function(response) {
+        .done(function(itemObj) {
             $.ajax({
-                url: conf.formUrl + response.data._id
+                url: conf.formUrl + itemObj.data.id
             })
             .done(function(formHtml) {
                 $(conf.modalJQID).find('.formFields').html(formHtml)
                 initMainModal(conf)
-                initDeleteModal(conf, response)
+                initDeleteModal(conf, itemObj)
                 initModalForm(conf)
                 conf.formInitCallback(conf)
+                return false
             })
+            return false
         })
+        return false
     })
     return false
 }
@@ -153,7 +166,7 @@ var selectorPopulateRows = function(conf) {
             $list.append(rowWrapper(conf.rowItem(value)))
         }
     })
-    $selector.find('.selectorCount').html((conf.results.length) + ' of ' + conf.maxListLength)
+    $selector.find('.selectorCount').html(conf.results.length + ' of ' + conf.maxListLength)
     initCreateNewItemButton(conf)
     initEditListItembuttons(conf)
     return false
@@ -165,8 +178,9 @@ var initModalForm = function(conf) {
         inline : true,
         keyboardShortcuts: false,
         onSuccess: function(event, fields) {
+            conf.currentModalForm.form('attach events', conf.modalJQID + ' .submit.button') // init submit
             if (conf.results.length < conf.maxListLength) { // TODO validate this check still works.
-                createItem(conf, fields)
+                saveItem(conf, fields)
             } else {
                 console.error('\nFailed adding row')
                 console.error(conf.selectorId + ' results = ' + conf.results.length + ' of ' + conf.maxListLength)
@@ -174,8 +188,18 @@ var initModalForm = function(conf) {
             return false
         }
     })
-    conf.currentModalForm.form('attach events', conf.modalJQID + ' .submit.button') // init submit
-    return conf.currentModalForm
+    return false
+}
+
+var initMainModal = function(conf) {
+    $(conf.modalJQID).modal({
+        onApprove: function() {
+            // SUBMIT FORM
+            conf.currentModalForm.form('submit')
+            return false
+        }
+    }).modal('show')
+    return false
 }
 
 var initDeleteModal = function(conf, response) {
@@ -188,17 +212,6 @@ var initDeleteModal = function(conf, response) {
             }
         }
     )
-}
-
-var initMainModal = function(conf) {
-    $(conf.modalJQID).modal({
-        onApprove: function() {
-            // SUBMIT FORM
-            conf.currentModalForm.form('submit')
-            return false
-        }
-    }).modal('show')
-    return false
 }
 
 var initSelector = function(conf) {

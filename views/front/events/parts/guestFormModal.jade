@@ -1,0 +1,24 @@
+
+input(type='hidden', name="isNew", id="isNew", value=isNew)
+input(type='hidden', name="_id", id="_id", value=data._id)
+input(type='hidden', name="_reservation", id="_reservation")
+input(type='hidden', name="_contact", id="_contact")
+
+.two.fields.required
+    .field
+        label(for='firstName') First Name
+        input(type='text', name='firstName', id='firstName', maxlength='35', value=data.firstName)
+    .field
+        label(for='lastName') Last Name
+        input(type='text', name='lastName', id='lastName', maxlength='35', value=data.lastName)
+.two.fields
+    .field.required
+        label(for='phone') Phone
+        .ui.left.icon.input
+            input(type='text', name='phone', id='phone', maxlength='15', value=data.phone)
+            i.phone.icon
+    .field
+        label(for='email') Email
+        .ui.left.icon.input
+            input(type='text', name='email', id='email', maxlength='255', value=data.email)
+            i.mail.icon

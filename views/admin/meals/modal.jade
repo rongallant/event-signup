@@ -3,7 +3,8 @@ include ../../mixins/personSelector
 include ../../mixins/selector
 include ../../mixins/scheduleDatesSelector
 
-input(type='hidden', name="_id", id="_id", value=data.id)
+input(type='hidden', name="isNew", id="isNew", value=isNew)
+input(type='hidden', name="id", id="id", value=data.id)
 input(type='hidden', name="_event", id="_event", value=data._event)
 
 .field.required
@@ -20,17 +21,16 @@ input(type='hidden', name="_event", id="_event", value=data._event)
     input(type='text', name="location", id="location", value=data.location, placeholder='Location')
 
 .fields
+
     .field.ten.wide.required
-        label(for="startDate") Start Date
-        input(type='text', name="startDate", id="startDate", value=data.startDate, placeholder='Date')
+        label(for="startDateTime") Start Date
+        input(type="datetime-local", name="startDateTime", id="startDateTime", value=moment(data.startDateTime).format('YYYY-MM-DDTHH:mm'))
 
     .field.six.wide.required
-        label(for="startDate") Start Time
-        input(type='text', name="startTime", id="startTime", value=data.startTime, placeholder='Time')
-
-    .field.ten.wide.required
         label(for="duration") Duration
-        input(type='text', name="duration", id="duration", value=data.duration, placeholder='Duration')
+        .ui.right.labeled.input
+            input(type='number', name="duration", id="duration", value=data.duration, placeholder='Duration')
+            .ui.basic.label Hours
 
 .field.required
     label(for='_contact') Main Contact

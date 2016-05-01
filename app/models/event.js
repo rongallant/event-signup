@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     mongoosePaginate = require('mongoose-paginate'),
     moment = require('moment'),
-    Address = require('./address')
+    Address = require('./address').schema
 
 var EventSchema = new Schema({
     name: {
@@ -13,12 +13,18 @@ var EventSchema = new Schema({
             unique: true
         }
     },
-    description: { type: String, maxlength: 2000 },
+    description: {
+        type: String,
+        maxlength: 2000
+    },
     startDateTime: { type: Date },
     endDateTime: { type: Date },
-    address: { type: Address.schema }, // This embeded doc works
+    address: { type: Address }, // This embeded doc works
     _contact: { type: Schema.Types.ObjectId, ref: 'Person' },
-    active: { type: Boolean, default: false }
+    active: {
+        type: Boolean,
+        default: false
+    }
 }, {
     strict: true,
     toObject: {

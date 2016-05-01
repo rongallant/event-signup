@@ -20,10 +20,6 @@ function isJSON(testVar) {
 
 // Save Contact
 function insertContactsEmergencyContact(req, res, next) {
-    console.log('POST - reservation.js - Save Emergency Contact to user')
-
-    console.log(req.body)
-
      var fullName = req.body.emergencyContact.fullName.split(' '),
             firstName = fullName[0],
             lastName = fullName[fullName.length - 1]
@@ -38,7 +34,7 @@ function insertContactsEmergencyContact(req, res, next) {
         if (err) {
             console.error("Error saving emergency contact")
             console.error(err)
-            return res.json({ "status": "500", "message": "Could not save emergency contact", "error": JSON.stringify(err) })
+            return res.json({ "status": "500", "message": "Could not save emergency contact", "error": err })
         } else if (data.ok === 0) {
             console.error("Did not save emergency contact " + data)
             return next()
@@ -48,7 +44,6 @@ function insertContactsEmergencyContact(req, res, next) {
 }
 
 function createReservation(req, res, next) {
-    console.log('POST - reservation.js - Create Reservation')
     try {
         var reservation = Reservation({
             _contact: mongoose.Types.ObjectId(req.body._contact),
@@ -60,28 +55,22 @@ function createReservation(req, res, next) {
             pets: req.body.pets
         })
         req.newReservation = reservation
-
-        console.log('new reservation')
-        console.log(reservation)
-
         return next()
     } catch(err) {
         console.error("Error creating reservation")
         console.error(err)
-        return res.status(500).json({ "status": "500", "message": "Error creating reservation", "error": JSON.stringify(err) })
+        return res.status(500).json({ "status": "500", "message": "Error creating reservation", "error": err })
     }
 }
 
 // Save Reservation
 router.post('/', insertContactsEmergencyContact, createReservation, function(req, res, next) {
-    // console.log('POST - reservation.js - Save Reservation')
     req.newReservation.save(function(err, data) {
         if (err) {
             console.error("Error saving reservation")
             console.error(err)
-            return res.status(500).json({ "status": "500", "message": "Error saving reservation", "error": JSON.stringify(err) })
+            return res.status(500).json({ "status": "500", "message": "Error saving reservation", "error": err })
         }
-        console.log("Reservation Successfully Saved")
         return res.status(201).json({ "status": "201", "message": "Reservation Successfully Saved" })
     })
 })
@@ -92,23 +81,13 @@ router.get('/:id', function(req, res, next) {
         .populate('_event _contact _contact.address guests pets activities tasks')
         .exec(function(err, data) {
             if (err) {
+                console.error("Could not find reservation")
                 console.error(err)
                 return res.status(404).json({ "status": "404", "message": "Could not find reservation", "error": err })
             }
-            res.status(201).json({ "status": "201", "data": data })
+            return res.status(201).json({ "status": "201", "data": data })
         }
     )
-})
-
-/* PUT Updates an item. */
-router.put('/', function(req, res, next) {
-    Reservation.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
-        if (err) {
-            console.error(err)
-            return res.status(500).json({ "status": "500", "message": "Could not update reservation", "error": err })
-        }
-        res.status(201).json({ "status": "201", "data" : {"id" : req.body.id} })
-    })
 })
 
 /* DELETE Deletes an item. */
@@ -118,6 +97,30 @@ router.delete('/:id', function(req, res, next) {
             return res.status(500).json({ "status": "500", "message": "Could not delete reservation", "error": err  })
         }
         return res.status(200).json({ "status": "200", "message": "Deleted Successfully" })
+    })
+})
+
+router.put('/activity/:reservationId', function(req, res, next) {
+    Reservation.findById(req.params.reservationId, function(err, data) {
+        if (err) {
+            return res.status(500).json({ "status": "500", "message": "Could not find reservation" })
+        } else if (data) {
+            if (req.body.isChecked == 1) {
+                data[req.body.activityType].push(mongoose.Types.ObjectId(req.body.activityId))
+            } else {
+                data[req.body.activityType].pull(req.body.activityId)
+            }
+            data.save(function (err, result) {
+                if (err) {
+                    console.error("Could save reservation")
+                    console.error(err)
+                    return res.status(500).json({ "status": "500", "message": "Could save reservation" })
+                } else if (req.body.isChecked == 1) {
+                    return res.status(200).json({ "status": "200", "message": req.body.activityType + " added", "data": result })
+                }
+                return res.status(200).json({ "status": "200", "message": req.body.activityType + " removed", "data": result })
+            })
+        }
     })
 })
 

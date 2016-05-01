@@ -1,66 +1,18 @@
-
-
-mixin activity(activity)
-    .item
-        .ui.image
-             i.orange.compass.icon.big
-        .top.aligned.content
-            .meta.ui.right.floated
-                div.
-                    #{moment(activity.startDateTime).format('h:MM a')}
-                    -
-                    #{moment(activity.startDateTime).add(activity.duration, 'hours').format('h:MM a')}
-            .header= activity.name
-            .content
-                p= activity.description
-                .extra
-
-
-mixin task(activity)
-    .item
-        .ui.image
-            i.yellow.heart.icon.big
-        .top.aligned.content
-            .meta.ui.right.floated
-                div.
-                    #{moment(activity.startDateTime).format('h:MM a')}
-                    -
-                    #{moment(activity.startDateTime).add(activity.duration, 'hours').format('h:MM a')}
-            .header= activity.name
-            .content
-                p= activity.description
-                .extra
-
-
-mixin meal(activity)
-    .item
-        .ui.image
-            i.green.food.icon.big
-        .top.aligned.content
-            .meta.ui.right.floated
-                div.
-                    #{moment(activity.startDateTime).format('h:MM a')}
-                    -
-                    #{moment(activity.startDateTime).add(activity.duration, 'hours').format('h:MM a')}
-            .header= activity.name
-            .content
-                p= activity.description
-                .extra
-                    .ui.right.floated.toggle.checkbox
-                        input(type='checkbox', name='public')
-                        label(for='public') Going
-
-
+include eventDayMixins
 
 .ui.relaxed.divided.items
 
+    h3 Event
+
     each item, i in data
 
+        p= JSON.stringify(eventId)
+
         if item.activity == 'task'
-            + task(item)
+            + task(item, '')
 
         if item.activity == 'meal'
-            + meal(item)
+            + meal(item, JSON.stringify(mealsSelectorSettings))
 
         if item.activity == 'activity'
-            + activity(item)
+            + activity(item, data.activities)

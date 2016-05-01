@@ -1,8 +1,9 @@
 var express = require('express'),
     router = express.Router(),
-    mongoose = require('mongoose')
+    moment = require('moment'),
+    utils = require('../../helpers/utilities'),
+    Meal = require("../../models/meal")
 
-var Meal = require("../../models/meal")
 var URL_BASE = "/admin/meals"
 
 /************************************************************
@@ -26,35 +27,37 @@ router.get('/:id', function(req, res, next) {
 
 /* POST New item created. */
 router.post('/', function(req, res, next) {
-    Meal.findById(req.body._id, function(err, data) {
+    console.error("Create meal")
+    Meal.create(req.body, function(err, data) {
         if (err) {
-            console.error("Issue finding meal")
-            return res.status(404).json({ "status": "404", "message": "Issue finding meal", "error": err })
-        } else if (!data) {
-            console.log('Creating new meal')
-            data = new Meal(req.body)
+            console.error("Issue creating meal")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Could not create meal", "error": err })
         }
-        data.save(function(err, data) {
-            console.log('Updating meal')
-            if (err) {
-                console.error("Could not save meal")
-                console.error(err)
-                return res.status(500).json({ "status": "500", "message": "Could not save meal", "error": err })
-            }
-            return res.status(201).json({ "status": "201", "message": "Meal created", "data": data })
-        })
+        return res.status(200).json({ "status": "200", "message": 'Meal created', "data": data })
     })
 })
 
 /* PUT Updates an item. */
 router.put('/', function(req, res, next) {
-    Meal.findByIdAndUpdate(req.body.id, {$set:req.body}, function (err, data) {
+
+    console.log('req.body')
+    console.log(req.body)
+
+    Meal.update({_id:req.body.id}, {$set:req.body}, function (err, data) {
+        console.error("Update meal")
         if (err) {
-            console.error("Could not update meal")
+            console.error("Error updating meal")
             console.error(err)
             return res.status(500).json({ "status": "500", "message": "Could not update meal", "error": err })
+        } else if (data && data.nModified === 0) {
+            console.log("Could not update meal")
+            console.log(data)
+            return res.status(500).json({ "status": "500", "message": "Could not update meal" })
         }
-        return res.status(201).json({ "status" : 201, "data" : { "id" : req.body.id } })
+        console.log('data')
+        console.log(data)
+        return res.status(200).json({ "status": "200", "message": "Meal updated", "data": {"id": req.body.id} })
     })
 })
 

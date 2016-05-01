@@ -24,11 +24,8 @@ exports.needsRole = function(allowedRoles) {
             if (exports.hasRole(req.user.roles, allowedRoles)) {
                 return next();
             } else {
-                console.error("401 : Does not have privileges.  " + req.originalUrl)
-                res.status(401).json({
-                    "status": "401",
-                    "message": "Does not have privileges."
-                })
+                console.error("401 : Does not have privileges. " + req.originalUrl)
+                res.status(401).json( {"status": "401", "message": "Does not have privileges." })
             }
         }
     ]

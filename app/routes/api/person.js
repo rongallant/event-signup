@@ -56,6 +56,17 @@ router.get('/username/:username', function(req, res, next) {
     })
 })
 
+router.get('/emergencycontact/:id', function(req, res, next) {
+      Person.findByIdAndUpdate(req.params.id, { $set: {_emergencyContact:req.body}}, { upsert: true }, function(err, data) {
+        if (err) {
+            console.error("Could not save emergency contact")
+            console.error(err)
+            return res.status(500).json({ "status": "500", "message": "Could not update person", "error": err })
+        }
+        return res.status(200).json({ "status": "200", "message": "Person updated" })
+    })
+})
+
 /* UPDATE Updates an item. */
 router.put('/',  auth.needsRole('ADMIN'), function(req, res, next) {
     Person.findByIdAndUpdate(req.body.id, { $set: req.body }, { upsert: true }, function(err, data) {

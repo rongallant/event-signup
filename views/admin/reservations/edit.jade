@@ -98,8 +98,6 @@ append appContent
                     +formSegment
                         +selectorListPanel('tasks', data.tasks, 'Task', 'yellow heart', 'yellow')
 
-            // include parts/eventDayFields
-
             .ui.hidden.clearing.divider
             .ui.error.message
             .ui.hidden.clearing.divider
@@ -149,6 +147,7 @@ append footer
 
     //- Meals Form
     +selectorModal('meals', 'Meal', 'green food', 'green')
+        input(type='hidden', name="id", id="id", value=data.id)
         input(type='hidden', name="_event", id="_event", value=data.id)
 
         .field.required

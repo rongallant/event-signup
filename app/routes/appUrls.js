@@ -12,13 +12,11 @@ module.exports = function(app) {
 
         res.locals.pageHome = '/' // index page
         res.locals.pageAbout = '/about'
-
         res.locals.pageAccountHome = '/guest'
         res.locals.pageAccountSignup = '/account/signup'
         res.locals.pageAccountComplete = '/account/complete'
         res.locals.pageAccountLogin = '/account/login'
         res.locals.pageAccountLogout = '/account/logout'
-
         res.locals.pageEvent = '/events'
         res.locals.pageEventSignup = '/events/signup'
 
@@ -44,7 +42,15 @@ module.exports = function(app) {
             "public": {
                 account : res.locals.fullUrl + '/public_api/account/',
                 login : res.locals.fullUrl + '/public_api/account/login/',
-                hasprofile : res.locals.fullUrl + '/public_api/account/hasprofile/'
+                hasprofile : res.locals.fullUrl + '/public_api/account/hasprofile/',
+                guests: {
+                    base: res.locals.fullUrl + '/public_api/guests/',
+                    byReservation: res.locals.fullUrl + '/public_api/guests/byReservation/'
+                },
+                pets: {
+                    base: res.locals.fullUrl + '/public_api/pets/',
+                    byReservation: res.locals.fullUrl + '/public_api/pets/byReservation/'
+                }
             },
             "secure": {
                 activity: res.locals.fullUrl + '/api/activity/',
@@ -73,14 +79,16 @@ module.exports = function(app) {
                 person : {
                     base : res.locals.fullUrl + '/api/person/',
                     byUsername : res.locals.fullUrl + '/api/person/username/',
-                    saveToken : res.locals.fullUrl + '/api/person/token/'
+                    saveToken : res.locals.fullUrl + '/api/person/token/',
+                    saveEmergencyContact : res.locals.fullUrl + '/api/person/emergencycontact/',
                 },
                 persons : {
                     base : res.locals.fullUrl + '/api/persons/',
                     byEventCount : res.locals.fullUrl + '/api/persons/byEventCount/'
                 },
                 reservation : {
-                    base: res.locals.fullUrl + '/api/reservation/'
+                    base: res.locals.fullUrl + '/api/reservation/',
+                    activity: res.locals.fullUrl + '/api/reservation/activity/'
                 },
                 reservations : {
                     base: res.locals.fullUrl + '/api/reservations/',

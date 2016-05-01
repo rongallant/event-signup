@@ -1,0 +1,57 @@
+
+mixin activity(activity, selected)
+    .activitiesActivities.item
+        .ui.image
+             i.orange.compass.icon.big
+        .top.aligned.content
+            .meta.ui.right.floated
+                div.
+                    #{moment(activity.startDateTime).format('h:MM a')}
+                    -
+                    #{moment(activity.startDateTime).add(activity.duration, 'hours').format('h:MM a')}
+            .header= activity.name
+            .content
+                p !{activity.description}
+                .extra
+                    .ui.right.floated.toggle.checkbox
+                        input(type='checkbox', name='goingActivities', id='activities-' + activity.id,  sel)
+                        label(for='activities-' + activity.id) Going
+
+
+mixin meal(activity, selected)
+    .activitiesMeals.item
+        .ui.image
+            i.green.food.icon.big
+        .top.aligned.content
+            .meta.ui.right.floated
+                div.
+                    #{moment(activity.startDateTime).format('h:MM a')}
+                    -
+                    #{moment(activity.startDateTime).add(activity.duration, 'hours').format('h:MM a')}
+            .header= activity.name
+            .content
+                p !{activity.description}
+                .extra
+                    .ui.right.floated.toggle.checkbox
+                        input(type='checkbox', name='goingMeals', id='meals-' + activity.id)
+                        label(for='meals-' + activity.id) Going
+
+
+mixin task(activity, selected)
+    .activitiesTasks.item
+        .ui.image
+            i.yellow.heart.icon.big
+        .top.aligned.content
+            .meta.ui.right.floated
+                div.
+                    #{moment(activity.startDateTime).format('h:MM a')}
+                    -
+                    #{moment(activity.startDateTime).add(activity.duration, 'hours').format('h:MM a')}
+            .header= activity.name
+            .content
+                p !{activity.description}
+                .extra
+                    .ui.right.floated.toggle.checkbox
+                        input(type='checkbox', name='goingTasks', id='meals-' + activity.id)
+                        label(for='tasks-' + activity.id) Going
+

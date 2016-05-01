@@ -21,6 +21,10 @@
     white-space: pre;
 }
 
+.selectorList {
+    position: relative;
+}
+
 #noty_topRight_layout_container {
     top: 100px !important;
 }

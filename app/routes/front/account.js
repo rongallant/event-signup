@@ -33,6 +33,7 @@ router.get('/signup', function(req, res, next) {
 })
 
 router.get(['/login'], function(req, res, next) {
+    console.log(res.locals.apiUri.public.login)
     res.render("front/account/login", {
         title: "Login",
         user: req.user,

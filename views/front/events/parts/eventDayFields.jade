@@ -1,27 +1,21 @@
-
 - var eventId = data._event.id
 - var start = data._event.startDateTime
 - var end = data._event.endDateTime
 - var daysOfEvent = []
-- for (var d = start; d <= end; d.setDate(d.getDate() + 1)) { daysOfEvent.push(new Date(d)); }
+- for (var d = start; d <= end; d.setDate(d.getDate() + 1)) { daysOfEvent.push(new Date(d)) }
 
 .ui.hidden.divider
 
 h4 Check out our schedule of events
 
-#schedule.ui.secondary.tabular.menu
+#schedule
+    .ui.secondary.tabular.menu
+        each day, i in daysOfEvent
+            a(data-tab="#{moment(day).format('x')}", class="item #{i}")
+                .ui.mini.statistic
+                    .value= moment(day).format('D')
+                    .label= moment(day).format('ddd')
 
     each day, i in daysOfEvent
-
-        a.active.item(data-tab="#{moment(day).format('x')}", class='#{i}')
-            .ui.mini.statistic
-                .value= moment(day).format('D')
-                .label= moment(day).format('ddd')
-
-each day, i in daysOfEvent
-
-    .ui.tab.segment(data-tab="#{moment(day).format('x')}") // unix milli time
-
-        .ui.relaxed.divided.items
-
-
+        .ui.tab.segment(data-tab="#{moment(day).format('x')}")
+            .ui.relaxed.divided.items

@@ -1,6 +1,6 @@
 
 mixin selectorListPanel(selectorId, items, itemName, iconClass, segmentClass)
-    .field: div(id=selectorId)
+    .selectorList.field: div(id=selectorId)
         .ui.inverted.dimmer
             .ui.text.loader
         h5.ui.header
@@ -16,7 +16,7 @@ mixin selectorListPanel(selectorId, items, itemName, iconClass, segmentClass)
             .ui.hidden.divider
 
 mixin selectorModal(selectorId, itemName, iconClass, segmentClass)
-    .ui.small.first.coupled.modal(id='#{selectorId}Modal')
+    .selectorModal.ui.small.first.coupled.modal(id='#{selectorId}Modal')
         .header
             i.icon(class=iconClass)
             | Edit #{itemName}
@@ -25,6 +25,8 @@ mixin selectorModal(selectorId, itemName, iconClass, segmentClass)
                 block
                 .formFields
                 .ui.error.message
+                div(style='display: none;')
+                    input#PreventChromeAutocomplete(type='text', name='PreventChromeAutocomplete', autocomplete='address-level4')
         .actions
             .ui.cancel.button
                 | Cancel

@@ -125,112 +125,125 @@ append javascripts
     script(src="/lib/pickadate/picker.js")
     script(src="/lib/pickadate/picker.date.js")
     script(src="/lib/pickadate/picker.time.js")
-
-    // Local Form Scripts
+    script(src="/lib/moment/moment-range.min.js")
     script.
-        var addDays = function(date, days) {
-            var result = new Date(date)
-            result.setDate(result.getDate() + days)
-            return result
+        var globalModelDatePattern = '#{global.modalPatternDate}'
+        var globalViewDatePattern = '#{global.viewPatternDate}'
+        var globalViewDateTimePattern = 'M/D/YY - h:mm a'
+
+        var eventDays = function(startDate, endDate) {
+            var a = []
+            var s = moment.utc(startDate)
+            var e = moment.utc(endDate)
+            var range = moment.range(s, e);
+            range.by('days', function(moment) {
+                a.push(moment)
+            })
+            return a
+        }
+        $.fn.populateDateSelect = function(arrayOfDates) {
+            for (var i in arrayOfDates) {
+                var d = moment.utc(arrayOfDates[i])
+                $(this).append($("<option />")
+                    .val(d.utc().format(globalModelDatePattern))
+                    .text(d.format(globalViewDatePattern)))
+            }
+            $(this).dropdown()
         }
 
-        var selectorModalsConfigs = function() {
+        var selectorModalsInit = function()
+        {
+            /* ************************************************************ */
+            /* * ACTIVITIES                                               * */
+            /* ************************************************************ */
 
-            // Activity Selector Configuration
             var activityFormInit = function(conf) {
-                console.log('taskFormInit ' + conf.modalJQID)
                 $modal = $(conf.modalJQID)
-                $modal.find('#startDate').pickadate()
-                $modal.find('#startTime').pickatime()
-                $modal.find('#endDate').pickadate()
-                $modal.find('#endTime').pickatime()
                 tinymce.init($.extend({ selector: conf.modalJQID + ' textarea.mde' }, tinymceConfig))
-                $modal.find('.personSelector.ui.dropdown').dropdown({apiSettings: {url: '/api/persons/dropdown/results?simple=1'}})
+                $modal.find('.personSelector.ui.dropdown').dropdown({
+                    apiSettings: {url: '/api/persons/dropdown/results?simple=1'}
+                })
                 return false
-            }
-            var activitiesSelectorSettings = {
+            },
+            activitiesSelectorSettings = {
                 selectorId: 'activities',
-                eventId: '#{data.id}',
                 maxListLength: 25,
-                listUri: '#{apiUri.secure.activities.byEvent}',
+                listUri: '#{apiUri.secure.activities.byEvent + data.id}',
                 crudUri: '#{apiUri.secure.activity}',
                 formUrl: '/admin/activities/modal/',
                 formInitCallback: activityFormInit,
-                results: [],
-                rowItem: function(rowObj) { return rowObj.name + ' - ' + rowObj.startTime },
-                formRules: {name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},duration:{rules:[{type:'empty'}]}}
-            }
-            var activitiesSelector = initSelector(activitiesSelectorSettings)
+                rowItem: function(rowObj) { return moment(rowObj.startDateTime).format(globalViewDateTimePattern) + ' (' +rowObj.name + ')' },
+                formRules: {
+                    name: ['maxLength[70]', 'empty'],
+                    description: 'maxLength[2000]',
+                    location: ['maxLength[500]', 'empty'],
+                    startTime: 'empty',
+                    duration: ['number', 'empty'],
+                    _contact: 'empty',
+                    effort:['number', 'empty'],
+                    personsRequired: ['number', 'empty']
+                }
+            },
+            activitiesSelector = initSelector(activitiesSelectorSettings)
 
-            // Meal Selector Configuration
-            var mealFormInit = function(conf) {
-                console.log('taskFormInit ' + conf.modalJQID)
-                $modal = $(conf.modalJQID)
-                $modal.find('#startDate').pickadate()
-                $modal.find('#startTime').pickatime()
-                $modal.find('#endDate').pickadate()
-                $modal.find('#endTime').pickatime()
-                tinymce.init($.extend({ selector: conf.modalJQID + ' textarea.mde' }, tinymceConfig))
-                $modal.find('.personSelector.ui.dropdown').dropdown({apiSettings: {url: '/api/persons/dropdown/results?simple=1'}})
-                return false
-            }
+            /* ************************************************************ */
+            /* * MEALS                                                    * */
+            /* ************************************************************ */
+
             var mealsSelectorSettings = {
                 selectorId: 'meals',
-                eventId: '#{data.id}',
                 maxListLength: 25,
-                listUri: '#{apiUri.secure.meals.byEvent}',
+                listUri: '#{apiUri.secure.meals.byEvent + data.id}',
                 crudUri: '#{apiUri.secure.meal}',
                 formUrl: '/admin/meals/modal/',
-                formInitCallback: mealFormInit,
-                results: [],
-                rowItem: function(rowObj) { return rowObj.name + ' - ' + rowObj.startTime },
-                formRules: {name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},description:[{type:'maxLength[2000]'}],startTime:{rules:[{type:'empty'}]},duration:{rules:[{type:'empty'}]}}
-            }
-            var mealsSelector = initSelector(mealsSelectorSettings)
+                formInitCallback: activityFormInit,
+                rowItem: function(rowObj) { return moment(rowObj.startDateTime).utc().format(globalViewDateTimePattern) + ' (' +rowObj.name + ')' },
+                formRules: {
+                    name: ['maxLength[70]', 'empty'],
+                    description: 'maxLength[2000]',
+                    location: ['maxLength[500]', 'empty'],
+                    startDateTime: 'empty',
+                    duration: ['number', 'empty'],
+                    _contact: 'empty'
+                }
+            },
+            mealsSelector = initSelector(mealsSelectorSettings)
 
-            // Task Selector Configuration
-            var taskFormInit = function(conf) {
-                console.log('taskFormInit ' + conf.modalJQID)
-                $modal = $(conf.modalJQID)
-                $modal.find('#startDate').pickadate()
-                $modal.find('#startTime').pickatime()
-                $modal.find('#endDate').pickadate()
-                $modal.find('#endTime').pickatime()
-                tinymce.init($.extend({ selector: conf.modalJQID + ' textarea.mde' }, tinymceConfig))
-                $modal.find('.personSelector.ui.dropdown').dropdown({apiSettings: {url: '/api/persons/dropdown/results?simple=1'}})
-                return false
-            }
+            /* ************************************************************ */
+            /* * TASKS                                                    * */
+            /* ************************************************************ */
+
             var tasksSelectorSettings = {
                 selectorId: 'tasks',
-                eventId: '#{data.id}',
                 maxListLength: 50,
-                listUri: '#{apiUri.secure.tasks.byEvent}',
+                listUri: '#{apiUri.secure.tasks.byEvent + data.id}',
                 crudUri: '#{apiUri.secure.task}',
                 formUrl: '/admin/tasks/modal/',
-                formInitCallback: taskFormInit,
-                results: [],
-                rowItem: function(rowObj) { return rowObj.name + ' - ' + rowObj.startTime },
+                formInitCallback: activityFormInit,
+                rowItem: function(rowObj) { return moment(rowObj.startDateTime).format(globalViewDateTimePattern) + ' (' +rowObj.name + ')' },
                 formRules: {
-                    fields: {
-                        name:{rules:[{type:'empty'},{type:'maxLength[70]'}]},
-                        description:[{type:'maxLength[2000]'}],
-                        startTime:{rules:[{type:'empty'}]},
-                        duration:{rules:[{type:'empty'}]}
-                    }
+                    name: ['maxLength[70]', 'empty'],
+                    description: 'maxLength[2000]',
+                    location: ['maxLength[500]', 'empty'],
+                    startTime: 'empty',
+                    duration: ['number', 'empty'],
+                    _contact: 'empty'
                 }
-            }
-            var tasksSelector = initSelector(tasksSelectorSettings)
+            },
+            tasksSelector = initSelector(tasksSelectorSettings)
+            return false
         }
 
         var mainFormInit = function() {
-            var validationRules = {
+            var $form = $('form[name=mainForm]')
+            $form.form({
                 fields: {
-                    eventName : ['empty'],
-                    description: ['empty'],
-                    mainPerson: ['empty'],
-                    location: ['empty'],
-                    schedules: ['empty'],
-                    _contact: ['empty']
+                    eventName : 'empty',
+                    description: ['empty', 'maxLength[5000]'],
+                    mainPerson: 'empty',
+                    location: 'empty',
+                    schedules: 'empty',
+                    _contact: 'empty',
                 },
                 inline : false,
                 keyboardShortcuts: false,
@@ -248,7 +261,6 @@ append javascripts
                     })
                     .error(function(response) {
                         console.log("Ajax Error")
-                        console.log(response)
                         toaster('error', 'Error: ' + response.statusText)
                     })
                     .done(function(response) {
@@ -256,60 +268,53 @@ append javascripts
                     })
                     return false
                 }
+            })
+            var deleteComplete = function(){
+                location.replace('#{listAction}')
+                return false
             }
-
-            var $form = $('form[name=mainForm]')
-
-            // CREATE / SAVE
-            $form.form(validationRules)
-
-            var deleteComplete = function(){location.replace('#{listAction}') }
             deleteConfirmation('#{apiItem}#{data.id}', $form.form('get values'), deleteComplete)
-
+            $form.find('.personSelector.ui.dropdown').dropdown({
+                apiSettings: {url: '/api/persons/dropdown/results?simple=1'}
+            })
             $form.find('#addressSearch').search(googleAddressSearchAndPopulate)
             $form.find('#startDate').pickadate()
             $form.find('#startTime').pickatime()
             $form.find('#endDate').pickadate()
             $form.find('#endTime').pickatime()
-
             tinymce.init(
                 $.extend({
                     selector: 'form[name=mainForm] textarea.mde'
                 }, tinymceConfig)
             )
-
-            var setActiveState = function(apiUri, eventId) {
-                $.ajax({
-                    type: 'put',
-                    url: apiUri,
-                    dataType: 'JSON',
-                    statusCode: {
-                        201: function(data) {
-                            console.log('201 Success')
-                            toaster('success', data.message)
-                        },
-                        500: function(data) {
-                            console.log('500 Error')
-                            toaster('error', data.message)
-                        }
-                    }
-                })
-            }
-
-            // onChecked
-            $('#activeCheck').checkbox({
+            $form.find('#activeCheck').checkbox({
                 onChecked: function() {
-                    console.log('onChecked called')
                     setActiveState('#{apiUri.secure.events.disableOthers + data.id}')
                 },
                 onUnchecked: function() {
-                    console.log('onUnchecked called')
                     setActiveState('#{apiUri.secure.event.deactivate + data.id}')
+                }
+            })
+            return false
+        }
+
+        var setActiveState = function(apiUri, eventId) {
+            $.ajax({
+                type: 'put',
+                url: apiUri,
+                dataType: 'JSON',
+                statusCode: {
+                    201: function(data) {
+                        toaster('success', data.message)
+                    },
+                    500: function(data) {
+                        toaster('error', data.message)
+                    }
                 }
             })
         }
 
         $(function() {
             mainFormInit()
-            selectorModalsConfigs()
+            selectorModalsInit()
         })

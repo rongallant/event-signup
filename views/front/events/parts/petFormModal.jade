@@ -1,0 +1,24 @@
+
+input(type='hidden', name="isNew", id="isNew", value=isNew)
+input(type='hidden', name="_id", id="_id", value=data._id)
+input(type='hidden', name="_reservation", id="_reservation")
+input(type='hidden', name="_contact", id="_contact")
+
+.three.fields
+    .field.required
+        label(for='petType') Pet Type
+        select.ui.dropdown(type='text', name='petType', id='petType', value=data.petType)
+            option Dog
+            option Cat
+            option Other
+
+    .field.required
+        label(for='petName') Pets Name
+        input(type='text', name='petName', id='petName', maxlength='35', value=data.petName)
+
+    .field
+        label(for='petWeight') Pets Weight
+        .ui.right.labeled.input
+            input(type='number', name='petWeight', id='petWeight', maxlength='3', value=data.petWeight)
+            .ui.basic.label
+                | lb

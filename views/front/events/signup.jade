@@ -1,147 +1,84 @@
 include ../../mixins/selector
+include parts/emergencyContactForm
 
 extends ../layout
 
-append frontContent
-
-    h1.ui.header Signup for #{data._event.name}
-    .ui.hidden.divider
-    .ui.hidden.divider
-
-    form.ui.form(name='mainForm')
-
-        input(type='hidden', name='_event', value=data._event)
-        input(type='hidden', name='_contact', value=data._contact)
-
-        .ui.relaxed.stackable.grid
-
-            .eight.wide.column
-
-                +selectorListPanel('guests', data.guests, 'Guest', 'blue user', 'blue')
-
-                +selectorListPanel('pets', data.pets, 'Pet', 'brown paw', 'brown')
-
-            .eight.wide.column
-
-                h5.ui.heading Emergency Contact
-                .ui.basic.red.segment
-
-                    .field.required
-                        label(for='emergencyContact_fullName') Full Name
-                        input(type='text', id='emergencyContact_fullName', name='emergencyContact[fullName]',
-                            value=data._contact.emergencyContact?data._contact.emergencyContact.firstName +' '+ data._contact.emergencyContact.lastName:'')
-
-                    .field.required
-                        label(for='emergencyContact_phone') Phone Number
-                        input(type='text', id='emergencyContact_phone', name='emergencyContact[phone]',
-                            value=data._contact.emergencyContact?data._contact.emergencyContact.phone:'')
-
-                    .field.required
-                        label(for='emergencyContact_email') Email Address
-                        input(type='text', id='emergencyContact_email', name='emergencyContact[email]',
-                            value=data._contact.emergencyContact?data._contact.emergencyContact.email:'')
-
-        include parts/eventDayFields
-
-        .ui.container
-            .ui.grid
-                .sixteen.wide.right.aligned.column
-                    .ui.big.primary.submit.button
-                        | Reserve Your Spot!
-
-        .ui.hidden.clearing.divider
-        .ui.error.message
-        .ui.hidden.clearing.divider
-
-append footer
-p &nbsp;
-p &nbsp;
-+selectorModal('guests', 'Guest', 'user blue', 'blue')
-    .two.fields.required
-        .field
-            label(for='firstName') First Name
-            input(type='text', name='firstName', id='firstName', maxlength='3')
-        .field
-            label(for='lastName') Last Name
-            input(type='text', name='lastName', id='lastName', maxlength='3')
-    .two.fields
-        .field.required
-            label(for='phone') Phone
-            .ui.left.icon.input
-                input(type='text', name='phone', id='phone', maxlength='15')
-                i.phone.icon
-        .field
-            label(for='email') Email
-            .ui.left.icon.input
-                input(type='text', name='email', id='email', maxlength='255')
-                i.mail.icon
-
-+selectorModal('pets', 'Pet', 'paw brown', 'brown')
-    .two.fields
-        .field
-            label(for='petType') Pet Type
-                select.ui.dropdown(type='text', name='petType', id='petType')
-                    option Dog
-                    option Cat
-                    option Other
-
-        .field
-            label(for='petName') Pets Name
-            input(type='text', name='petName', id='petName', maxlength='35')
-
-        .field
-            label(for='petWeight') Pets Weight
-            .ui.right.labeled.input
-                input(type='number', name='petWeight', id='petWeight', maxlength='3')
-                .ui.basic.label
-                    | lb
+append stylesheets
+    +emergencyContactStyles('emergencyContact')
 
 append javascripts
+    + emergencyContactScripts('emergencyContact',
+        data._contact.id,
+        data._contact.emergencyContact,
+        apiUri.secure.person.saveEmergencyContact)
+    script(src='/javascripts/selector.js')
     script.
-        var guestListContainer = !{ data.guests && data.guests.length ? JSON.stringify(data.guests) : '[]' }
-        var petListContainer = !{ data.pets && data.pets.length ? JSON.stringify(data.pets) : '[]' }
+        // Global Vars
+        var reservationId = '#{data.id ? data.id : ''}'
+        var eventId = '#{data._event ? data._event.id : ''}'
+        var contactId = '#{data._contact ? data._contact.id : ''}'
 
-        function customValidators($form, fields, guests, pets, formErrors) {
-            if (typeof formErrors == 'undefined') {
-                formErrors = []
-            }
-            if (fields['guests'].length > 5) {
-                formErrors.push('No more than 5 guests')
-            }
-            if (fields['pets'].length > 2) {
-                formErrors.push('No more than 2 pets')
-            }
-            console.log(formErrors)
-            if (formErrors.length > 0) {
-                $form.form('add errors', formErrors)
-            }
-            return (formErrors.length > 0)
+        function arrNoDupe(a) {
+            var temp = {};
+            for (var i = 0; i < a.length; i++)
+                temp[a[i]] = true;
+            var r = [];
+            for (var k in temp)
+                r.push(k);
+            return r;
         }
 
-        function scheduleForDay(dateTime) {
-             $.ajax({
-                type: 'get',
-                url: '/events/scheduleForDay/#{data._event.id}/' + dateTime,
-                dataType: 'JSON'
-            })
-            .error(function(response) {
-                toaster('error', 'Error: ' + JSON.parse(response.responseText).message)
-            })
-            .done(function(response) {
-                location.replace('#{editAction}' + response.data.id)
-            })
+        var selectorsInit = function() {
+
+            // Guest Selector Configuration
+            var guestFormInit = function(conf) {
+                $modal = $(conf.modalJQID)
+                $modal.find('input#_reservation').val(reservationId)
+                $modal.find('input#_contact').val(contactId)
+                return false
+            }
+            var guestsSelectorSettings = {
+                selectorId: 'guests',
+                maxListLength: 5,
+                listUri: '#{apiUri.public.guests.byReservation}' + reservationId,
+                crudUri: '#{apiUri.public.guests.base}',
+                formUrl: '/events/guest/modal/',
+                formInitCallback: guestFormInit,
+                rowItem: function(rowObj) { return rowObj.firstName + ' ' + rowObj.lastName },
+                formRules: {
+                    firstName: {rules:[{type:'empty'},{type:'maxLength[35]'}]},
+                    lastName: {rules:[{type:'empty'},{type:'maxLength[35]'}]},
+                    email:{rules:[{type:'email'}]},
+                    phone:{rules:[{type:'maxLength[18]'}]}
+                }
+            }
+            var guestsSelector = initSelector(guestsSelectorSettings)
+
+            // Pet Selector Configuration
+            var petsFormInit = function(conf) {
+                $modal = $(conf.modalJQID)
+                $modal.find('input#_reservation').val(reservationId)
+                $modal.find('input#_contact').val(contactId)
+                return false
+            }
+            var petsSelectorSettings = {
+                selectorId: 'pets',
+                maxListLength: 2,
+                listUri: '#{apiUri.public.pets.byReservation}' + reservationId,
+                crudUri: '#{apiUri.public.pets.base}',
+                formUrl: '/events/pet/modal/',
+                formInitCallback: guestFormInit,
+                rowItem: function(rowObj) { return rowObj.petName + ' - ' + rowObj.petWeight + ' lb'
+                },
+                formRules: {petName:{rules:[{type:'empty'}, {type:'maxLength[35]'}]},petWeight:{rules:[{type:'empty'}, {type:'maxLength[3]'}]}}
+            }
+            var petsSelector = initSelector(petsSelectorSettings)
+            return false
         }
 
-        $(function(){
+        // Main Form
+        var mainFormInit = function() {
             var $form =  $('form[name=mainForm]')
-
-            $('.tabular.menu .item')
-                .tab({
-                    cache: false,
-                    context : 'parent',
-                    auto    : true,
-                    path    : '/events/eventDay/#{eventId}/'
-                })
 
             var validationRules = {
                 emergencyContact_fullName : {rules:[{type:'empty'}, {type:'maxLength[70]'}]},
@@ -154,19 +91,7 @@ append javascripts
                 debug: false,
                 fields: validationRules,
                 keyboardShortcuts: false,
-                onFailure: function(formErrors, fields) {
-                    console.log(formErrors)
-                    fields['guests'] = guestListContainer
-                    fields['pets'] = petListContainer
-                    customValidators($form, fields, formErrors)
-                    return false
-                },
                 onSuccess: function(event, fields) {
-                    fields['guests'] = guestListContainer
-                    fields['pets'] = petListContainer
-                    if (customValidators($form, fields)) { // has errors
-                        return false
-                    }
                     console.log('Attemping to save into #{formAction} via #{formMethod}' )
                     $.ajax({
                         type: '#{formMethod}',
@@ -206,12 +131,118 @@ append javascripts
                     return false
                 }
             })
+            return false
+        }
+
+        var parseActivityId = function(id) {
+            var parts = id.split('-')
+            return parts.length === 2 ? parts : []
+        }
+
+        var initEventDays = function() {
+            $('.tabular.menu .item').tab({
+                auto: true,
+                cache: false,
+                path: '/events/eventDay/#{data._event.id}/#{data.id}/',
+                onLoad: function(tabPath, parameterArray, historyEvent) {
+                    initEventDayTab()
+                }
+            })
+            return false
+        }
+
+        var initEventDayTab = function() {
+            var resActivities = !{JSON.stringify(data.activities)},
+                resMeals = !{JSON.stringify(data.meals)},
+                resTasks = !{JSON.stringify(data.tasks)},
+                selectedActivities = arrNoDupe(resActivities.concat(resMeals, resTasks))
+
+            var saveActivityCall = function(activityId, checked) {
+                var parts = parseActivityId(activityId)
+                $.ajax({
+                    type: 'put',
+                    url: '#{apiUri.secure.reservation.activity}' + reservationId,
+                    data: {
+                        "activityId": parts[1],
+                        "activityType": parts[0],
+                        "isChecked": checked
+                    },
+                    // context: '#schedule .item.0',
+                    headers: { "x-access-token":"#{authToken}" }
+                }).done(function(response) {
+                    var data = response.data
+                    resActivities = data.activities,
+                    resMeals = data.meals,
+                    resTasks = data.tasks,
+                    selectedActivities = arrNoDupe(resActivities.concat(resMeals, resTasks))
+                })
+                return false
+            }
+            $('.activitiesActivities .checkbox, .activitiesMeals .checkbox, .activitiesTasks .checkbox')
+            .checkbox({
+                onChecked: function() {
+                    saveActivityCall($(this).attr('id'), 1)
+                },
+                onUnchecked: function() {
+                    saveActivityCall($(this).attr('id'), 0)
+                }
+            })
+
+            $('[name=goingActivities], [name=goingMeals], [name=goingTasks]')
+            .each(function(index, field) {
+                var parts = parseActivityId($(field).prop('id'))
+                var checked = false
+                for (var i in selectedActivities) {
+                    checked = (parts[1] === selectedActivities[i])
+                    if (checked) break
+                }
+                $(field).prop('checked', checked)
+            })
+            return false
+        }
+
+        $(function(){
+            mainFormInit()
+            selectorsInit()
+            initEventDays()
+            $('.tabular.menu').find('.item.0').click()
         })
 
-    -var guestFormRules = "{firstName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]},lastName: {rules:[{type:'empty'}, {type:'maxLength[35]'}]}}"
-    -var guestRowItem = "fields.firstName + ' ' + fields.lastName"
-    +selectorJs('guests', 5, guestFormRules, guestRowItem, 'guestListContainer')
+append frontContent
 
-    -var petFormRules = "{petName:{rules:[{type:'empty'}, {type:'maxLength[35]'}]},petWeight:{rules:[{type:'empty'}, {type:'maxLength[3]'}]}}"
-    -var petRowItem = "fields.petName + ' - ' + fields.petWeight + ' lb'"
-    +selectorJs('pets', 2, petFormRules, petRowItem, 'petListContainer')
+    h1.ui.header Signup for #{data._event.name}
+    .ui.hidden.divider
+
+    -// pre= JSON.stringify(data, null, '\t')
+
+    .ui.hidden.divider
+
+    .ui.relaxed.stackable.grid
+
+        .eight.wide.column
+
+            +selectorListPanel('guests', data.guests, 'Guest', 'blue user', 'blue')
+
+            +selectorListPanel('pets', data.pets, 'Pet', 'brown paw', 'brown')
+
+        .eight.wide.column
+
+            + emergencyContact('emergencyContact')
+
+    include parts/eventDayFields
+
+    .ui.container
+        .ui.grid
+            .sixteen.wide.right.aligned.column
+                .ui.big.primary.submit.button
+                    | Reserve Your Spot!
+
+    -// *************************************************
+    -// FORM MODALS
+    -// *************************************************
+
+    -// Guests Form
+    +selectorModal('guests', 'Guest', 'user blue', 'blue')
+
+    -// Pets Form
+    +selectorModal('pets', 'Pet', 'paw brown', 'brown')

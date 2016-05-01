@@ -1,7 +1,8 @@
 var express = require('express'),
     request = require('request'),
-    auth = require('../../helpers/authorization.js'),
     path = require("path"),
+    moment = require('moment'),
+    auth = require('../../helpers/authorization.js'),
     router = express.Router(),
     Activity = require("../../models/activity"),
     appSettings = require('../utils/appSettings'),
@@ -23,33 +24,9 @@ router.use(function(req, res, next) {
  * PAGES
  ************************************************************/
 
-function hasVal(variable){
+function hasVal(variable) {
     return (typeof variable !== 'undefined')
 }
-
-/**
- * I am the EDIT modal field content for editing inline activities.
- */
-router.get('/modal', auth.needsRole('ADMIN'), function(req, res, next) {
-    res.render('admin/activities/modal', {
-        user: req.user,
-        data: new Activity()
-    })
-})
-
-/**
- * I am the modal field content for editing inline activities.
- */
-router.get('/modal/:id', auth.needsRole('ADMIN'), function(req, res, next) {
-    request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
-        if (err) { return next(err) }
-        else if (!data) { data = new Activity() }
-        res.render('admin/activities/modal', {
-            user: req.user,
-            data: JSON.parse(data.body).data
-        })
-    })
-})
 
 router.get('/edit/:id', auth.needsRole('ADMIN'), function(req, res, next) {
         console.log('Activity')
@@ -62,6 +39,34 @@ router.get('/edit/:id', auth.needsRole('ADMIN'), function(req, res, next) {
             formMode: 'edit',
             formMethod: 'PUT',
             formAction: res.locals.apiItem + req.params.id
+        })
+    })
+})
+
+/**
+ * I am the EDIT modal field content for editing inline activities.
+ */
+router.get('/modal', auth.needsRole('ADMIN'), function(req, res, next) {
+    res.render('admin/activities/modal', {
+        user: req.user,
+        data: new Activity(),
+        isNew: 'true',
+        moment: moment
+    })
+})
+
+/**
+ * I am the modal field content for editing inline activities.
+ */
+router.get('/modal/:id', auth.needsRole('ADMIN'), function(req, res, next) {
+    request({"uri":res.locals.apiItem + req.params.id, "headers":{"x-access-token":req.session.authToken}}, function (err, data){
+        if (err) { return next(err) }
+        else if (!data) { data = new Activity() }
+        res.render('admin/activities/modal', {
+            user: req.user,
+            data: JSON.parse(data.body).data,
+            isNew: 'false',
+            moment: moment
         })
     })
 })
