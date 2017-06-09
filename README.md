@@ -26,7 +26,7 @@ res.status(200).json({ "status": "200", "message": "You have logged in", "data":
 #### Sample response message explination
 
 ```javascript
-	{
+{
 	/* Required */
 	status: "200", // HTML server response code.
 	message: "Successfully did it", // User readable response of what happened.
