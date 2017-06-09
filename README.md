@@ -32,10 +32,10 @@ message: "Successfully did it", // User readable response of what happened.
 
 
 /* Optional */
-  * code: "250", // Internal defined code.  Used by app.
-  * more_info: "More details about this call.", // Notes or important details about API call.
-  * data: data.body, // Response data/results.
-  * error: err // JSON Error() response object.
+code: "250", // Internal defined code.  Used by app.
+more_info: "More details about this call.", // Notes or important details about API call.
+data: data.body, // Response data/results.
+error: err // JSON Error() response object.
 ```
 
 https://dev.twitter.com/overview/api/response-codes
